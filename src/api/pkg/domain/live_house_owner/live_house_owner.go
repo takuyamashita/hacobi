@@ -62,6 +62,10 @@ func NewLiveHouseOwnerName(name string) (livehouseOwnerName, error) {
 	return livehouseOwnerName(name), nil
 }
 
+func (n livehouseOwnerName) String() string {
+	return string(n)
+}
+
 type LiveHouseOwnerId struct {
 	value uint64
 }
@@ -92,6 +96,10 @@ func NewLiveHouseOwnerEmailAddress(address string) (liveHouseOwnerEmailAddress, 
 	}, nil
 }
 
+func (a liveHouseOwnerEmailAddress) String() string {
+	return a.localPart + "@" + a.domain
+}
+
 type liveHouseOwnerPassword string
 
 func NewLiveHouseOwnerPassword(password string) (liveHouseOwnerPassword, error) {
@@ -101,4 +109,8 @@ func NewLiveHouseOwnerPassword(password string) (liveHouseOwnerPassword, error) 
 	}
 
 	return liveHouseOwnerPassword(password), nil
+}
+
+func (p liveHouseOwnerPassword) String() string {
+	return string(p)
 }

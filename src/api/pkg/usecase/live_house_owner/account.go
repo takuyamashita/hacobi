@@ -10,18 +10,18 @@ type LiveHouseOwnerRepository interface {
 	Save(owner livehouseownerdomain.LiveHouseOwner, ctx context.Context) (*livehouseownerdomain.LiveHouseOwnerId, error)
 }
 
-type accountUseCase struct {
+type AccountUseCase struct {
 	liveHouseOwnerRepository LiveHouseOwnerRepository
 	liveHouseOwner           livehouseownerdomain.LiveHouseOwner
 }
 
-func NewAccountUseCase(liveHouseOwnerRepository LiveHouseOwnerRepository) accountUseCase {
-	return accountUseCase{
+func NewAccountUseCase(liveHouseOwnerRepository LiveHouseOwnerRepository) AccountUseCase {
+	return AccountUseCase{
 		liveHouseOwnerRepository: liveHouseOwnerRepository,
 	}
 }
 
-func (useCase accountUseCase) RegisterAccount(name string, emailAddress string, password string, ctx context.Context) (*livehouseownerdomain.LiveHouseOwnerId, error) {
+func (useCase AccountUseCase) RegisterAccount(name string, emailAddress string, password string, ctx context.Context) (*livehouseownerdomain.LiveHouseOwnerId, error) {
 
 	liveHouseOwnerName, err := livehouseownerdomain.NewLiveHouseOwnerName(name)
 	if err != nil {
