@@ -1,11 +1,11 @@
-package livehouseowner
+package live_house_owner_repository
 
 import (
 	"context"
 	"database/sql"
 	"log"
 
-	livehouseownerdomain "github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_owner"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_owner_domain"
 )
 
 type liveHouseOwner struct {
@@ -18,7 +18,7 @@ func NewLiveHouseOwner(db *sql.DB) *liveHouseOwner {
 	}
 }
 
-func (repo liveHouseOwner) Save(owner livehouseownerdomain.LiveHouseOwner, ctx context.Context) (*livehouseownerdomain.LiveHouseOwnerId, error) {
+func (repo liveHouseOwner) Save(owner live_house_owner_domain.LiveHouseOwner, ctx context.Context) (*live_house_owner_domain.LiveHouseOwnerId, error) {
 
 	result, err := repo.db.ExecContext(
 		ctx,
@@ -35,7 +35,7 @@ func (repo liveHouseOwner) Save(owner livehouseownerdomain.LiveHouseOwner, ctx c
 		return nil, err
 	}
 
-	ownerId, err := livehouseownerdomain.NewLiveHouseOwnerId(uint64(dbId))
+	ownerId, err := live_house_owner_domain.NewLiveHouseOwnerId(uint64(dbId))
 	if err != nil {
 		return nil, err
 	}

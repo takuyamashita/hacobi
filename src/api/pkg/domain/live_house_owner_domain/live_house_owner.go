@@ -1,4 +1,4 @@
-package livehouseowner
+package live_house_owner_domain
 
 import (
 	"errors"

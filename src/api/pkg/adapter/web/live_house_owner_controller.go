@@ -1,16 +1,16 @@
-package controller
+package web
 
 import (
 	"github.com/labstack/echo/v4"
-	livehouseowner "github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_owner"
+	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_owner_usecase"
 )
 
 type LiveHouseOwnerController struct {
-	accountUseCase livehouseowner.AccountUseCase
+	accountUseCase live_house_owner_usecase.AccountUseCase
 }
 
 func NewLiveHouseOwnerController(
-	accountUseCase livehouseowner.AccountUseCase,
+	accountUseCase live_house_owner_usecase.AccountUseCase,
 ) LiveHouseOwnerController {
 	return LiveHouseOwnerController{
 		accountUseCase: accountUseCase,

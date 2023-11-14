@@ -12,9 +12,9 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/takuyamashita/hacobi/src/api/db"
-	"github.com/takuyamashita/hacobi/src/api/pkg/adapter/controller"
-	livehouseownerrepository "github.com/takuyamashita/hacobi/src/api/pkg/repository/live_house_owner"
-	livehouseownerusecase "github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_owner"
+	"github.com/takuyamashita/hacobi/src/api/pkg/adapter/web"
+	"github.com/takuyamashita/hacobi/src/api/pkg/repository/live_house_owner_repository"
+	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_owner_usecase"
 )
 
 type Application interface {
@@ -78,11 +78,11 @@ func (app *application) setupRoutes() {
 		return c.String(200, "Hello, World!")
 	})
 
-	liveHouseOwnerRepository := livehouseownerrepository.NewLiveHouseOwner(app.db)
+	liveHouseOwnerRepository := live_house_owner_repository.NewLiveHouseOwner(app.db)
 
-	liveHouseOwnerUsecase := livehouseownerusecase.NewAccountUseCase(liveHouseOwnerRepository)
+	liveHouseOwnerUsecase := live_house_owner_usecase.NewAccountUseCase(liveHouseOwnerRepository)
 
-	liveHouseOwnerController := controller.NewLiveHouseOwnerController(liveHouseOwnerUsecase)
+	liveHouseOwnerController := web.NewLiveHouseOwnerController(liveHouseOwnerUsecase)
 
 	app.server.POST("/api/live_house_owner/account", liveHouseOwnerController.RegisterAccount)
 }
