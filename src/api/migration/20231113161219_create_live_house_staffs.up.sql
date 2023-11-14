@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS live_house_owners (
+CREATE TABLE IF NOT EXISTS live_house_staffs (
     id BIGINT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
