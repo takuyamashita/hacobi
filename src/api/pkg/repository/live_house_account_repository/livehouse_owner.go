@@ -1,24 +1,24 @@
-package live_house_owner_repository
+package live_house_account_repository
 
 import (
 	"context"
 	"database/sql"
 	"log"
 
-	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_owner_domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_account_domain"
 )
 
-type liveHouseOwner struct {
+type LiveHouseStaff struct {
 	db *sql.DB
 }
 
-func NewLiveHouseOwner(db *sql.DB) *liveHouseOwner {
-	return &liveHouseOwner{
+func NewliveHouseStaff(db *sql.DB) *LiveHouseStaff {
+	return &LiveHouseStaff{
 		db: db,
 	}
 }
 
-func (repo liveHouseOwner) Save(owner live_house_owner_domain.LiveHouseOwner, ctx context.Context) (*live_house_owner_domain.LiveHouseOwnerId, error) {
+func (repo LiveHouseStaff) Save(owner live_house_account_domain.LiveHouseStaff, ctx context.Context) (*live_house_account_domain.LiveHouseStaffId, error) {
 
 	result, err := repo.db.ExecContext(
 		ctx,
@@ -35,7 +35,7 @@ func (repo liveHouseOwner) Save(owner live_house_owner_domain.LiveHouseOwner, ct
 		return nil, err
 	}
 
-	ownerId, err := live_house_owner_domain.NewLiveHouseOwnerId(uint64(dbId))
+	ownerId, err := live_house_account_domain.NewliveHouseStaffId(uint64(dbId))
 	if err != nil {
 		return nil, err
 	}

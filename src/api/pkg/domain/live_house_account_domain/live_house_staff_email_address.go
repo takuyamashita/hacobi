@@ -1,4 +1,4 @@
-package live_house_owner_domain
+package live_house_account_domain
 
 import (
 	"errors"
@@ -10,28 +10,28 @@ var (
 	mailAddressRegexPatern = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 )
 
-type LiveHouseOwnerEmailAddress struct {
+type LiveHouseStaffEmailAddress struct {
 	localPart string
 	domain    string
 }
 
-func NewLiveHouseOwnerEmailAddress(address string) (LiveHouseOwnerEmailAddress, error) {
+func NewLiveHouseStaffEmailAddress(address string) (LiveHouseStaffEmailAddress, error) {
 
 	if !mailAddressRegexPatern.MatchString(address) {
-		return LiveHouseOwnerEmailAddress{}, errors.New("email is invalid")
+		return LiveHouseStaffEmailAddress{}, errors.New("email is invalid")
 	}
 
 	addressParts := strings.Split(address, "@")
 	if len(addressParts) != 2 {
-		return LiveHouseOwnerEmailAddress{}, errors.New("email is invalid")
+		return LiveHouseStaffEmailAddress{}, errors.New("email is invalid")
 	}
 
-	return LiveHouseOwnerEmailAddress{
+	return LiveHouseStaffEmailAddress{
 		localPart: addressParts[0],
 		domain:    addressParts[1],
 	}, nil
 }
 
-func (a LiveHouseOwnerEmailAddress) String() string {
+func (a LiveHouseStaffEmailAddress) String() string {
 	return a.localPart + "@" + a.domain
 }
