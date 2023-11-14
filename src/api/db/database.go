@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
@@ -12,10 +13,10 @@ import (
 
 type database sql.DB
 
-func NewDatabase() *sql.DB {
+func NewDatabase(ctx context.Context) *sql.DB {
 
 	db := open(getConfigParams())
-	if !isCoccencted(db) {
+	if err := isCoccencted(ctx, db); err != nil {
 		log.Fatal("Could not connect to the database")
 	}
 
@@ -49,15 +50,12 @@ func open(config mysql.Config) *sql.DB {
 	return db
 }
 
-func isCoccencted(db *sql.DB) bool {
+func isCoccencted(ctx context.Context, db *sql.DB) error {
 
-	for i := 0; i < 5; i++ {
-		if err := db.Ping(); err == nil {
-			return true
-		}
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
 
-		time.Sleep(1 * time.Second)
-	}
+	db.PingContext(ctx)
 
-	return false
+	return nil
 }

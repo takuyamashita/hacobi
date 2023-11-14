@@ -25,7 +25,8 @@ type application struct {
 
 func newApplication() Application {
 
-	db := db.NewDatabase()
+	ctx := context.Background()
+	db := db.NewDatabase(ctx)
 	defer db.Close()
 
 	app := &application{
