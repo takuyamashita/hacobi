@@ -1,4 +1,4 @@
-package live_house_account_domain
+package live_house_staff_domain
 
 type LiveHouseStaff struct {
 	id       *LiveHouseStaffId

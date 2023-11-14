@@ -13,8 +13,8 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/takuyamashita/hacobi/src/api/db"
 	"github.com/takuyamashita/hacobi/src/api/pkg/adapter/web"
-	"github.com/takuyamashita/hacobi/src/api/pkg/repository/live_house_account_repository"
-	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_account_usecase"
+	"github.com/takuyamashita/hacobi/src/api/pkg/repository/live_house_staff_repository"
+	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
 )
 
 type Application interface {
@@ -78,9 +78,9 @@ func (app *application) setupRoutes() {
 		return c.String(200, "Hello, World!")
 	})
 
-	liveHouseStaffRepository := live_house_account_repository.NewliveHouseStaff(app.db)
+	liveHouseStaffRepository := live_house_staff_repository.NewliveHouseStaff(app.db)
 
-	liveHouseStaffUsecase := live_house_account_usecase.NewAccountUseCase(liveHouseStaffRepository)
+	liveHouseStaffUsecase := live_house_staff_usecase.NewAccountUseCase(liveHouseStaffRepository)
 
 	liveHouseStaffController := web.NewliveHouseStaffController(liveHouseStaffUsecase)
 

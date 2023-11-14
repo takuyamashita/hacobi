@@ -2,15 +2,15 @@ package web
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_account_usecase"
+	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
 )
 
 type liveHouseStaffController struct {
-	accountUseCase live_house_account_usecase.AccountUseCase
+	accountUseCase live_house_staff_usecase.AccountUseCase
 }
 
 func NewliveHouseStaffController(
-	accountUseCase live_house_account_usecase.AccountUseCase,
+	accountUseCase live_house_staff_usecase.AccountUseCase,
 ) liveHouseStaffController {
 	return liveHouseStaffController{
 		accountUseCase: accountUseCase,
