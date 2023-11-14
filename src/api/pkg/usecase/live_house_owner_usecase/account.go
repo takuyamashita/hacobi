@@ -48,7 +48,7 @@ func (useCase AccountUseCase) RegisterAccount(name string, emailAddress string, 
 		return nil, err
 	}
 
-	id, err := useCase.liveHouseOwnerRepository.Save(liveHouseOwner, ctx)
+	id, err := useCase.liveHouseOwnerRepository.Save(*liveHouseOwner, ctx)
 
 	return id, err
 }
