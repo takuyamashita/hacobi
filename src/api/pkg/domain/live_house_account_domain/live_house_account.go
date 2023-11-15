@@ -7,6 +7,7 @@ import (
 
 type liveHouseAccount struct {
 	id        *LiveHouseAccountId
+	name      LiveHouseAccountName
 	staffs    []live_house_staff_domain.LiveHouseStaffId
 	liveHouse *live_house_domain.LiveHouseId
 }

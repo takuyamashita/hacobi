@@ -1,9 +1,13 @@
 package live_house_staff_domain
 
 type LiveHouseStaffId struct {
-	value uint64
+	value string
 }
 
-func NewliveHouseStaffId(id uint64) (LiveHouseStaffId, error) {
+func NewliveHouseStaffId(id string) (LiveHouseStaffId, error) {
 	return LiveHouseStaffId{id}, nil
+}
+
+func (id LiveHouseStaffId) String() string {
+	return id.value
 }

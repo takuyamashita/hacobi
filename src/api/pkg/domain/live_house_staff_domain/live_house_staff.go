@@ -1,14 +1,14 @@
 package live_house_staff_domain
 
 type LiveHouseStaff struct {
-	id       *LiveHouseStaffId
+	id       LiveHouseStaffId
 	name     LiveHouseStaffName
 	email    LiveHouseStaffEmailAddress
 	password LiveHouseStaffPassword
 }
 
 func NewliveHouseStaff(
-	id *LiveHouseStaffId,
+	id LiveHouseStaffId,
 	name LiveHouseStaffName,
 	email LiveHouseStaffEmailAddress,
 	password LiveHouseStaffPassword,
@@ -32,4 +32,8 @@ func (owner LiveHouseStaff) EmailAddress() LiveHouseStaffEmailAddress {
 
 func (owner LiveHouseStaff) Password() LiveHouseStaffPassword {
 	return owner.password
+}
+
+func (owner LiveHouseStaff) Id() LiveHouseStaffId {
+	return owner.id
 }

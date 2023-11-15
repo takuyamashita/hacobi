@@ -18,27 +18,17 @@ func NewliveHouseStaff(db *sql.DB) *LiveHouseStaff {
 	}
 }
 
-func (repo LiveHouseStaff) Save(owner live_house_staff_domain.LiveHouseStaff, ctx context.Context) (*live_house_staff_domain.LiveHouseStaffId, error) {
+func (repo LiveHouseStaff) Save(owner live_house_staff_domain.LiveHouseStaff, ctx context.Context) error {
 
-	result, err := repo.db.ExecContext(
+	_, err := repo.db.ExecContext(
 		ctx,
-		"INSERT INTO live_house_owners (name, email, password) VALUES (?, ?, ?)",
-		owner.Name().String(), owner.EmailAddress().String(), owner.Password().String(),
+		"INSERT INTO live_house_staffs (id, name, email, password) VALUES (?, ?, ?, ?)",
+		owner.Id().String(), owner.Name().String(), owner.EmailAddress().String(), owner.Password().String(),
 	)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return err
 	}
 
-	dbId, err := result.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-
-	ownerId, err := live_house_staff_domain.NewliveHouseStaffId(uint64(dbId))
-	if err != nil {
-		return nil, err
-	}
-
-	return &ownerId, nil
+	return nil
 }

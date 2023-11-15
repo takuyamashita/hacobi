@@ -14,6 +14,7 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/db"
 	"github.com/takuyamashita/hacobi/src/api/pkg/adapter/web"
 	"github.com/takuyamashita/hacobi/src/api/pkg/repository/live_house_staff_repository"
+	"github.com/takuyamashita/hacobi/src/api/pkg/repository/uuid_repository"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
 )
 
@@ -78,9 +79,10 @@ func (app *application) setupRoutes() {
 		return c.String(200, "Hello, World!")
 	})
 
+	uuid_repository := uuid_repository.NewUuid()
 	liveHouseStaffRepository := live_house_staff_repository.NewliveHouseStaff(app.db)
 
-	liveHouseStaffUsecase := live_house_staff_usecase.NewAccountUseCase(liveHouseStaffRepository)
+	liveHouseStaffUsecase := live_house_staff_usecase.NewAccountUseCase(uuid_repository, liveHouseStaffRepository)
 
 	liveHouseStaffController := web.NewliveHouseStaffController(liveHouseStaffUsecase)
 
