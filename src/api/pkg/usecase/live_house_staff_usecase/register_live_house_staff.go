@@ -7,32 +7,7 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 )
 
-type UuidRepository interface {
-	Generate() (string, error)
-}
-
-type LiveHouseStaffRepository interface {
-	Save(owner live_house_staff_domain.LiveHouseStaff, ctx context.Context) error
-	FindByEmail(emailAddress live_house_staff_domain.LiveHouseStaffEmailAddress, ctx context.Context) (live_house_staff_domain.LiveHouseStaff, error)
-}
-
-type AccountUsecase struct {
-	liveHouseStaffRepository LiveHouseStaffRepository
-	uuidRepository           UuidRepository
-	liveHouseStaff           live_house_staff_domain.LiveHouseStaff
-}
-
-func NewAccountUsecase(
-	uuidRepository UuidRepository,
-	liveHouseStaffRepository LiveHouseStaffRepository,
-) AccountUsecase {
-	return AccountUsecase{
-		uuidRepository:           uuidRepository,
-		liveHouseStaffRepository: liveHouseStaffRepository,
-	}
-}
-
-func (usecase AccountUsecase) RegisterAccount(name string, emailAddress string, password string, ctx context.Context) (string, error) {
+func (usecase LiveHouseStaffUsecase) RegisterAccount(name string, emailAddress string, password string, ctx context.Context) (string, error) {
 
 	liveHouseStaffEmailAddress, err := live_house_staff_domain.NewLiveHouseStaffEmailAddress(emailAddress)
 	if err != nil {
@@ -74,7 +49,7 @@ func (usecase AccountUsecase) RegisterAccount(name string, emailAddress string, 
 	return liveHouseStaff.Id().String(), nil
 }
 
-func (useCase AccountUsecase) isEmailAddressAlreadyRegistered(emailAddress live_house_staff_domain.LiveHouseStaffEmailAddress, ctx context.Context) (bool, error) {
+func (useCase LiveHouseStaffUsecase) isEmailAddressAlreadyRegistered(emailAddress live_house_staff_domain.LiveHouseStaffEmailAddress, ctx context.Context) (bool, error) {
 
 	sameEmailAddressStaff, err := useCase.liveHouseStaffRepository.FindByEmail(emailAddress, ctx)
 	if err != nil {

@@ -82,7 +82,7 @@ func (app *application) setupRoutes() {
 	uuid_repository := uuid_repository.NewUuid()
 	liveHouseStaffRepository := live_house_staff_repository.NewliveHouseStaff(app.db)
 
-	liveHouseStaffUsecase := live_house_staff_usecase.NewAccountUsecase(uuid_repository, liveHouseStaffRepository)
+	liveHouseStaffUsecase := live_house_staff_usecase.NewLiveHouseStaffUsecase(uuid_repository, liveHouseStaffRepository)
 
 	liveHouseStaffController := web.NewliveHouseStaffController(liveHouseStaffUsecase)
 
