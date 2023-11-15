@@ -7,7 +7,7 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 )
 
-type uuidRepository interface {
+type UuidRepository interface {
 	Generate() (string, error)
 }
 
@@ -18,12 +18,12 @@ type LiveHouseStaffRepository interface {
 
 type AccountUsecase struct {
 	liveHouseStaffRepository LiveHouseStaffRepository
-	uuidRepository           uuidRepository
+	uuidRepository           UuidRepository
 	liveHouseStaff           live_house_staff_domain.LiveHouseStaff
 }
 
 func NewAccountUsecase(
-	uuidRepository uuidRepository,
+	uuidRepository UuidRepository,
 	liveHouseStaffRepository LiveHouseStaffRepository,
 ) AccountUsecase {
 	return AccountUsecase{
