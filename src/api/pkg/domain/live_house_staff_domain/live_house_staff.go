@@ -21,7 +21,7 @@ func NewLiveHouseStaff(
 	password string,
 ) (LiveHouseStaff, error) {
 
-	liveHouseStaffName, err := NewliveHouseStaffName(name)
+	liveHouseStaffName, err := NewLiveHouseStaffName(name)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +31,7 @@ func NewLiveHouseStaff(
 		return nil, err
 	}
 
-	liveHouseStaffPassword, err := NewliveHouseStaffPassword(password)
+	liveHouseStaffPassword, err := NewLiveHouseStaffPassword(password)
 	if err != nil {
 		return nil, err
 	}
