@@ -6,7 +6,10 @@ import (
 	"log"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
 )
+
+var _ live_house_staff_usecase.LiveHouseStaffRepository = (*LiveHouseStaff)(nil)
 
 type LiveHouseStaff struct {
 	db *sql.DB
@@ -31,4 +34,39 @@ func (repo LiveHouseStaff) Save(owner live_house_staff_domain.LiveHouseStaff, ct
 	}
 
 	return nil
+}
+
+func (repo LiveHouseStaff) FindByEmail(emailAddress live_house_staff_domain.LiveHouseStaffEmailAddress, ctx context.Context) (live_house_staff_domain.LiveHouseStaff, error) {
+
+	var id string
+	var name string
+	var email string
+	var password string
+
+	err := repo.db.QueryRowContext(
+		ctx,
+		"SELECT id, name, email, password FROM live_house_staffs WHERE email = ?",
+		emailAddress.String(),
+	).Scan(&id, &name, &email, &password)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	liveHouseStaffId, err := live_house_staff_domain.NewLiveHouseStaffId(id)
+	if err != nil {
+		return nil, err
+	}
+
+	liveHouseStaff, err := live_house_staff_domain.NewliveHouseStaff(
+		liveHouseStaffId,
+		name,
+		email,
+		password,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return liveHouseStaff, nil
 }

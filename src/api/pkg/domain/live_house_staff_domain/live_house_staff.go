@@ -1,6 +1,13 @@
 package live_house_staff_domain
 
-type LiveHouseStaff struct {
+type LiveHouseStaff interface {
+	Id() LiveHouseStaffId
+	Name() LiveHouseStaffName
+	EmailAddress() LiveHouseStaffEmailAddress
+	Password() LiveHouseStaffPassword
+}
+
+type liveHouseStaff struct {
 	id           LiveHouseStaffId
 	name         LiveHouseStaffName
 	emailAddress LiveHouseStaffEmailAddress
@@ -9,31 +16,46 @@ type LiveHouseStaff struct {
 
 func NewliveHouseStaff(
 	id LiveHouseStaffId,
-	name LiveHouseStaffName,
-	emailAddress LiveHouseStaffEmailAddress,
-	password LiveHouseStaffPassword,
+	name string,
+	emailAddress string,
+	password string,
 ) (LiveHouseStaff, error) {
 
-	return LiveHouseStaff{
+	liveHouseStaffName, err := NewliveHouseStaffName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	liveHouseStaffEmailAddress, err := NewLiveHouseStaffEmailAddress(emailAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	liveHouseStaffPassword, err := NewliveHouseStaffPassword(password)
+	if err != nil {
+		return nil, err
+	}
+
+	return liveHouseStaff{
 		id:           id,
-		name:         name,
-		emailAddress: emailAddress,
-		password:     password,
+		name:         liveHouseStaffName,
+		emailAddress: liveHouseStaffEmailAddress,
+		password:     liveHouseStaffPassword,
 	}, nil
 }
 
-func (owner LiveHouseStaff) Name() LiveHouseStaffName {
-	return owner.name
+func (staff liveHouseStaff) Name() LiveHouseStaffName {
+	return staff.name
 }
 
-func (owner LiveHouseStaff) EmailAddress() LiveHouseStaffEmailAddress {
-	return owner.emailAddress
+func (staff liveHouseStaff) EmailAddress() LiveHouseStaffEmailAddress {
+	return staff.emailAddress
 }
 
-func (owner LiveHouseStaff) Password() LiveHouseStaffPassword {
-	return owner.password
+func (staff liveHouseStaff) Password() LiveHouseStaffPassword {
+	return staff.password
 }
 
-func (owner LiveHouseStaff) Id() LiveHouseStaffId {
-	return owner.id
+func (staff liveHouseStaff) Id() LiveHouseStaffId {
+	return staff.id
 }

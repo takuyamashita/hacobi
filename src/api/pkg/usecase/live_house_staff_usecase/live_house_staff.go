@@ -2,6 +2,7 @@ package live_house_staff_usecase
 
 import (
 	"context"
+	"errors"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 )
@@ -10,20 +11,20 @@ type uuidRepository interface {
 	Generate() (string, error)
 }
 
-type liveHouseStaffRepository interface {
+type LiveHouseStaffRepository interface {
 	Save(owner live_house_staff_domain.LiveHouseStaff, ctx context.Context) error
 	FindByEmail(emailAddress live_house_staff_domain.LiveHouseStaffEmailAddress, ctx context.Context) (live_house_staff_domain.LiveHouseStaff, error)
 }
 
 type AccountUseCase struct {
-	liveHouseStaffRepository liveHouseStaffRepository
+	liveHouseStaffRepository LiveHouseStaffRepository
 	uuidRepository           uuidRepository
 	liveHouseStaff           live_house_staff_domain.LiveHouseStaff
 }
 
 func NewAccountUseCase(
 	uuidRepository uuidRepository,
-	liveHouseStaffRepository liveHouseStaffRepository,
+	liveHouseStaffRepository LiveHouseStaffRepository,
 ) AccountUseCase {
 	return AccountUseCase{
 		uuidRepository:           uuidRepository,
@@ -33,19 +34,17 @@ func NewAccountUseCase(
 
 func (useCase AccountUseCase) RegisterAccount(name string, emailAddress string, password string, ctx context.Context) (string, error) {
 
-	liveHouseStaffName, err := live_house_staff_domain.NewliveHouseStaffName(name)
-	if err != nil {
-		return "", err
-	}
-
 	liveHouseStaffEmailAddress, err := live_house_staff_domain.NewLiveHouseStaffEmailAddress(emailAddress)
 	if err != nil {
 		return "", err
 	}
 
-	liveHouseStaffPassword, err := live_house_staff_domain.NewliveHouseStaffPassword(password)
+	sameEmailAddressStaff, err := useCase.liveHouseStaffRepository.FindByEmail(liveHouseStaffEmailAddress, ctx)
 	if err != nil {
 		return "", err
+	}
+	if sameEmailAddressStaff != nil {
+		return "", errors.New("email address is already registered")
 	}
 
 	id, err := useCase.uuidRepository.Generate()
@@ -53,16 +52,16 @@ func (useCase AccountUseCase) RegisterAccount(name string, emailAddress string, 
 		return "", err
 	}
 
-	liveHouseStaffId, err := live_house_staff_domain.NewliveHouseStaffId(id)
+	liveHouseStaffId, err := live_house_staff_domain.NewLiveHouseStaffId(id)
 	if err != nil {
 		return "", err
 	}
 
 	liveHouseStaff, err := live_house_staff_domain.NewliveHouseStaff(
 		liveHouseStaffId,
-		liveHouseStaffName,
-		liveHouseStaffEmailAddress,
-		liveHouseStaffPassword,
+		name,
+		emailAddress,
+		password,
 	)
 	if err != nil {
 		return "", err

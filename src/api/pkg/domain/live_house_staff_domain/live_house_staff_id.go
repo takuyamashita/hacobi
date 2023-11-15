@@ -4,7 +4,7 @@ type LiveHouseStaffId struct {
 	value string
 }
 
-func NewliveHouseStaffId(id string) (LiveHouseStaffId, error) {
+func NewLiveHouseStaffId(id string) (LiveHouseStaffId, error) {
 	return LiveHouseStaffId{id}, nil
 }
 
