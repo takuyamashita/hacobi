@@ -58,7 +58,7 @@ func (repo LiveHouseStaff) FindByEmail(emailAddress live_house_staff_domain.Live
 		return nil, err
 	}
 
-	liveHouseStaff, err := live_house_staff_domain.NewliveHouseStaff(
+	liveHouseStaff, err := live_house_staff_domain.NewLiveHouseStaff(
 		liveHouseStaffId,
 		name,
 		email,

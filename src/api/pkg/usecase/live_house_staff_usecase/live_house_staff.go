@@ -16,38 +16,38 @@ type LiveHouseStaffRepository interface {
 	FindByEmail(emailAddress live_house_staff_domain.LiveHouseStaffEmailAddress, ctx context.Context) (live_house_staff_domain.LiveHouseStaff, error)
 }
 
-type AccountUseCase struct {
+type AccountUsecase struct {
 	liveHouseStaffRepository LiveHouseStaffRepository
 	uuidRepository           uuidRepository
 	liveHouseStaff           live_house_staff_domain.LiveHouseStaff
 }
 
-func NewAccountUseCase(
+func NewAccountUsecase(
 	uuidRepository uuidRepository,
 	liveHouseStaffRepository LiveHouseStaffRepository,
-) AccountUseCase {
-	return AccountUseCase{
+) AccountUsecase {
+	return AccountUsecase{
 		uuidRepository:           uuidRepository,
 		liveHouseStaffRepository: liveHouseStaffRepository,
 	}
 }
 
-func (useCase AccountUseCase) RegisterAccount(name string, emailAddress string, password string, ctx context.Context) (string, error) {
+func (usecase AccountUsecase) RegisterAccount(name string, emailAddress string, password string, ctx context.Context) (string, error) {
 
 	liveHouseStaffEmailAddress, err := live_house_staff_domain.NewLiveHouseStaffEmailAddress(emailAddress)
 	if err != nil {
 		return "", err
 	}
 
-	sameEmailAddressStaff, err := useCase.liveHouseStaffRepository.FindByEmail(liveHouseStaffEmailAddress, ctx)
+	isEmailAddressAlreadyRegistered, err := usecase.isEmailAddressAlreadyRegistered(liveHouseStaffEmailAddress, ctx)
 	if err != nil {
 		return "", err
 	}
-	if sameEmailAddressStaff != nil {
+	if isEmailAddressAlreadyRegistered {
 		return "", errors.New("email address is already registered")
 	}
 
-	id, err := useCase.uuidRepository.Generate()
+	id, err := usecase.uuidRepository.Generate()
 	if err != nil {
 		return "", err
 	}
@@ -57,7 +57,7 @@ func (useCase AccountUseCase) RegisterAccount(name string, emailAddress string, 
 		return "", err
 	}
 
-	liveHouseStaff, err := live_house_staff_domain.NewliveHouseStaff(
+	liveHouseStaff, err := live_house_staff_domain.NewLiveHouseStaff(
 		liveHouseStaffId,
 		name,
 		emailAddress,
@@ -67,9 +67,22 @@ func (useCase AccountUseCase) RegisterAccount(name string, emailAddress string, 
 		return "", err
 	}
 
-	if err := useCase.liveHouseStaffRepository.Save(liveHouseStaff, ctx); err != nil {
+	if err := usecase.liveHouseStaffRepository.Save(liveHouseStaff, ctx); err != nil {
 		return "", err
 	}
 
 	return liveHouseStaff.Id().String(), nil
+}
+
+func (useCase AccountUsecase) isEmailAddressAlreadyRegistered(emailAddress live_house_staff_domain.LiveHouseStaffEmailAddress, ctx context.Context) (bool, error) {
+
+	sameEmailAddressStaff, err := useCase.liveHouseStaffRepository.FindByEmail(emailAddress, ctx)
+	if err != nil {
+		return false, err
+	}
+	if sameEmailAddressStaff != nil {
+		return true, nil
+	}
+
+	return false, nil
 }

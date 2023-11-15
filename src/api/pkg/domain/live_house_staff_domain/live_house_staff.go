@@ -14,7 +14,7 @@ type liveHouseStaff struct {
 	password     LiveHouseStaffPassword
 }
 
-func NewliveHouseStaff(
+func NewLiveHouseStaff(
 	id LiveHouseStaffId,
 	name string,
 	emailAddress string,

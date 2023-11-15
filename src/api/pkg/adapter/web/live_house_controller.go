@@ -6,11 +6,11 @@ import (
 )
 
 type liveHouseStaffController struct {
-	accountUseCase live_house_staff_usecase.AccountUseCase
+	accountUseCase live_house_staff_usecase.AccountUsecase
 }
 
 func NewliveHouseStaffController(
-	accountUseCase live_house_staff_usecase.AccountUseCase,
+	accountUseCase live_house_staff_usecase.AccountUsecase,
 ) liveHouseStaffController {
 	return liveHouseStaffController{
 		accountUseCase: accountUseCase,
