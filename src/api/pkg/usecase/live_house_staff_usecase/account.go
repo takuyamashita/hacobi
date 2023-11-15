@@ -12,6 +12,7 @@ type uuidRepository interface {
 
 type liveHouseStaffRepository interface {
 	Save(owner live_house_staff_domain.LiveHouseStaff, ctx context.Context) error
+	FindByEmail(emailAddress live_house_staff_domain.LiveHouseStaffEmailAddress, ctx context.Context) (live_house_staff_domain.LiveHouseStaff, error)
 }
 
 type AccountUseCase struct {
@@ -30,31 +31,31 @@ func NewAccountUseCase(
 	}
 }
 
-func (useCase AccountUseCase) RegisterAccount(name string, emailAddress string, password string, ctx context.Context) (live_house_staff_domain.LiveHouseStaffId, error) {
+func (useCase AccountUseCase) RegisterAccount(name string, emailAddress string, password string, ctx context.Context) (string, error) {
 
 	liveHouseStaffName, err := live_house_staff_domain.NewliveHouseStaffName(name)
 	if err != nil {
-		return live_house_staff_domain.LiveHouseStaffId{}, err
+		return "", err
 	}
 
 	liveHouseStaffEmailAddress, err := live_house_staff_domain.NewLiveHouseStaffEmailAddress(emailAddress)
 	if err != nil {
-		return live_house_staff_domain.LiveHouseStaffId{}, err
+		return "", err
 	}
 
 	liveHouseStaffPassword, err := live_house_staff_domain.NewliveHouseStaffPassword(password)
 	if err != nil {
-		return live_house_staff_domain.LiveHouseStaffId{}, err
+		return "", err
 	}
 
 	id, err := useCase.uuidRepository.Generate()
 	if err != nil {
-		return live_house_staff_domain.LiveHouseStaffId{}, err
+		return "", err
 	}
 
 	liveHouseStaffId, err := live_house_staff_domain.NewliveHouseStaffId(id)
 	if err != nil {
-		return live_house_staff_domain.LiveHouseStaffId{}, err
+		return "", err
 	}
 
 	liveHouseStaff, err := live_house_staff_domain.NewliveHouseStaff(
@@ -64,8 +65,12 @@ func (useCase AccountUseCase) RegisterAccount(name string, emailAddress string, 
 		liveHouseStaffPassword,
 	)
 	if err != nil {
-		return live_house_staff_domain.LiveHouseStaffId{}, err
+		return "", err
 	}
 
-	return liveHouseStaffId, useCase.liveHouseStaffRepository.Save(liveHouseStaff, ctx)
+	if err := useCase.liveHouseStaffRepository.Save(liveHouseStaff, ctx); err != nil {
+		return "", err
+	}
+
+	return liveHouseStaff.Id().String(), nil
 }
