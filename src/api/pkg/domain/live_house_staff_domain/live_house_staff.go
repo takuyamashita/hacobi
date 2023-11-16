@@ -1,13 +1,13 @@
 package live_house_staff_domain
 
-type LiveHouseStaff interface {
+type LiveHouseStaffIntf interface {
 	Id() LiveHouseStaffId
 	Name() LiveHouseStaffName
 	EmailAddress() LiveHouseStaffEmailAddress
 	Password() LiveHouseStaffPassword
 }
 
-type liveHouseStaff struct {
+type liveHouseStaffImpl struct {
 	id           LiveHouseStaffId
 	name         LiveHouseStaffName
 	emailAddress LiveHouseStaffEmailAddress
@@ -15,47 +15,52 @@ type liveHouseStaff struct {
 }
 
 func NewLiveHouseStaff(
-	id LiveHouseStaffId,
+	id string,
 	name string,
 	emailAddress string,
 	password string,
-) (LiveHouseStaff, error) {
+) (LiveHouseStaffIntf, error) {
 
-	liveHouseStaffName, err := NewLiveHouseStaffName(name)
+	liveHouseStaffId, err := newLiveHouseStaffId(id)
 	if err != nil {
 		return nil, err
 	}
 
-	liveHouseStaffEmailAddress, err := NewLiveHouseStaffEmailAddress(emailAddress)
+	liveHouseStaffName, err := newLiveHouseStaffName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	liveHouseStaffPassword, err := NewLiveHouseStaffPassword(password)
+	liveHouseStaffEmailAddress, err := newLiveHouseStaffEmailAddress(emailAddress)
 	if err != nil {
 		return nil, err
 	}
 
-	return liveHouseStaff{
-		id:           id,
+	liveHouseStaffPassword, err := newLiveHouseStaffPassword(password)
+	if err != nil {
+		return nil, err
+	}
+
+	return liveHouseStaffImpl{
+		id:           liveHouseStaffId,
 		name:         liveHouseStaffName,
 		emailAddress: liveHouseStaffEmailAddress,
 		password:     liveHouseStaffPassword,
 	}, nil
 }
 
-func (staff liveHouseStaff) Name() LiveHouseStaffName {
+func (staff liveHouseStaffImpl) Name() LiveHouseStaffName {
 	return staff.name
 }
 
-func (staff liveHouseStaff) EmailAddress() LiveHouseStaffEmailAddress {
+func (staff liveHouseStaffImpl) EmailAddress() LiveHouseStaffEmailAddress {
 	return staff.emailAddress
 }
 
-func (staff liveHouseStaff) Password() LiveHouseStaffPassword {
+func (staff liveHouseStaffImpl) Password() LiveHouseStaffPassword {
 	return staff.password
 }
 
-func (staff liveHouseStaff) Id() LiveHouseStaffId {
+func (staff liveHouseStaffImpl) Id() LiveHouseStaffId {
 	return staff.id
 }

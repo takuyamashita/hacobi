@@ -13,6 +13,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/takuyamashita/hacobi/src/api/db"
 	"github.com/takuyamashita/hacobi/src/api/pkg/adapter/web"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/repository/live_house_staff_repository"
 	"github.com/takuyamashita/hacobi/src/api/pkg/repository/uuid_repository"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
@@ -82,7 +83,9 @@ func (app *application) setupRoutes() {
 	uuid_repository := uuid_repository.NewUuid()
 	liveHouseStaffRepository := live_house_staff_repository.NewliveHouseStaff(app.db)
 
-	liveHouseStaffUsecase := live_house_staff_usecase.NewLiveHouseStaffUsecase(uuid_repository, liveHouseStaffRepository)
+	liveHouseStaffEmailAddressChecker := live_house_staff_domain.NewLiveHouseStaffEmailAddressChecker(liveHouseStaffRepository)
+
+	liveHouseStaffUsecase := live_house_staff_usecase.NewLiveHouseStaffUsecase(uuid_repository, liveHouseStaffRepository, liveHouseStaffEmailAddressChecker)
 
 	liveHouseStaffController := web.NewliveHouseStaffController(liveHouseStaffUsecase)
 

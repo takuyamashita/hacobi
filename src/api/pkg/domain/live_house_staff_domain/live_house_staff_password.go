@@ -9,7 +9,7 @@ type LiveHouseStaffPassword struct {
 	value string
 }
 
-func NewLiveHouseStaffPassword(password string) (LiveHouseStaffPassword, error) {
+func newLiveHouseStaffPassword(password string) (LiveHouseStaffPassword, error) {
 
 	if (utf8.RuneCountInString(password) < 8) || (utf8.RuneCountInString(password) > 255) {
 		return LiveHouseStaffPassword{}, errors.New("password must be between 8 and 255 characters")

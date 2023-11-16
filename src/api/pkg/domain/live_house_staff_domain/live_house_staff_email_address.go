@@ -15,7 +15,7 @@ type LiveHouseStaffEmailAddress struct {
 	domain    string
 }
 
-func NewLiveHouseStaffEmailAddress(address string) (LiveHouseStaffEmailAddress, error) {
+func newLiveHouseStaffEmailAddress(address string) (LiveHouseStaffEmailAddress, error) {
 
 	if !mailAddressRegexPatern.MatchString(address) {
 		return LiveHouseStaffEmailAddress{}, errors.New("email is invalid")

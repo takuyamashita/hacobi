@@ -9,7 +9,12 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
 )
 
-var _ live_house_staff_usecase.LiveHouseStaffRepository = (*LiveHouseStaff)(nil)
+type _compositIntf interface {
+	live_house_staff_usecase.LiveHouseStaffRepository
+	live_house_staff_domain.LiveHouseStaffRepository
+}
+
+var _ _compositIntf = (*LiveHouseStaff)(nil)
 
 type LiveHouseStaff struct {
 	db *sql.DB
@@ -21,7 +26,7 @@ func NewliveHouseStaff(db *sql.DB) *LiveHouseStaff {
 	}
 }
 
-func (repo LiveHouseStaff) Save(owner live_house_staff_domain.LiveHouseStaff, ctx context.Context) error {
+func (repo LiveHouseStaff) Save(owner live_house_staff_domain.LiveHouseStaffIntf, ctx context.Context) error {
 
 	_, err := repo.db.ExecContext(
 		ctx,
@@ -36,7 +41,7 @@ func (repo LiveHouseStaff) Save(owner live_house_staff_domain.LiveHouseStaff, ct
 	return nil
 }
 
-func (repo LiveHouseStaff) FindByEmail(emailAddress live_house_staff_domain.LiveHouseStaffEmailAddress, ctx context.Context) (live_house_staff_domain.LiveHouseStaff, error) {
+func (repo LiveHouseStaff) FindByEmail(emailAddress live_house_staff_domain.LiveHouseStaffEmailAddress, ctx context.Context) (live_house_staff_domain.LiveHouseStaffIntf, error) {
 
 	var id string
 	var name string
@@ -53,13 +58,8 @@ func (repo LiveHouseStaff) FindByEmail(emailAddress live_house_staff_domain.Live
 		return nil, err
 	}
 
-	liveHouseStaffId, err := live_house_staff_domain.NewLiveHouseStaffId(id)
-	if err != nil {
-		return nil, err
-	}
-
 	liveHouseStaff, err := live_house_staff_domain.NewLiveHouseStaff(
-		liveHouseStaffId,
+		id,
 		name,
 		email,
 		password,
