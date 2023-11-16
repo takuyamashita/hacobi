@@ -53,9 +53,13 @@ func (repo LiveHouseStaff) FindByEmail(emailAddress live_house_staff_domain.Live
 		"SELECT id, name, email, password FROM live_house_staffs WHERE email = ?",
 		emailAddress.String(),
 	).Scan(&id, &name, &email, &password)
-	if err != nil {
-		log.Println(err)
+
+	if err != sql.ErrNoRows {
 		return nil, err
+	}
+
+	if err == sql.ErrNoRows {
+		return nil, nil
 	}
 
 	liveHouseStaff, err := live_house_staff_domain.NewLiveHouseStaff(
