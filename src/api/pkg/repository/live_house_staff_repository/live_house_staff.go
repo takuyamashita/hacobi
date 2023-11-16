@@ -26,12 +26,12 @@ func NewliveHouseStaff(db *sql.DB) *LiveHouseStaff {
 	}
 }
 
-func (repo LiveHouseStaff) Save(owner live_house_staff_domain.LiveHouseStaffIntf, ctx context.Context) error {
+func (repo LiveHouseStaff) Save(staff live_house_staff_domain.LiveHouseStaffIntf, ctx context.Context) error {
 
 	_, err := repo.db.ExecContext(
 		ctx,
 		"INSERT INTO live_house_staffs (id, name, email, password) VALUES (?, ?, ?, ?)",
-		owner.Id().String(), owner.Name().String(), owner.EmailAddress().String(), owner.Password().String(),
+		staff.Id().String(), staff.Name().String(), staff.EmailAddress().String(), staff.Password().String(),
 	)
 	if err != nil {
 		log.Println(err)
