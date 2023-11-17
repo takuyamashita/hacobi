@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS live_house_account_live_house_staff;
