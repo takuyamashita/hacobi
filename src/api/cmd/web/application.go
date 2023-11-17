@@ -80,7 +80,7 @@ func (app *application) setupRoutes() {
 		return c.String(200, "Hello, World!")
 	})
 
-	uuid_repository := uuid_repository.NewUuid()
+	uuid_repository := uuid_repository.NewUuidRepository()
 	liveHouseStaffRepository := live_house_staff_repository.NewliveHouseStaff(app.db)
 
 	liveHouseStaffEmailAddressChecker := live_house_staff_domain.NewLiveHouseStaffEmailAddressChecker(liveHouseStaffRepository)

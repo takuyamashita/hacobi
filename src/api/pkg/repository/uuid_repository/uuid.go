@@ -5,15 +5,15 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
 )
 
-var _ live_house_staff_usecase.UuidRepository = (*uuid)(nil)
+var _ live_house_staff_usecase.UuidRepository = (*uuidRepository)(nil)
 
-type uuid struct{}
+type uuidRepository struct{}
 
-func NewUuid() uuid {
-	return uuid{}
+func NewUuidRepository() uuidRepository {
+	return uuidRepository{}
 }
 
-func (uuid) Generate() (string, error) {
+func (uuidRepository) Generate() (string, error) {
 	uuid, err := google_uuid.NewRandom()
 	if err != nil {
 		return "", err

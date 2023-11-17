@@ -1,44 +1,42 @@
-package live_house_staff_usecase
+package live_house_staff_usecase_test
 
 import (
 	"context"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
 )
 
 type _compositIntf interface {
-	LiveHouseStaffRepository
+	live_house_staff_usecase.LiveHouseStaffRepository
 	live_house_staff_domain.LiveHouseStaffRepository
 }
 
 var _ _compositIntf = (*LiveHouseStaffRepositoryMock)(nil)
 
-type Store struct {
-	_compositIntf
-	Users map[string]live_house_staff_domain.LiveHouseStaffIntf
-}
-
 type LiveHouseStaffRepositoryMock struct {
-	Store Store
+	Store *Store
 }
 
-func NewliveHouseStaffMock(store Store) *LiveHouseStaffRepositoryMock {
+func NewliveHouseStaffMock(store *Store) *LiveHouseStaffRepositoryMock {
 	return &LiveHouseStaffRepositoryMock{Store: store}
 }
 
-func (repo LiveHouseStaffRepositoryMock) Save(owner live_house_staff_domain.LiveHouseStaffIntf, ctx context.Context) error {
+func (repo LiveHouseStaffRepositoryMock) Save(staff live_house_staff_domain.LiveHouseStaffIntf, ctx context.Context) error {
+
+	repo.Store.Staffs = append(repo.Store.Staffs, staff)
 
 	return nil
 }
 
 func (repo LiveHouseStaffRepositoryMock) FindByEmail(emailAddress live_house_staff_domain.LiveHouseStaffEmailAddress, ctx context.Context) (live_house_staff_domain.LiveHouseStaffIntf, error) {
 
-	var user live_house_staff_domain.LiveHouseStaffIntf
-	for _, v := range repo.Store.Users {
+	var staff live_house_staff_domain.LiveHouseStaffIntf
+	for _, v := range repo.Store.Staffs {
 		if v.EmailAddress().String() == emailAddress.String() {
-			user = v
+			staff = v
 		}
 	}
 
-	return user, nil
+	return staff, nil
 }
