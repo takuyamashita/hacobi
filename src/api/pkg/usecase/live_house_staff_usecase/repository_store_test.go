@@ -18,27 +18,6 @@ func NewStore(uuidRepository live_house_staff_usecase.UuidRepository) Store {
 	}
 }
 
-var staffs = []map[string]string{
-	{
-		"id":           "",
-		"name":         "name1",
-		"emailAddress": "test-1@test.com",
-		"password":     "password",
-	},
-	{
-		"id":           "",
-		"name":         "name2",
-		"emailAddress": "test-2@test.com",
-		"password":     "password",
-	},
-	{
-		"id":           "",
-		"name":         "name3",
-		"emailAddress": "duplicate@test.com",
-		"password":     "password",
-	},
-}
-
 func (s *Store) Clear() {
 	s.Staffs = []live_house_staff_domain.LiveHouseStaffIntf{}
 }
