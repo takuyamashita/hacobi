@@ -5,13 +5,13 @@ import (
 	"testing"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
-	"github.com/takuyamashita/hacobi/src/api/pkg/repository/uuid_repository"
+	"github.com/takuyamashita/hacobi/src/api/pkg/repository"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
 )
 
 func TestRegisterAccountSuccess(t *testing.T) {
 
-	uuidRepository := uuid_repository.NewUuidRepository()
+	uuidRepository := repository.NewUuidRepository()
 	store := NewStore(uuidRepository)
 	liveHouseStaffRepositoryMock := LiveHouseStaffRepositoryMock{
 		Store: &store,

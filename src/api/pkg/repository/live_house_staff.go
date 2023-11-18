@@ -1,4 +1,4 @@
-package live_house_staff_repository
+package repository
 
 import (
 	"context"
