@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"net/http"
 	"os"
 	"os/signal"
@@ -14,6 +13,7 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/db"
 	"github.com/takuyamashita/hacobi/src/api/pkg/adapter/web"
 	"github.com/takuyamashita/hacobi/src/api/pkg/container"
+	mysql "github.com/takuyamashita/hacobi/src/api/pkg/db"
 )
 
 type Application interface {
@@ -22,18 +22,18 @@ type Application interface {
 
 type application struct {
 	server    *echo.Echo
-	db        *sql.DB
+	db        *mysql.MySQL
 	container container.Container
 }
 
 func newApplication() Application {
 
 	ctx := context.Background()
-	db := db.NewDatabase(ctx)
+	db := mysql.NewMySQL(db.NewDatabase(ctx))
 
 	app := &application{
 		server:    echo.New(),
-		db:        db,
+		db:        &db,
 		container: container.NewContainer(),
 	}
 	app.setupMiddlewares()

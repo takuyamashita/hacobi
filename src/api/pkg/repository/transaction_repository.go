@@ -3,13 +3,15 @@ package repository
 import (
 	"context"
 	"database/sql"
+
+	"github.com/takuyamashita/hacobi/src/api/pkg/db"
 )
 
 type Transaction struct {
-	db *sql.DB
+	db *db.MySQL
 }
 
-func (t Transaction) Exec(f func(*sql.Tx) error, ctx context.Context) error {
+func (t Transaction) Begin(ctx context.Context) (func() error, error) {
 
 	opt := &sql.TxOptions{
 		Isolation: sql.LevelDefault,
@@ -18,13 +20,9 @@ func (t Transaction) Exec(f func(*sql.Tx) error, ctx context.Context) error {
 
 	tx, err := t.db.BeginTx(ctx, opt)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if err := f(tx); err != nil {
-		tx.Rollback()
-		return err
-	}
+	return tx.Rollback, nil
 
-	return tx.Commit()
 }

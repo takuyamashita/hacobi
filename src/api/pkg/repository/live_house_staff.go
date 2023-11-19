@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"log"
 
+	"github.com/takuyamashita/hacobi/src/api/pkg/db"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
@@ -17,10 +18,10 @@ type _compositIntf interface {
 var _ _compositIntf = (*LiveHouseStaff)(nil)
 
 type LiveHouseStaff struct {
-	db *sql.DB
+	db *db.MySQL
 }
 
-func NewliveHouseStaff(db *sql.DB) *LiveHouseStaff {
+func NewliveHouseStaff(db *db.MySQL) *LiveHouseStaff {
 	return &LiveHouseStaff{
 		db: db,
 	}

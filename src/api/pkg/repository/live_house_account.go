@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 
+	"github.com/takuyamashita/hacobi/src/api/pkg/db"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_account_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
@@ -11,10 +11,10 @@ import (
 var _ usecase.LiveHouseAccountRepositoryIntf = (*LiveHouseAccount)(nil)
 
 type LiveHouseAccount struct {
-	db *sql.DB
+	db *db.MySQL
 }
 
-func NewliveHouseAccount(db *sql.DB) *LiveHouseAccount {
+func NewliveHouseAccount(db *db.MySQL) *LiveHouseAccount {
 	return &LiveHouseAccount{
 		db: db,
 	}
