@@ -52,3 +52,17 @@ func (repo LiveHouseStaffRepositoryMock) FindById(id live_house_staff_domain.Liv
 
 	return staff, nil
 }
+
+var _ usecase.TransationRepositoryIntf = (*TransactionRepositoryMock)(nil)
+
+type TransactionRepositoryMock struct {
+}
+
+func (repo TransactionRepositoryMock) Begin(ctx context.Context) (commit func() error, rollback func() error, err error) {
+
+	commit = func() error { return nil }
+	rollback = func() error { return nil }
+	err = nil
+
+	return
+}

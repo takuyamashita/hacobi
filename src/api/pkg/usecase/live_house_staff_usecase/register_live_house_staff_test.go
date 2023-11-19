@@ -18,7 +18,7 @@ func TestRegisterAccountSuccess(t *testing.T) {
 	}
 
 	liveHouseStaffEmailAddressChecker := live_house_staff_domain.NewLiveHouseStaffEmailAddressChecker(liveHouseStaffRepositoryMock)
-	usecase := live_house_staff_usecase.NewLiveHouseStaffUsecase(uuidRepository, liveHouseStaffRepositoryMock, liveHouseStaffEmailAddressChecker)
+	usecase := live_house_staff_usecase.NewLiveHouseStaffUsecase(uuidRepository, &TransactionRepositoryMock{}, liveHouseStaffRepositoryMock, liveHouseStaffEmailAddressChecker)
 
 	type args struct {
 		name         string

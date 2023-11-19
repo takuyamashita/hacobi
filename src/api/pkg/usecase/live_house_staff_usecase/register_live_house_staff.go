@@ -9,8 +9,13 @@ import (
 
 func (usecase LiveHouseStaffUsecase) RegisterAccount(name string, emailAddress string, password string, ctx context.Context) (string, error) {
 
-	//xxx: transactionを貼る
+	commit, rollback, err := usecase.transactionRepository.Begin(ctx)
+	defer commit()
+	if err != nil {
+		return "", err
+	}
 
+	// ???????? lock ?????????
 	isEmailAddressAlreadyRegistered, err := usecase.liveHouseStaffEmailAddressChecker.IsEmailAddressAlreadyRegistered(emailAddress, ctx)
 	if err != nil {
 		return "", err
@@ -35,6 +40,7 @@ func (usecase LiveHouseStaffUsecase) RegisterAccount(name string, emailAddress s
 	}
 
 	if err := usecase.liveHouseStaffRepository.Save(liveHouseStaff, ctx); err != nil {
+		rollback()
 		return "", err
 	}
 
