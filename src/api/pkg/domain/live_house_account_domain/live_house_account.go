@@ -10,6 +10,7 @@ import (
 type LiveHouseAccountIntf interface {
 	AddStaff(id live_house_staff_domain.LiveHouseStaffId, role liveHouseAccountStaffRoleValue) error
 	Id() LiveHouseAccountId
+	Staffs() LiveHouseAccountStaffs
 }
 
 type liveHouseAccountImpl struct {
@@ -67,4 +68,8 @@ func (a *liveHouseAccountImpl) AddStaff(id live_house_staff_domain.LiveHouseStaf
 
 func (a liveHouseAccountImpl) Id() LiveHouseAccountId {
 	return a.id
+}
+
+func (a liveHouseAccountImpl) Staffs() LiveHouseAccountStaffs {
+	return a.staffs
 }

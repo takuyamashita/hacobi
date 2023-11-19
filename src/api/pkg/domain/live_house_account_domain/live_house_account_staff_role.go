@@ -35,3 +35,7 @@ type LiveHouseAccountStaffRole struct {
 func newLiveHouseAccountStaffRole(role liveHouseAccountStaffRoleValue) (LiveHouseAccountStaffRole, error) {
 	return LiveHouseAccountStaffRole{value: role}, nil
 }
+
+func (r LiveHouseAccountStaffRole) Number() uint {
+	return uint(r.value)
+}

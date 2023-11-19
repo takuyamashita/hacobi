@@ -1,13 +1,14 @@
 package live_house_account_usecase
 
 import (
+	"context"
 	"errors"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_account_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 )
 
-func (u LiveHouseAccountUsecase) RegisterLiveHouseAccount(userId string) (string, error) {
+func (u LiveHouseAccountUsecase) RegisterLiveHouseAccount(userId string, ctx context.Context) (string, error) {
 
 	accountId, err := u.uuidRepository.Generate()
 	if err != nil {
@@ -37,6 +38,11 @@ func (u LiveHouseAccountUsecase) RegisterLiveHouseAccount(userId string) (string
 		},
 		nil,
 	)
+	if err != nil {
+		return "", err
+	}
+
+	err = u.liveHouseAccountRepository.Save(account, ctx)
 	if err != nil {
 		return "", err
 	}

@@ -1,11 +1,29 @@
 package live_house_account_usecase
 
-import "github.com/takuyamashita/hacobi/src/api/pkg/usecase"
+import (
+	"context"
+
+	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
+)
 
 type LiveHouseAccountUsecaseIntf interface {
+	RegisterLiveHouseAccount(userId string, ctx context.Context) (string, error)
 }
 
 type LiveHouseAccountUsecase struct {
-	uuidRepository           usecase.UuidRepositoryIntf
-	liveHouseStaffRepository usecase.LiveHouseStaffRepositoryIntf
+	uuidRepository             usecase.UuidRepositoryIntf
+	liveHouseStaffRepository   usecase.LiveHouseStaffRepositoryIntf
+	liveHouseAccountRepository usecase.LiveHouseAccountRepositoryIntf
+}
+
+func NewLiveHouseAccountUsecase(
+	uuidRepository usecase.UuidRepositoryIntf,
+	liveHouseStaffRepository usecase.LiveHouseStaffRepositoryIntf,
+	liveHouseAccountRepository usecase.LiveHouseAccountRepositoryIntf,
+) LiveHouseAccountUsecaseIntf {
+	return &LiveHouseAccountUsecase{
+		uuidRepository:             uuidRepository,
+		liveHouseStaffRepository:   liveHouseStaffRepository,
+		liveHouseAccountRepository: liveHouseAccountRepository,
+	}
 }

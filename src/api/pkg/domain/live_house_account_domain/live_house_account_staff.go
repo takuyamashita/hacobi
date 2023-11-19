@@ -27,3 +27,11 @@ func newLiveHouseAccountStaff(id live_house_staff_domain.LiveHouseStaffId, role 
 		role: liveHouseStaffRole,
 	}, nil
 }
+
+func (s LiveHouseAccountStaff) Id() live_house_staff_domain.LiveHouseStaffId {
+	return s.id
+}
+
+func (s LiveHouseAccountStaff) Role() LiveHouseAccountStaffRole {
+	return s.role
+}

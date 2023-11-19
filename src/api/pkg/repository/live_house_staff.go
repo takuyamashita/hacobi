@@ -75,6 +75,45 @@ func (repo LiveHouseStaff) FindByEmail(emailAddress live_house_staff_domain.Live
 	return liveHouseStaff, nil
 }
 
+/*
+mysql> desc live_house_staffs;
++------------+--------------+------+-----+----------------------+--------------------------------------------------+
+| Field      | Type         | Null | Key | Default              | Extra                                            |
++------------+--------------+------+-----+----------------------+--------------------------------------------------+
+| id         | varchar(36)  | NO   | PRI | NULL                 |                                                  |
+| name       | varchar(255) | NO   |     | NULL                 |                                                  |
+| email      | varchar(255) | NO   | UNI | NULL                 |                                                  |
+| password   | varchar(255) | NO   |     | NULL                 |                                                  |
+| created_at | datetime(6)  | NO   |     | CURRENT_TIMESTAMP(6) | DEFAULT_GENERATED                                |
+| updated_at | datetime(6)  | NO   |     | CURRENT_TIMESTAMP(6) | DEFAULT_GENERATED on update CURRENT_TIMESTAMP(6) |
++------------+--------------+------+-----+----------------------+--------------------------------------------------+
+6 rows in set (0.01 sec)
+*/
 func (repo LiveHouseStaff) FindById(id live_house_staff_domain.LiveHouseStaffId) (live_house_staff_domain.LiveHouseStaffIntf, error) {
-	return nil, nil
+
+	var dbId string
+	var name string
+	var email string
+	var password string
+
+	rows := repo.db.QueryRow(
+		"SELECT id, name, email, password FROM live_house_staffs WHERE id = ?",
+		id.String(),
+	)
+	err := rows.Scan(&dbId, &name, &email, &password)
+	if err != nil {
+		return nil, err
+	}
+
+	liveHouseStaff, err := live_house_staff_domain.NewLiveHouseStaff(
+		dbId,
+		name,
+		email,
+		password,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return liveHouseStaff, nil
 }

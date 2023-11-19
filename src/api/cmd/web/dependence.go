@@ -4,6 +4,7 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/repository"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
+	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_account_usecase"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
 )
 
@@ -22,6 +23,11 @@ func (app *application) setupDI() {
 	app.container.Bind(func() usecase.UuidRepositoryIntf {
 		return repository.NewUuidRepository()
 	})
+
+	app.container.Bind(func() usecase.LiveHouseAccountRepositoryIntf {
+		return repository.NewliveHouseAccount(app.db)
+	})
+
 	// or
 	// app.container.Bind(repository.NewUuidRepository)
 
@@ -30,6 +36,8 @@ func (app *application) setupDI() {
 	app.container.Bind(func(liveHouseStaffRepository live_house_staff_domain.LiveHouseStaffRepositoryIntf) live_house_staff_domain.LiveHouseStaffEmailAddressCheckerIntf {
 		return live_house_staff_domain.NewLiveHouseStaffEmailAddressChecker(liveHouseStaffRepository)
 	})
+
+	//~~~~~~~~~~~~~~~~~~ usecase ~~~~~~~~~~~~~~~~~~//
 
 	app.container.Bind(func(
 		uuidRepository usecase.UuidRepositoryIntf,
@@ -42,4 +50,6 @@ func (app *application) setupDI() {
 			liveHouseStaffEmailAddressChecker,
 		)
 	})
+
+	app.container.Bind(live_house_account_usecase.NewLiveHouseAccountUsecase)
 }
