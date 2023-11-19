@@ -39,3 +39,7 @@ func newLiveHouseAccountStaffRole(role liveHouseAccountStaffRoleValue) (LiveHous
 func (r LiveHouseAccountStaffRole) Number() uint {
 	return uint(r.value)
 }
+
+func (s LiveHouseAccountStaffRole) Is(r liveHouseAccountStaffRoleValue) bool {
+	return s.value == r
+}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_account_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
 
@@ -72,15 +73,24 @@ func TestRegisterLiveHouseAccount(t *testing.T) {
 			}
 
 			exists := false
+			var account live_house_account_domain.LiveHouseAccountIntf
 			for _, a := range store.Accounts {
 				if a.Id().String() == id {
+					account = a
 					exists = true
 				}
 			}
 			if !exists {
-				t.Fatal("account is not saved")
+				t.Fatal("アカウントが保存されていません")
 			}
 
+			if len(account.Staffs()) != 1 {
+				t.Fatal("スタッフが登録されていないか、複数登録されています")
+			}
+
+			if !account.Staffs()[0].Role().Is(live_house_account_domain.GetRoleMaster()) {
+				t.Fatalf("want role master, but set %d", account.Staffs()[0].Role().Number())
+			}
 		})
 	}
 }
