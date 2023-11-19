@@ -13,9 +13,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/takuyamashita/hacobi/src/api/db"
 	"github.com/takuyamashita/hacobi/src/api/pkg/adapter/web"
-	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
-	"github.com/takuyamashita/hacobi/src/api/pkg/repository"
-	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
+	"github.com/takuyamashita/hacobi/src/api/pkg/container"
 )
 
 type Application interface {
@@ -23,8 +21,9 @@ type Application interface {
 }
 
 type application struct {
-	server *echo.Echo
-	db     *sql.DB
+	server    *echo.Echo
+	db        *sql.DB
+	container container.Container
 }
 
 func newApplication() Application {
@@ -33,10 +32,12 @@ func newApplication() Application {
 	db := db.NewDatabase(ctx)
 
 	app := &application{
-		server: echo.New(),
-		db:     db,
+		server:    echo.New(),
+		db:        db,
+		container: container.NewContainer(),
 	}
 	app.setupMiddlewares()
+	app.setupDI()
 	app.setupRoutes()
 
 	return app
@@ -79,14 +80,7 @@ func (app *application) setupRoutes() {
 		return c.String(200, "Hello, World!")
 	})
 
-	uuid_repository := repository.NewUuidRepository()
-	liveHouseStaffRepository := repository.NewliveHouseStaff(app.db)
+	liveHouseStaffController := web.NewliveHouseStaffController(app.container)
 
-	liveHouseStaffEmailAddressChecker := live_house_staff_domain.NewLiveHouseStaffEmailAddressChecker(liveHouseStaffRepository)
-
-	liveHouseStaffUsecase := live_house_staff_usecase.NewLiveHouseStaffUsecase(uuid_repository, liveHouseStaffRepository, liveHouseStaffEmailAddressChecker)
-
-	liveHouseStaffController := web.NewliveHouseStaffController(liveHouseStaffUsecase)
-
-	app.server.POST("/api/live_house_owner/account", liveHouseStaffController.RegisterAccount)
+	app.server.POST("/api/v1/live_house_owner/account", liveHouseStaffController.RegisterAccount)
 }

@@ -8,8 +8,8 @@ import (
 )
 
 type _compositIntf interface {
-	live_house_staff_usecase.LiveHouseStaffRepository
-	live_house_staff_domain.LiveHouseStaffRepository
+	live_house_staff_usecase.LiveHouseStaffRepositoryIntf
+	live_house_staff_domain.LiveHouseStaffRepositoryIntf
 }
 
 var _ _compositIntf = (*LiveHouseStaffRepositoryMock)(nil)

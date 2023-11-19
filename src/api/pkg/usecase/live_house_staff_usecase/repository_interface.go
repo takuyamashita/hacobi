@@ -6,10 +6,10 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 )
 
-type UuidRepository interface {
+type UuidRepositoryIntf interface {
 	Generate() (string, error)
 }
 
-type LiveHouseStaffRepository interface {
+type LiveHouseStaffRepositoryIntf interface {
 	Save(owner live_house_staff_domain.LiveHouseStaffIntf, ctx context.Context) error
 }

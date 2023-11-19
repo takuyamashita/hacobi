@@ -5,12 +5,12 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
 )
 
-var _ live_house_staff_usecase.UuidRepository = (*uuidRepository)(nil)
+var _ live_house_staff_usecase.UuidRepositoryIntf = (*uuidRepository)(nil)
 
 type uuidRepository struct{}
 
-func NewUuidRepository() uuidRepository {
-	return uuidRepository{}
+func NewUuidRepository() live_house_staff_usecase.UuidRepositoryIntf {
+	return &uuidRepository{}
 }
 
 func (uuidRepository) Generate() (string, error) {

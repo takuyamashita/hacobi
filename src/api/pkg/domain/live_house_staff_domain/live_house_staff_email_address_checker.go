@@ -7,13 +7,13 @@ type LiveHouseStaffEmailAddressCheckerIntf interface {
 }
 
 type liveHouseStaffEmailAddressCheckerImpl struct {
-	liveHouseStaffRepository LiveHouseStaffRepository
+	liveHouseStaffRepository LiveHouseStaffRepositoryIntf
 }
 
 func NewLiveHouseStaffEmailAddressChecker(
-	repository LiveHouseStaffRepository,
+	repository LiveHouseStaffRepositoryIntf,
 ) LiveHouseStaffEmailAddressCheckerIntf {
-	return liveHouseStaffEmailAddressCheckerImpl{
+	return &liveHouseStaffEmailAddressCheckerImpl{
 		liveHouseStaffRepository: repository,
 	}
 }

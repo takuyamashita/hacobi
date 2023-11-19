@@ -9,10 +9,10 @@ import (
 
 type Store struct {
 	Staffs         []live_house_staff_domain.LiveHouseStaffIntf
-	uuidRepository live_house_staff_usecase.UuidRepository
+	uuidRepository live_house_staff_usecase.UuidRepositoryIntf
 }
 
-func NewStore(uuidRepository live_house_staff_usecase.UuidRepository) Store {
+func NewStore(uuidRepository live_house_staff_usecase.UuidRepositoryIntf) Store {
 	return Store{
 		uuidRepository: uuidRepository,
 	}
@@ -22,11 +22,11 @@ func (s *Store) Clear() {
 	s.Staffs = []live_house_staff_domain.LiveHouseStaffIntf{}
 }
 
-func (s *Store) SetupStore(uuidRepository live_house_staff_usecase.UuidRepository, t *testing.T) {
+func (s *Store) SetupStore(uuidRepository live_house_staff_usecase.UuidRepositoryIntf, t *testing.T) {
 	s.setupStaffs(uuidRepository, t)
 }
 
-func (s *Store) setupStaffs(uuidRepository live_house_staff_usecase.UuidRepository, t *testing.T) {
+func (s *Store) setupStaffs(uuidRepository live_house_staff_usecase.UuidRepositoryIntf, t *testing.T) {
 
 	if s.Staffs == nil {
 		s.Staffs = []live_house_staff_domain.LiveHouseStaffIntf{}

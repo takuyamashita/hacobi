@@ -5,6 +5,12 @@ import (
 	"reflect"
 )
 
+type Container interface {
+	BindSingle(resolver interface{})
+	Bind(resolver interface{})
+	Make(intf interface{})
+}
+
 func NewContainer() container {
 	return container{}
 }
