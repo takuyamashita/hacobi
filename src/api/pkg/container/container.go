@@ -45,14 +45,14 @@ func (c container) bind(resolver interface{}, isSingleton bool) {
 		log.Fatal("resolverは引数が0個または1つ以上のinterfaceで、返り値がinterface1つの関数である必要があります")
 	}
 
-	args := make([]reflect.Value, r.NumIn())
-
-	for i := 0; i < r.NumIn(); i++ {
-		args[i] = c.retrieveInsetance(r.In(i))
-	}
-
 	c[r.Out(0)] = &resolverInfo{
 		resolver: func() reflect.Value {
+
+			args := make([]reflect.Value, r.NumIn())
+			for i := 0; i < r.NumIn(); i++ {
+				args[i] = c.retrieveInsetance(r.In(i))
+			}
+
 			return reflect.ValueOf(resolver).Call(args)[0]
 		},
 		isSingleton: isSingleton,

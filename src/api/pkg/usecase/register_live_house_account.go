@@ -1,16 +1,28 @@
-package live_house_account_usecase
+package usecase
 
 import (
 	"context"
 	"errors"
 
+	"github.com/takuyamashita/hacobi/src/api/pkg/container"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_account_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 )
 
-func (u LiveHouseAccountUsecase) RegisterLiveHouseAccount(userId string, ctx context.Context) (string, error) {
+func RegisterLiveHouseAccount(userId string, ctx context.Context, container container.Container) (string, error) {
 
-	accountId, err := u.uuidRepository.Generate()
+	var (
+		uuidRepo             UuidRepositoryIntf
+		txRepo               TransationRepositoryIntf
+		liveHouseAccountRepo LiveHouseAccountRepositoryIntf
+		liveHouseStaffRepo   LiveHouseStaffRepositoryIntf
+	)
+	container.Make(&uuidRepo)
+	container.Make(&txRepo)
+	container.Make(&liveHouseAccountRepo)
+	container.Make(&liveHouseStaffRepo)
+
+	accountId, err := uuidRepo.Generate()
 	if err != nil {
 		return "", err
 	}
@@ -20,7 +32,7 @@ func (u LiveHouseAccountUsecase) RegisterLiveHouseAccount(userId string, ctx con
 		return "", err
 	}
 
-	commit, rollback, err := u.transationRepository.Begin(ctx)
+	commit, rollback, err := txRepo.Begin(ctx)
 	defer commit()
 	if err != nil {
 		return "", err
@@ -29,7 +41,7 @@ func (u LiveHouseAccountUsecase) RegisterLiveHouseAccount(userId string, ctx con
 	{
 
 		// ???????? lock ?????????
-		liveHouseStaff, err := u.liveHouseStaffRepository.FindById(liveHouseStaffId, ctx)
+		liveHouseStaff, err := liveHouseStaffRepo.FindById(liveHouseStaffId, ctx)
 		if err != nil {
 			return "", err
 		}
@@ -51,7 +63,7 @@ func (u LiveHouseAccountUsecase) RegisterLiveHouseAccount(userId string, ctx con
 			return "", err
 		}
 
-		err = u.liveHouseAccountRepository.Save(account, ctx)
+		err = liveHouseAccountRepo.Save(account, ctx)
 		if err != nil {
 			rollback()
 			return "", err

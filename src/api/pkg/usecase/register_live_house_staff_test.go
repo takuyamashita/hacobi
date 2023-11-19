@@ -1,24 +1,16 @@
-package live_house_staff_usecase_test
+package usecase_test
 
 import (
 	"context"
 	"testing"
 
-	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
-	"github.com/takuyamashita/hacobi/src/api/pkg/repository"
-	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
+	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
 
-func TestRegisterAccountSuccess(t *testing.T) {
+func TestRegisterLiveHouseStaff(t *testing.T) {
 
-	uuidRepository := repository.NewUuidRepository()
-	store := NewStore(uuidRepository)
-	liveHouseStaffRepositoryMock := LiveHouseStaffRepositoryMock{
-		Store: &store,
-	}
-
-	liveHouseStaffEmailAddressChecker := live_house_staff_domain.NewLiveHouseStaffEmailAddressChecker(liveHouseStaffRepositoryMock)
-	usecase := live_house_staff_usecase.NewLiveHouseStaffUsecase(uuidRepository, &TransactionRepositoryMock{}, liveHouseStaffRepositoryMock, liveHouseStaffEmailAddressChecker)
+	store := NewStore()
+	container := NewTestContainer(&store)
 
 	type args struct {
 		name         string
@@ -78,13 +70,14 @@ func TestRegisterAccountSuccess(t *testing.T) {
 			},
 		},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			store.SetupStore(uuidRepository, t)
+			var uuidRepo usecase.UuidRepositoryIntf
+			container.Make(&uuidRepo)
 
-			_, err := usecase.RegisterAccount(tt.args.name, tt.args.emailAddress, tt.args.password, context.Background())
+			store.SetupStaffs(uuidRepo, t)
+			_, err := usecase.RegisterLiveHouseStaff(tt.args.name, tt.args.emailAddress, tt.args.password, context.Background(), container)
 			if tt.want.hasError && err == nil {
 				t.Errorf("エラーが発生していません")
 			}

@@ -14,6 +14,7 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/adapter/web"
 	"github.com/takuyamashita/hacobi/src/api/pkg/container"
 	mysql "github.com/takuyamashita/hacobi/src/api/pkg/db"
+	"github.com/takuyamashita/hacobi/src/api/pkg/dependency"
 )
 
 type Application interface {
@@ -37,7 +38,7 @@ func newApplication() Application {
 		container: container.NewContainer(),
 	}
 	app.setupMiddlewares()
-	app.setupDI()
+	dependency.SetupDI(app.container, app.db)
 	app.setupRoutes()
 
 	return app

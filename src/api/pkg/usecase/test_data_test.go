@@ -1,4 +1,4 @@
-package live_house_staff_usecase_test
+package usecase_test
 
 var staffs = []map[string]string{
 	{

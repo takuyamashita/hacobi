@@ -8,7 +8,11 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
 
-var _ usecase.TransationRepositoryIntf = (*Transaction)(nil)
+type TransationRepositoryIntf interface {
+	usecase.TransationRepositoryIntf
+}
+
+var _ TransationRepositoryIntf = (*Transaction)(nil)
 
 type Transaction struct {
 	db *db.MySQL

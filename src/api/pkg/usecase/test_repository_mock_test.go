@@ -1,18 +1,15 @@
-package live_house_staff_usecase_test
+package usecase_test
 
 import (
 	"context"
 
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_account_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/repository"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
 
-type _compositIntf interface {
-	usecase.LiveHouseStaffRepositoryIntf
-	live_house_staff_domain.LiveHouseStaffRepositoryIntf
-}
-
-var _ _compositIntf = (*LiveHouseStaffRepositoryMock)(nil)
+var _ repository.LiveHouseStaffRepositoryIntf = (*LiveHouseStaffRepositoryMock)(nil)
 
 type LiveHouseStaffRepositoryMock struct {
 	Store *Store
@@ -53,7 +50,18 @@ func (repo LiveHouseStaffRepositoryMock) FindById(id live_house_staff_domain.Liv
 	return staff, nil
 }
 
-var _ usecase.TransationRepositoryIntf = (*TransactionRepositoryMock)(nil)
+var _ usecase.LiveHouseAccountRepositoryIntf = (*LiveHouseAccountRepositoryMock)(nil)
+
+type LiveHouseAccountRepositoryMock struct {
+	Store *Store
+}
+
+func (repo LiveHouseAccountRepositoryMock) Save(account live_house_account_domain.LiveHouseAccountIntf, ctx context.Context) error {
+	repo.Store.Accounts = append(repo.Store.Accounts, account)
+	return nil
+}
+
+var _ repository.TransationRepositoryIntf = (*TransactionRepositoryMock)(nil)
 
 type TransactionRepositoryMock struct {
 }

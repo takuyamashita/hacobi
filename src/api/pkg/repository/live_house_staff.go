@@ -10,12 +10,12 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
 
-type _compositIntf interface {
+type LiveHouseStaffRepositoryIntf interface {
 	usecase.LiveHouseStaffRepositoryIntf
 	live_house_staff_domain.LiveHouseStaffRepositoryIntf
 }
 
-var _ _compositIntf = (*LiveHouseStaff)(nil)
+var _ LiveHouseStaffRepositoryIntf = (*LiveHouseStaff)(nil)
 
 type LiveHouseStaff struct {
 	db *db.MySQL
