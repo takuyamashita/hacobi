@@ -6,9 +6,9 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_account_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/repository"
-	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
 
+// ~~~~~~~~~~~repository.LiveHouseStaffRepositoryIntf~~~~~~~~~~~ //
 var _ repository.LiveHouseStaffRepositoryIntf = (*LiveHouseStaffRepositoryMock)(nil)
 
 type LiveHouseStaffRepositoryMock struct {
@@ -18,14 +18,12 @@ type LiveHouseStaffRepositoryMock struct {
 func NewliveHouseStaffMock(store *Store) *LiveHouseStaffRepositoryMock {
 	return &LiveHouseStaffRepositoryMock{Store: store}
 }
-
 func (repo LiveHouseStaffRepositoryMock) Save(staff live_house_staff_domain.LiveHouseStaffIntf, ctx context.Context) error {
 
 	repo.Store.Staffs = append(repo.Store.Staffs, staff)
 
 	return nil
 }
-
 func (repo LiveHouseStaffRepositoryMock) FindByEmail(emailAddress live_house_staff_domain.LiveHouseStaffEmailAddress, ctx context.Context) (live_house_staff_domain.LiveHouseStaffIntf, error) {
 
 	var staff live_house_staff_domain.LiveHouseStaffIntf
@@ -37,7 +35,6 @@ func (repo LiveHouseStaffRepositoryMock) FindByEmail(emailAddress live_house_sta
 
 	return staff, nil
 }
-
 func (repo LiveHouseStaffRepositoryMock) FindById(id live_house_staff_domain.LiveHouseStaffId, ctx context.Context) (live_house_staff_domain.LiveHouseStaffIntf, error) {
 
 	var staff live_house_staff_domain.LiveHouseStaffIntf
@@ -50,7 +47,8 @@ func (repo LiveHouseStaffRepositoryMock) FindById(id live_house_staff_domain.Liv
 	return staff, nil
 }
 
-var _ usecase.LiveHouseAccountRepositoryIntf = (*LiveHouseAccountRepositoryMock)(nil)
+// ~~~~~~~~~~~usecase.LiveHouseAccountRepositoryIntf~~~~~~~~~~~ //
+var _ repository.LiveHouseAccountRepositoryIntf = (*LiveHouseAccountRepositoryMock)(nil)
 
 type LiveHouseAccountRepositoryMock struct {
 	Store *Store
@@ -61,6 +59,7 @@ func (repo LiveHouseAccountRepositoryMock) Save(account live_house_account_domai
 	return nil
 }
 
+// ~~~~~~~~~~~repository.TransationRepositoryIntf~~~~~~~~~~~ //
 var _ repository.TransationRepositoryIntf = (*TransactionRepositoryMock)(nil)
 
 type TransactionRepositoryMock struct {

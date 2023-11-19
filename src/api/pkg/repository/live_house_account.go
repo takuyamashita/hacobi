@@ -8,7 +8,11 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
 
-var _ usecase.LiveHouseAccountRepositoryIntf = (*LiveHouseAccount)(nil)
+type LiveHouseAccountRepositoryIntf interface {
+	usecase.LiveHouseAccountRepositoryIntf
+}
+
+var _ LiveHouseAccountRepositoryIntf = (*LiveHouseAccount)(nil)
 
 type LiveHouseAccount struct {
 	db *db.MySQL
