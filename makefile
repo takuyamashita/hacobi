@@ -14,3 +14,6 @@ api-migrate-create:
 api-migrate-force:
 	@ read -p "Which version apply dirty=false: " FORCE_VERSION; \
 	docker compose exec -e FORCE_VERSION=$${FORCE_VERSION} api sh -c '$$(eval echo migrate -database \$${DB_URL} -path \$${MIGRATION_PATH} \$${MIGATION_FILE_NAME} force \$${FORCE_VERSION})'
+
+api-test:
+	docker compose exec api sh -c 'go test --count 1 ./pkg/...'
