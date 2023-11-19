@@ -6,8 +6,15 @@ import (
 )
 
 type Container interface {
+
+	// BindSingleは、resolverが返すインスタンスをシングルトンとして登録します
+	// 1つのコンテナインスタンスに対してシングルになります(=複数のコンテナインスタンスを作成した場合、それぞれのコンテナインスタンスに対してシングルトンになります)
 	BindSingle(resolver interface{})
+
+	// Bindは、resolverが返すインスタンスをresolverの返り値の型で登録します
 	Bind(resolver interface{})
+
+	// Makeは、intfに対して、コンテナに登録されているresolverを使ってインスタンスを生成しintfにセットします
 	Make(intf interface{})
 }
 
