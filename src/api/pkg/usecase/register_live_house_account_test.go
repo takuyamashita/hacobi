@@ -56,7 +56,7 @@ func TestRegisterLiveHouseAccount(t *testing.T) {
 			id, err := usecase.RegisterLiveHouseAccount(tt.args.id, context.Background(), container)
 
 			if tt.want.hasError && err == nil {
-				t.Fatal("error is nil")
+				t.Fatal("エラーが発生していません")
 			}
 
 			if tt.want.hasError {
