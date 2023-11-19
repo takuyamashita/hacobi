@@ -34,9 +34,7 @@ func (app *application) setupDI() {
 
 	//~~~~~~~~~~~~~~~~~~ domain ~~~~~~~~~~~~~~~~~~//
 
-	app.container.Bind(func(liveHouseStaffRepository live_house_staff_domain.LiveHouseStaffRepositoryIntf) live_house_staff_domain.LiveHouseStaffEmailAddressCheckerIntf {
-		return live_house_staff_domain.NewLiveHouseStaffEmailAddressChecker(liveHouseStaffRepository)
-	})
+	app.container.Bind(live_house_staff_domain.NewLiveHouseStaffEmailAddressChecker)
 
 	//~~~~~~~~~~~~~~~~~~ usecase ~~~~~~~~~~~~~~~~~~//
 
