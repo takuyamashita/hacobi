@@ -14,16 +14,19 @@ type LiveHouseAccountUsecase struct {
 	uuidRepository             usecase.UuidRepositoryIntf
 	liveHouseStaffRepository   usecase.LiveHouseStaffRepositoryIntf
 	liveHouseAccountRepository usecase.LiveHouseAccountRepositoryIntf
+	transationRepository       usecase.TransationRepositoryIntf
 }
 
 func NewLiveHouseAccountUsecase(
 	uuidRepository usecase.UuidRepositoryIntf,
 	liveHouseStaffRepository usecase.LiveHouseStaffRepositoryIntf,
 	liveHouseAccountRepository usecase.LiveHouseAccountRepositoryIntf,
+	transationRepository usecase.TransationRepositoryIntf,
 ) LiveHouseAccountUsecaseIntf {
 	return &LiveHouseAccountUsecase{
 		uuidRepository:             uuidRepository,
 		liveHouseStaffRepository:   liveHouseStaffRepository,
 		liveHouseAccountRepository: liveHouseAccountRepository,
+		transationRepository:       transationRepository,
 	}
 }

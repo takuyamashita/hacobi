@@ -16,6 +16,10 @@ func (app *application) setupDI() {
 		return repository.NewUuidRepository()
 	})
 
+	app.container.Bind(func() usecase.TransationRepositoryIntf {
+		return repository.NewTransaction(app.db)
+	})
+
 	app.container.Bind(func() live_house_staff_domain.LiveHouseStaffRepositoryIntf {
 		return repository.NewliveHouseStaff(app.db)
 	})

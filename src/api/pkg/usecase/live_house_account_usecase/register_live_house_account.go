@@ -20,32 +20,43 @@ func (u LiveHouseAccountUsecase) RegisterLiveHouseAccount(userId string, ctx con
 		return "", err
 	}
 
-	liveHouseStaff, err := u.liveHouseStaffRepository.FindById(liveHouseStaffId)
+	commit, rollback, err := u.transationRepository.Begin(ctx)
+	defer commit()
 	if err != nil {
 		return "", err
 	}
-	if liveHouseStaff == nil {
-		return "", errors.New("live house staff not found")
-	}
 
-	account, err := live_house_account_domain.NewLiveHouseAccount(
-		accountId,
-		[]live_house_account_domain.StaffParams{
-			{
-				Id:   liveHouseStaffId,
-				Role: live_house_account_domain.GetRoleMaster(),
+	{
+
+		// ???????? lock ?????????
+		liveHouseStaff, err := u.liveHouseStaffRepository.FindById(liveHouseStaffId, ctx)
+		if err != nil {
+			return "", err
+		}
+		if liveHouseStaff == nil {
+			return "", errors.New("live house staff not found")
+		}
+
+		account, err := live_house_account_domain.NewLiveHouseAccount(
+			accountId,
+			[]live_house_account_domain.StaffParams{
+				{
+					Id:   liveHouseStaffId,
+					Role: live_house_account_domain.GetRoleMaster(),
+				},
 			},
-		},
-		nil,
-	)
-	if err != nil {
-		return "", err
-	}
+			nil,
+		)
+		if err != nil {
+			return "", err
+		}
 
-	err = u.liveHouseAccountRepository.Save(account, ctx)
-	if err != nil {
-		return "", err
-	}
+		err = u.liveHouseAccountRepository.Save(account, ctx)
+		if err != nil {
+			rollback()
+			return "", err
+		}
 
-	return account.Id().String(), nil
+		return account.Id().String(), nil
+	}
 }

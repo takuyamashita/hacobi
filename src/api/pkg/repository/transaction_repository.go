@@ -5,13 +5,28 @@ import (
 	"database/sql"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/db"
+	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
+
+var _ usecase.TransationRepositoryIntf = (*Transaction)(nil)
 
 type Transaction struct {
 	db *db.MySQL
 }
 
-func (t Transaction) Begin(ctx context.Context) (func() error, error) {
+func NewTransaction(db *db.MySQL) *Transaction {
+	return &Transaction{
+		db: db,
+	}
+}
+
+func makeCommitFunc(tx *db.MySQL) func() error {
+	return func() error {
+		return tx.Commit()
+	}
+}
+
+func (t Transaction) Begin(ctx context.Context) (func() error, func() error, error) {
 
 	opt := &sql.TxOptions{
 		Isolation: sql.LevelDefault,
@@ -20,9 +35,9 @@ func (t Transaction) Begin(ctx context.Context) (func() error, error) {
 
 	tx, err := t.db.BeginTx(ctx, opt)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return tx.Rollback, nil
+	return makeCommitFunc(tx), tx.Rollback, nil
 
 }

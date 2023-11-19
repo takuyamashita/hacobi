@@ -39,14 +39,21 @@ func (repo LiveHouseAccount) Save(account live_house_account_domain.LiveHouseAcc
 
 	*/
 
-	err := func() error {
+	tx, err := repo.db.BeginTx(ctx, nil)
+	defer tx.Commit()
+	if err != nil {
+		return err
+	}
 
-		_, err := repo.db.ExecContext(
+	{
+
+		_, err := tx.ExecContext(
 			ctx,
 			"INSERT INTO live_house_accounts (id) VALUES (?)", account.Id().String(),
 		)
 
 		if err != nil {
+			tx.Rollback()
 			return err
 		}
 
@@ -68,9 +75,12 @@ func (repo LiveHouseAccount) Save(account live_house_account_domain.LiveHouseAcc
 			args...,
 		)
 
-		return err
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
 
-	}()
+	}
 
-	return err
+	return nil
 }

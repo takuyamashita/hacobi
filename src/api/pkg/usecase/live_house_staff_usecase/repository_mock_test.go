@@ -41,7 +41,7 @@ func (repo LiveHouseStaffRepositoryMock) FindByEmail(emailAddress live_house_sta
 	return staff, nil
 }
 
-func (repo LiveHouseStaffRepositoryMock) FindById(id live_house_staff_domain.LiveHouseStaffId) (live_house_staff_domain.LiveHouseStaffIntf, error) {
+func (repo LiveHouseStaffRepositoryMock) FindById(id live_house_staff_domain.LiveHouseStaffId, ctx context.Context) (live_house_staff_domain.LiveHouseStaffIntf, error) {
 
 	var staff live_house_staff_domain.LiveHouseStaffIntf
 	for _, v := range repo.Store.Staffs {

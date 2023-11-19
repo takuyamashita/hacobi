@@ -90,14 +90,15 @@ mysql> desc live_house_staffs;
 +------------+--------------+------+-----+----------------------+--------------------------------------------------+
 6 rows in set (0.01 sec)
 */
-func (repo LiveHouseStaff) FindById(id live_house_staff_domain.LiveHouseStaffId) (live_house_staff_domain.LiveHouseStaffIntf, error) {
+func (repo LiveHouseStaff) FindById(id live_house_staff_domain.LiveHouseStaffId, ctx context.Context) (live_house_staff_domain.LiveHouseStaffIntf, error) {
 
 	var dbId string
 	var name string
 	var email string
 	var password string
 
-	rows := repo.db.QueryRow(
+	rows := repo.db.QueryRowContext(
+		ctx,
 		"SELECT id, name, email, password FROM live_house_staffs WHERE id = ?",
 		id.String(),
 	)
