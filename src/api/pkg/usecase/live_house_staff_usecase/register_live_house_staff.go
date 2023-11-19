@@ -9,6 +9,8 @@ import (
 
 func (usecase LiveHouseStaffUsecase) RegisterAccount(name string, emailAddress string, password string, ctx context.Context) (string, error) {
 
+	//xxx: transactionを貼る
+
 	isEmailAddressAlreadyRegistered, err := usecase.liveHouseStaffEmailAddressChecker.IsEmailAddressAlreadyRegistered(emailAddress, ctx)
 	if err != nil {
 		return "", err
