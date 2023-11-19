@@ -7,8 +7,12 @@ import (
 
 type MySQL struct {
 	*sql.DB
-	tx      *sql.Tx
-	txCount uint
+	tx       *sql.Tx
+	txCount  uint
+	Begin    interface{}
+	Exec     interface{}
+	Query    interface{}
+	QueryRow interface{}
 }
 
 func NewMySQL(db *sql.DB) MySQL {
