@@ -6,11 +6,11 @@ import (
 	"log"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
-	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
+	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
 
 type _compositIntf interface {
-	live_house_staff_usecase.LiveHouseStaffRepositoryIntf
+	usecase.LiveHouseStaffRepositoryIntf
 	live_house_staff_domain.LiveHouseStaffRepositoryIntf
 }
 
@@ -73,4 +73,8 @@ func (repo LiveHouseStaff) FindByEmail(emailAddress live_house_staff_domain.Live
 	}
 
 	return liveHouseStaff, nil
+}
+
+func (repo LiveHouseStaff) FindById(id live_house_staff_domain.LiveHouseStaffId) (live_house_staff_domain.LiveHouseStaffIntf, error) {
+	return nil, nil
 }

@@ -1,4 +1,4 @@
-package live_house_staff_usecase
+package usecase
 
 import (
 	"context"
@@ -12,4 +12,5 @@ type UuidRepositoryIntf interface {
 
 type LiveHouseStaffRepositoryIntf interface {
 	Save(owner live_house_staff_domain.LiveHouseStaffIntf, ctx context.Context) error
+	FindById(id live_house_staff_domain.LiveHouseStaffId) (live_house_staff_domain.LiveHouseStaffIntf, error)
 }

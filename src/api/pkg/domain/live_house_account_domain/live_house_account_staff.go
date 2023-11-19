@@ -15,7 +15,7 @@ type LiveHouseAccountStaff struct {
 	role LiveHouseAccountStaffRole
 }
 
-func newLiveHouseAccountStaff(id live_house_staff_domain.LiveHouseStaffId, role int) (LiveHouseAccountStaff, error) {
+func newLiveHouseAccountStaff(id live_house_staff_domain.LiveHouseStaffId, role liveHouseAccountStaffRoleValue) (LiveHouseAccountStaff, error) {
 
 	liveHouseStaffRole, err := newLiveHouseAccountStaffRole(role)
 	if err != nil {

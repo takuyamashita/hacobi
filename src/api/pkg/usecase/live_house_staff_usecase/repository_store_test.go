@@ -4,15 +4,15 @@ import (
 	"testing"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
-	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
+	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
 
 type Store struct {
 	Staffs         []live_house_staff_domain.LiveHouseStaffIntf
-	uuidRepository live_house_staff_usecase.UuidRepositoryIntf
+	uuidRepository usecase.UuidRepositoryIntf
 }
 
-func NewStore(uuidRepository live_house_staff_usecase.UuidRepositoryIntf) Store {
+func NewStore(uuidRepository usecase.UuidRepositoryIntf) Store {
 	return Store{
 		uuidRepository: uuidRepository,
 	}
@@ -22,11 +22,11 @@ func (s *Store) Clear() {
 	s.Staffs = []live_house_staff_domain.LiveHouseStaffIntf{}
 }
 
-func (s *Store) SetupStore(uuidRepository live_house_staff_usecase.UuidRepositoryIntf, t *testing.T) {
+func (s *Store) SetupStore(uuidRepository usecase.UuidRepositoryIntf, t *testing.T) {
 	s.setupStaffs(uuidRepository, t)
 }
 
-func (s *Store) setupStaffs(uuidRepository live_house_staff_usecase.UuidRepositoryIntf, t *testing.T) {
+func (s *Store) setupStaffs(uuidRepository usecase.UuidRepositoryIntf, t *testing.T) {
 
 	if s.Staffs == nil {
 		s.Staffs = []live_house_staff_domain.LiveHouseStaffIntf{}

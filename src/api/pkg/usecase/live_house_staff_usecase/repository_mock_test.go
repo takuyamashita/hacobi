@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
-	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
+	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
 
 type _compositIntf interface {
-	live_house_staff_usecase.LiveHouseStaffRepositoryIntf
+	usecase.LiveHouseStaffRepositoryIntf
 	live_house_staff_domain.LiveHouseStaffRepositoryIntf
 }
 
@@ -34,6 +34,18 @@ func (repo LiveHouseStaffRepositoryMock) FindByEmail(emailAddress live_house_sta
 	var staff live_house_staff_domain.LiveHouseStaffIntf
 	for _, v := range repo.Store.Staffs {
 		if v.EmailAddress().String() == emailAddress.String() {
+			staff = v
+		}
+	}
+
+	return staff, nil
+}
+
+func (repo LiveHouseStaffRepositoryMock) FindById(id live_house_staff_domain.LiveHouseStaffId) (live_house_staff_domain.LiveHouseStaffIntf, error) {
+
+	var staff live_house_staff_domain.LiveHouseStaffIntf
+	for _, v := range repo.Store.Staffs {
+		if v.Id().String() == id.String() {
 			staff = v
 		}
 	}

@@ -2,14 +2,14 @@ package repository
 
 import (
 	google_uuid "github.com/google/uuid"
-	"github.com/takuyamashita/hacobi/src/api/pkg/usecase/live_house_staff_usecase"
+	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
 
-var _ live_house_staff_usecase.UuidRepositoryIntf = (*uuidRepository)(nil)
+var _ usecase.UuidRepositoryIntf = (*uuidRepository)(nil)
 
 type uuidRepository struct{}
 
-func NewUuidRepository() live_house_staff_usecase.UuidRepositoryIntf {
+func NewUuidRepository() usecase.UuidRepositoryIntf {
 	return &uuidRepository{}
 }
 

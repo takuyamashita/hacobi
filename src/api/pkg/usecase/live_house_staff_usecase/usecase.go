@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
 
 type LiveHouseStaffUsecaseIntf interface {
@@ -11,14 +12,14 @@ type LiveHouseStaffUsecaseIntf interface {
 }
 
 type LiveHouseStaffUsecase struct {
-	uuidRepository                    UuidRepositoryIntf
-	liveHouseStaffRepository          LiveHouseStaffRepositoryIntf
+	uuidRepository                    usecase.UuidRepositoryIntf
+	liveHouseStaffRepository          usecase.LiveHouseStaffRepositoryIntf
 	liveHouseStaffEmailAddressChecker live_house_staff_domain.LiveHouseStaffEmailAddressCheckerIntf
 }
 
 func NewLiveHouseStaffUsecase(
-	uuidRepository UuidRepositoryIntf,
-	liveHouseStaffRepository LiveHouseStaffRepositoryIntf,
+	uuidRepository usecase.UuidRepositoryIntf,
+	liveHouseStaffRepository usecase.LiveHouseStaffRepositoryIntf,
 	liveHouseStaffEmailAddressChecker live_house_staff_domain.LiveHouseStaffEmailAddressCheckerIntf,
 ) LiveHouseStaffUsecaseIntf {
 	return &LiveHouseStaffUsecase{

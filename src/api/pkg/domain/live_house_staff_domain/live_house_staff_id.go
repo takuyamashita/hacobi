@@ -4,10 +4,15 @@ type LiveHouseStaffId struct {
 	value string
 }
 
-func newLiveHouseStaffId(id string) (LiveHouseStaffId, error) {
+func NewLiveHouseStaffId(id string) (LiveHouseStaffId, error) {
 	return LiveHouseStaffId{id}, nil
 }
 
 func (id LiveHouseStaffId) String() string {
 	return id.value
+}
+
+func (id LiveHouseStaffId) Equals(target LiveHouseStaffId) bool {
+
+	return id.value == target.value
 }
