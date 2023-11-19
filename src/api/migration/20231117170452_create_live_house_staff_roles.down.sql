@@ -1,1 +1,0 @@
-DROP TABLE IF EXISTS live_house_staff_roles;

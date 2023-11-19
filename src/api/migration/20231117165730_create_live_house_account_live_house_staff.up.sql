@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS live_house_account_live_house_staff (
     live_house_account_id VARCHAR(36) NOT NULL,
     live_house_staff_id VARCHAR(36) NOT NULL,
+    role INT UNSIGNED NOT NULL DEFAULT 0,
     created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
     INDEX live_house_account_id (live_house_account_id),
