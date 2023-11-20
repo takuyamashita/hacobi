@@ -1,12 +1,14 @@
 "use client";
 
 import React from "react";
+import Button from "@/component/Button";
 
 const Login = () => {
+  const [email, setEmail] = React.useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("submit");
+    console.log("submit", email);
   };
 
   return (
@@ -23,15 +25,10 @@ const Login = () => {
           id="email"
           type="email"
           placeholder="hacobi@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
-      </div>
-      <div className="flex justify-center">
-        <button
-          type="submit"
-          className="bg-blue-500  text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        >
-          新規登録
-        </button>
+        <Button type="submit">新規登録</Button>
       </div>
     </form>
   );
