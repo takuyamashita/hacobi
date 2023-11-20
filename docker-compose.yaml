@@ -13,6 +13,16 @@ services:
     depends_on:
       - api
       - db
+      - front
+
+  front:
+    image: node:20.9.0-alpine
+    volumes:
+      - ./src/front:/app
+    working_dir: /app
+    tty: true
+    depends_on:
+      - api
 
   api:
     build:
