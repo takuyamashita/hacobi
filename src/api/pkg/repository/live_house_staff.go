@@ -31,8 +31,8 @@ func (repo LiveHouseStaff) Save(staff live_house_staff_domain.LiveHouseStaffIntf
 
 	_, err := repo.db.ExecContext(
 		ctx,
-		"INSERT INTO live_house_staffs (id, name, email, password) VALUES (?, ?, ?, ?)",
-		staff.Id().String(), staff.Name().String(), staff.EmailAddress().String(), staff.Password().String(),
+		"INSERT INTO live_house_staffs (id, display_name, email, password) VALUES (?, ?, ?, ?)",
+		staff.Id().String(), staff.DisplayName().String(), staff.EmailAddress().String(), staff.Password().String(),
 	)
 	if err != nil {
 		log.Println(err)
@@ -45,15 +45,15 @@ func (repo LiveHouseStaff) Save(staff live_house_staff_domain.LiveHouseStaffIntf
 func (repo LiveHouseStaff) FindByEmail(emailAddress live_house_staff_domain.LiveHouseStaffEmailAddress, ctx context.Context) (live_house_staff_domain.LiveHouseStaffIntf, error) {
 
 	var id string
-	var name string
+	var displayName string
 	var email string
 	var password string
 
 	err := repo.db.QueryRowContext(
 		ctx,
-		"SELECT id, name, email, password FROM live_house_staffs WHERE email = ?",
+		"SELECT id, display_name, email, password FROM live_house_staffs WHERE email = ?",
 		emailAddress.String(),
-	).Scan(&id, &name, &email, &password)
+	).Scan(&id, &displayName, &email, &password)
 
 	if err != sql.ErrNoRows {
 		return nil, err
@@ -65,7 +65,7 @@ func (repo LiveHouseStaff) FindByEmail(emailAddress live_house_staff_domain.Live
 
 	liveHouseStaff, err := live_house_staff_domain.NewLiveHouseStaff(
 		id,
-		name,
+		displayName,
 		email,
 		password,
 	)
@@ -93,23 +93,23 @@ mysql> desc live_house_staffs;
 func (repo LiveHouseStaff) FindById(id live_house_staff_domain.LiveHouseStaffId, ctx context.Context) (live_house_staff_domain.LiveHouseStaffIntf, error) {
 
 	var dbId string
-	var name string
+	var displayName string
 	var email string
 	var password string
 
 	rows := repo.db.QueryRowContext(
 		ctx,
-		"SELECT id, name, email, password FROM live_house_staffs WHERE id = ?",
+		"SELECT id, diaplay_name, email, password FROM live_house_staffs WHERE id = ?",
 		id.String(),
 	)
-	err := rows.Scan(&dbId, &name, &email, &password)
+	err := rows.Scan(&dbId, &displayName, &email, &password)
 	if err != nil {
 		return nil, err
 	}
 
 	liveHouseStaff, err := live_house_staff_domain.NewLiveHouseStaff(
 		dbId,
-		name,
+		displayName,
 		email,
 		password,
 	)

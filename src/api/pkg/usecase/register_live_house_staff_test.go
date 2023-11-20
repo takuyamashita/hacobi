@@ -13,7 +13,7 @@ func TestRegisterLiveHouseStaff(t *testing.T) {
 	container := NewTestContainer(&store)
 
 	type args struct {
-		name         string
+		displayName  string
 		emailAddress string
 		password     string
 	}
@@ -28,7 +28,7 @@ func TestRegisterLiveHouseStaff(t *testing.T) {
 		{
 			name: "正常に保存",
 			args: args{
-				name:         "山田　太郎",
+				displayName:  "山田　太郎",
 				emailAddress: "test@test.com",
 				password:     "123password^{}$s",
 			},
@@ -39,7 +39,7 @@ func TestRegisterLiveHouseStaff(t *testing.T) {
 		{
 			name: "名前が空文字",
 			args: args{
-				name:         "",
+				displayName:  "",
 				emailAddress: "test@test.com",
 				password:     "123password^{}$s",
 			},
@@ -50,7 +50,7 @@ func TestRegisterLiveHouseStaff(t *testing.T) {
 		{
 			name: "メールアドレスが空文字",
 			args: args{
-				name:         "山田　太郎",
+				displayName:  "山田　太郎",
 				emailAddress: "",
 				password:     "123password^{}$s",
 			},
@@ -61,7 +61,7 @@ func TestRegisterLiveHouseStaff(t *testing.T) {
 		{
 			name: "メールアドレスが重複",
 			args: args{
-				name:         "山田　太郎",
+				displayName:  "山田　太郎",
 				emailAddress: "duplicate@test.com",
 				password:     "123password^{}$s",
 			},
@@ -77,7 +77,7 @@ func TestRegisterLiveHouseStaff(t *testing.T) {
 			container.Make(&uuidRepo)
 
 			store.SetupStaffs(uuidRepo, t)
-			_, err := usecase.RegisterLiveHouseStaff(tt.args.name, tt.args.emailAddress, tt.args.password, context.Background(), container)
+			_, err := usecase.RegisterLiveHouseStaff(tt.args.displayName, tt.args.emailAddress, tt.args.password, context.Background(), container)
 			if tt.want.hasError && err == nil {
 				t.Errorf("エラーが発生していません")
 			}
@@ -94,7 +94,7 @@ func TestRegisterLiveHouseStaff(t *testing.T) {
 				if staff.EmailAddress().String() != tt.args.emailAddress {
 					continue
 				}
-				if staff.Name().String() != tt.args.name {
+				if staff.DisplayName().String() != tt.args.displayName {
 					continue
 				}
 				staffExists = true

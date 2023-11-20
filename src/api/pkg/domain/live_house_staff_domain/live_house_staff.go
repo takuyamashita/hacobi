@@ -2,21 +2,21 @@ package live_house_staff_domain
 
 type LiveHouseStaffIntf interface {
 	Id() LiveHouseStaffId
-	Name() LiveHouseStaffName
+	DisplayName() LiveHouseStaffDisplayName
 	EmailAddress() LiveHouseStaffEmailAddress
 	Password() LiveHouseStaffPassword
 }
 
 type liveHouseStaffImpl struct {
 	id           LiveHouseStaffId
-	name         LiveHouseStaffName
+	displayName  LiveHouseStaffDisplayName
 	emailAddress LiveHouseStaffEmailAddress
 	password     LiveHouseStaffPassword
 }
 
 func NewLiveHouseStaff(
 	id string,
-	name string,
+	displayName string,
 	emailAddress string,
 	password string,
 ) (LiveHouseStaffIntf, error) {
@@ -26,7 +26,7 @@ func NewLiveHouseStaff(
 		return nil, err
 	}
 
-	liveHouseStaffName, err := newLiveHouseStaffName(name)
+	liveHouseStaffDisplayName, err := newLiveHouseStaffDisplayName(displayName)
 	if err != nil {
 		return nil, err
 	}
@@ -43,14 +43,14 @@ func NewLiveHouseStaff(
 
 	return liveHouseStaffImpl{
 		id:           liveHouseStaffId,
-		name:         liveHouseStaffName,
+		displayName:  liveHouseStaffDisplayName,
 		emailAddress: liveHouseStaffEmailAddress,
 		password:     liveHouseStaffPassword,
 	}, nil
 }
 
-func (staff liveHouseStaffImpl) Name() LiveHouseStaffName {
-	return staff.name
+func (staff liveHouseStaffImpl) DisplayName() LiveHouseStaffDisplayName {
+	return staff.displayName
 }
 
 func (staff liveHouseStaffImpl) EmailAddress() LiveHouseStaffEmailAddress {
