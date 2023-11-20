@@ -1,3 +1,9 @@
 {
-    "go.goroot": "/home/yamashita/sdk/go1.21.4"
+    "go.goroot": "/home/yamashita/sdk/go1.21.4",
+    "[typescript]": {
+        "editor.tabSize": 2
+    },
+    "[typescriptreact]": {
+        "editor.tabSize": 2
+    },
 }
