@@ -17,3 +17,6 @@ api-migrate-force:
 
 api-test:
 	docker compose exec api sh -c 'go test --count 1 ./pkg/...'
+
+front-fmt:
+	docker compose exec front sh -c 'npm run fmt'
