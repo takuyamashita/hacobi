@@ -7,3 +7,7 @@ type Token struct {
 func newToken(token string) Token {
 	return Token{token}
 }
+
+func (t Token) String() string {
+	return t.value
+}

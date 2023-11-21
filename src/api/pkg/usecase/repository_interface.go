@@ -5,6 +5,7 @@ import (
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_account_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_email_authorization_domain"
 )
 
 type UuidRepositoryIntf interface {
@@ -13,6 +14,10 @@ type UuidRepositoryIntf interface {
 
 type TransationRepositoryIntf interface {
 	Begin(ctx context.Context) (commit func() error, rollback func() error, err error)
+}
+
+type LiveHouseStaffEmailAuthorizationRepositoryIntf interface {
+	Save(authorization live_house_staff_email_authorization_domain.LiveHouseStaffEmailAuthorizationIntf, ctx context.Context) error
 }
 
 type LiveHouseStaffRepositoryIntf interface {

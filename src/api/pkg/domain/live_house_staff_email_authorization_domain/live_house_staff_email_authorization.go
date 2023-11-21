@@ -12,14 +12,14 @@ type liveHouseStaffEmailAuthorizationImpl struct {
 	token        Token
 }
 
-func NewLiveHouseStaffEmailAuthorization(emailAddress string) LiveHouseStaffEmailAuthorizationIntf {
+func NewLiveHouseStaffEmailAuthorization(emailAddress string, token string) (LiveHouseStaffEmailAuthorizationIntf, error) {
 
 	liveHouseStaffEmailAddress, err := domain.NewLiveHouseStaffEmailAddress(emailAddress)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
 	return &liveHouseStaffEmailAuthorizationImpl{
 		emailAddress: liveHouseStaffEmailAddress,
-	}
+	}, nil
 }
