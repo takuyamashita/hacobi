@@ -1,4 +1,4 @@
-package live_house_staff_domain
+package domain
 
 import (
 	"errors"
@@ -15,7 +15,7 @@ type LiveHouseStaffEmailAddress struct {
 	domain    string
 }
 
-func newLiveHouseStaffEmailAddress(address string) (LiveHouseStaffEmailAddress, error) {
+func NewLiveHouseStaffEmailAddress(address string) (LiveHouseStaffEmailAddress, error) {
 
 	if !mailAddressRegexPatern.MatchString(address) {
 		return LiveHouseStaffEmailAddress{}, errors.New("email is invalid")

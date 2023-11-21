@@ -1,16 +1,18 @@
 package live_house_staff_domain
 
+import "github.com/takuyamashita/hacobi/src/api/pkg/domain"
+
 type LiveHouseStaffIntf interface {
 	Id() LiveHouseStaffId
 	DisplayName() LiveHouseStaffDisplayName
-	EmailAddress() LiveHouseStaffEmailAddress
+	EmailAddress() domain.LiveHouseStaffEmailAddress
 	Password() LiveHouseStaffPassword
 }
 
 type liveHouseStaffImpl struct {
 	id           LiveHouseStaffId
 	displayName  LiveHouseStaffDisplayName
-	emailAddress LiveHouseStaffEmailAddress
+	emailAddress domain.LiveHouseStaffEmailAddress
 	password     LiveHouseStaffPassword
 }
 
@@ -31,7 +33,7 @@ func NewLiveHouseStaff(
 		return nil, err
 	}
 
-	liveHouseStaffEmailAddress, err := newLiveHouseStaffEmailAddress(emailAddress)
+	liveHouseStaffEmailAddress, err := domain.NewLiveHouseStaffEmailAddress(emailAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +55,7 @@ func (staff liveHouseStaffImpl) DisplayName() LiveHouseStaffDisplayName {
 	return staff.displayName
 }
 
-func (staff liveHouseStaffImpl) EmailAddress() LiveHouseStaffEmailAddress {
+func (staff liveHouseStaffImpl) EmailAddress() domain.LiveHouseStaffEmailAddress {
 	return staff.emailAddress
 }
 

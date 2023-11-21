@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/db"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
@@ -42,7 +43,7 @@ func (repo LiveHouseStaff) Save(staff live_house_staff_domain.LiveHouseStaffIntf
 	return nil
 }
 
-func (repo LiveHouseStaff) FindByEmail(emailAddress live_house_staff_domain.LiveHouseStaffEmailAddress, ctx context.Context) (live_house_staff_domain.LiveHouseStaffIntf, error) {
+func (repo LiveHouseStaff) FindByEmail(emailAddress domain.LiveHouseStaffEmailAddress, ctx context.Context) (live_house_staff_domain.LiveHouseStaffIntf, error) {
 
 	var id string
 	var displayName string

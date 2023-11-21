@@ -1,6 +1,10 @@
 package live_house_staff_domain
 
-import "context"
+import (
+	"context"
+
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
+)
 
 type LiveHouseStaffEmailAddressCheckerIntf interface {
 	IsEmailAddressAlreadyRegistered(emailAddress string, ctx context.Context) (bool, error)
@@ -20,7 +24,7 @@ func NewLiveHouseStaffEmailAddressChecker(
 
 func (checker liveHouseStaffEmailAddressCheckerImpl) IsEmailAddressAlreadyRegistered(emailAddress string, ctx context.Context) (bool, error) {
 
-	liveHouseStaffEmailAddress, err := newLiveHouseStaffEmailAddress(emailAddress)
+	liveHouseStaffEmailAddress, err := domain.NewLiveHouseStaffEmailAddress(emailAddress)
 
 	sameEmailAddressStaff, err := checker.liveHouseStaffRepository.FindByEmail(liveHouseStaffEmailAddress, ctx)
 	if err != nil {

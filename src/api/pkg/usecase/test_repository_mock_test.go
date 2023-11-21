@@ -3,6 +3,7 @@ package usecase_test
 import (
 	"context"
 
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_account_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/repository"
@@ -24,7 +25,7 @@ func (repo LiveHouseStaffRepositoryMock) Save(staff live_house_staff_domain.Live
 
 	return nil
 }
-func (repo LiveHouseStaffRepositoryMock) FindByEmail(emailAddress live_house_staff_domain.LiveHouseStaffEmailAddress, ctx context.Context) (live_house_staff_domain.LiveHouseStaffIntf, error) {
+func (repo LiveHouseStaffRepositoryMock) FindByEmail(emailAddress domain.LiveHouseStaffEmailAddress, ctx context.Context) (live_house_staff_domain.LiveHouseStaffIntf, error) {
 
 	var staff live_house_staff_domain.LiveHouseStaffIntf
 	for _, v := range repo.Store.Staffs {
