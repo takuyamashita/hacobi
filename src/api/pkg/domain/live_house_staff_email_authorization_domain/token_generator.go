@@ -1,7 +1,5 @@
 package live_house_staff_email_authorization_domain
 
-const tokenLength = 64
-
 type TokenGeneratorIntf interface {
 	Generate() (Token, error)
 }
@@ -22,5 +20,10 @@ func (t tokenGeneratorImpl) Generate() (Token, error) {
 		return Token{}, err
 	}
 
-	return newToken(tokenStr), nil
+	tkn, err := newToken(tokenStr)
+	if err != nil {
+		return Token{}, err
+	}
+
+	return tkn, nil
 }
