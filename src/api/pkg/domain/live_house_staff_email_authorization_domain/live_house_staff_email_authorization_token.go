@@ -2,7 +2,7 @@ package live_house_staff_email_authorization_domain
 
 import "fmt"
 
-const tokenLength = 64
+const TokenLength = 64
 
 type Token struct {
 	value string
@@ -10,8 +10,8 @@ type Token struct {
 
 func newToken(token string) (Token, error) {
 
-	if len(token) != tokenLength {
-		return Token{}, fmt.Errorf("token length must be %d", tokenLength)
+	if len(token) != TokenLength*2 {
+		return Token{}, fmt.Errorf("token length must be %d", TokenLength)
 	}
 
 	return Token{token}, nil

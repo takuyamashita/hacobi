@@ -15,7 +15,7 @@ func NewTokenGenerator(randomStringRepository RandomStringRepositoryIntf) TokenG
 }
 
 func (t tokenGeneratorImpl) Generate() (Token, error) {
-	tokenStr, err := t.randomStringRepository.Generate(tokenLength)
+	tokenStr, err := t.randomStringRepository.Generate(TokenLength)
 	if err != nil {
 		return Token{}, err
 	}
