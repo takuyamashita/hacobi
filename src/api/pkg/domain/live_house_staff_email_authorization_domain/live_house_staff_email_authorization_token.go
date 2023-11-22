@@ -2,6 +2,8 @@ package live_house_staff_email_authorization_domain
 
 import "fmt"
 
+// TokenLength is the length of the token AS BYTES.
+// [0A 0B 0C 0D 0E 0F] -> 6 bytes -> 12 hex string
 const TokenLength = 64
 
 type Token struct {

@@ -4,13 +4,13 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 
-	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_email_authorization_domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
 )
 
-var _ live_house_staff_email_authorization_domain.RandomStringRepositoryIntf = (*randomStringRepositoryImpl)(nil)
+var _ domain.RandomStringRepositoryIntf = (*randomStringRepositoryImpl)(nil)
 
 type RandomStringRepositoryIntf interface {
-	live_house_staff_email_authorization_domain.RandomStringRepositoryIntf
+	domain.RandomStringRepositoryIntf
 }
 
 type randomStringRepositoryImpl struct{}

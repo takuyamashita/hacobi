@@ -1,29 +1,32 @@
 package live_house_staff_email_authorization_domain
 
+import "github.com/takuyamashita/hacobi/src/api/pkg/domain"
+
 type TokenGeneratorIntf interface {
-	Generate() (Token, error)
+	Generate() (*Token, error)
 }
 
 type tokenGeneratorImpl struct {
-	randomStringRepository RandomStringRepositoryIntf
+	randomStringRepository domain.RandomStringRepositoryIntf
 }
 
-func NewTokenGenerator(randomStringRepository RandomStringRepositoryIntf) TokenGeneratorIntf {
+func NewTokenGenerator(randomStringRepository domain.RandomStringRepositoryIntf) TokenGeneratorIntf {
 	return &tokenGeneratorImpl{
 		randomStringRepository: randomStringRepository,
 	}
 }
 
-func (t tokenGeneratorImpl) Generate() (Token, error) {
+func (t tokenGeneratorImpl) Generate() (*Token, error) {
+
 	tokenStr, err := t.randomStringRepository.Generate(TokenLength)
 	if err != nil {
-		return Token{}, err
+		return nil, err
 	}
 
 	tkn, err := newToken(tokenStr)
 	if err != nil {
-		return Token{}, err
+		return nil, err
 	}
 
-	return tkn, nil
+	return &tkn, nil
 }
