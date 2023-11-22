@@ -5,6 +5,8 @@ import (
 )
 
 type LiveHouseStaffEmailAuthorizationIntf interface {
+	EmailAddress() domain.LiveHouseStaffEmailAddress
+	Token() Token
 }
 
 type liveHouseStaffEmailAuthorizationImpl struct {
@@ -22,4 +24,12 @@ func NewLiveHouseStaffEmailAuthorization(emailAddress string, token string) (Liv
 	return &liveHouseStaffEmailAuthorizationImpl{
 		emailAddress: liveHouseStaffEmailAddress,
 	}, nil
+}
+
+func (auth liveHouseStaffEmailAuthorizationImpl) EmailAddress() domain.LiveHouseStaffEmailAddress {
+	return auth.emailAddress
+}
+
+func (auth liveHouseStaffEmailAuthorizationImpl) Token() Token {
+	return auth.token
 }

@@ -23,7 +23,7 @@ func (t tokenGeneratorImpl) Generate() (*Token, error) {
 		return nil, err
 	}
 
-	tkn, err := newToken(tokenStr)
+	tkn, err := newTokenFromHexString(tokenStr)
 	if err != nil {
 		return nil, err
 	}

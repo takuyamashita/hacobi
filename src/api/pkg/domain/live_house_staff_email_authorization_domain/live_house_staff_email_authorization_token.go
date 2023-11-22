@@ -10,7 +10,7 @@ type Token struct {
 	value string
 }
 
-func newToken(token string) (Token, error) {
+func newTokenFromHexString(token string) (Token, error) {
 
 	if len(token) != TokenLength*2 {
 		return Token{}, fmt.Errorf("token length must be %d", TokenLength)
