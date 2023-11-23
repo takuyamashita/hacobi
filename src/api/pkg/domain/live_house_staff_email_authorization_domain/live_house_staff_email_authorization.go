@@ -21,8 +21,14 @@ func NewLiveHouseStaffEmailAuthorization(emailAddress string, token string) (Liv
 		return nil, err
 	}
 
+	tkn, err := newTokenFromHexString(token)
+	if err != nil {
+		return nil, err
+	}
+
 	return &liveHouseStaffEmailAuthorizationImpl{
 		emailAddress: liveHouseStaffEmailAddress,
+		token:        tkn,
 	}, nil
 }
 
