@@ -4,6 +4,7 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/container"
 	"github.com/takuyamashita/hacobi/src/api/pkg/db"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/event"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_email_authorization_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/repository"
@@ -58,4 +59,8 @@ func SetupDI(container container.Container, db *db.MySQL) {
 		container.Make(&liveHouseStaffEmailAuthRepo)
 		container.Make(&tknGen)
 	*/
+
+	//~~~~~~~~~~~~~~~~~~ event ~~~~~~~~~~~~~~~~~~//
+
+	container.Bind(event.NewLiveHouseStaffEmailAuthorizationCreated)
 }

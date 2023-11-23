@@ -5,8 +5,10 @@ import (
 	"errors"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/container"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/event"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_email_authorization_domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/mail"
 )
 
 func SendLiveHouseStaffEmailAuthorization(emailAddress string, ctx context.Context, container container.Container) error {
@@ -29,6 +31,14 @@ func SendLiveHouseStaffEmailAuthorization(emailAddress string, ctx context.Conte
 	}
 
 	liveHouseStaffEmailAuthorizationRepo.Save(auth, ctx)
+
+	///////////////////////
+
+	eventPublisher := event.NewEventPublisher[live_house_staff_email_authorization_domain.AuthCreatedEvent]()
+	eventPublisher.Subscribe(mail.LiveHouseStaffEmailAuthorization{})
+	eventPublisher.Publish(live_house_staff_email_authorization_domain.AuthCreatedEvent{})
+
+	///////////////////////
 
 	return nil
 }
