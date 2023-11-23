@@ -38,6 +38,8 @@ services:
       - DB_PASSWORD=hacobi
       - DB_HOST=db
       - DB_URL=mysql://hacobi:hacobi@tcp(db:3306)/hacobi
+      - URL_PROTOCOL=http
+      - FQDN=localhost
       - MIGRATION_PATH=/app/migration
     depends_on:
       - db
