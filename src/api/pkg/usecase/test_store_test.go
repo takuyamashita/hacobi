@@ -13,6 +13,7 @@ type Store struct {
 	Staffs                            []live_house_staff_domain.LiveHouseStaffIntf
 	Accounts                          []live_house_account_domain.LiveHouseAccountIntf
 	LiveHouseStaffEmailAuthorizations []live_house_staff_email_authorization_domain.LiveHouseStaffEmailAuthorizationIntf
+	SentMails                         []SentMail
 }
 
 func NewStore() Store {

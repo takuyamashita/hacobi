@@ -2,7 +2,6 @@ package usecase_test
 
 import (
 	"context"
-	"log"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_account_domain"
@@ -94,11 +93,23 @@ func (repo LiveHouseStaffEmailAuthorizationRepositoryMock) Save(auth live_house_
 // ~~~~~~~~~~~domain.MainIntf~~~~~~~~~~~ //
 var _ domain.MailIntf = (*MailMock)(nil)
 
-type MailMock struct{}
+type MailMock struct {
+	Store *Store
+}
+
+type SentMail struct {
+	To      string
+	Subject string
+	Body    string
+}
 
 func (m MailMock) Send(to string, subject string, body string) error {
 
-	log.Printf("to: %s, subject: %s, body: %s", to, subject, body)
+	m.Store.SentMails = append(m.Store.SentMails, SentMail{
+		To:      to,
+		Subject: subject,
+		Body:    body,
+	})
 
 	return nil
 }

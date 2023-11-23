@@ -2,8 +2,10 @@ package usecase_test
 
 import (
 	"context"
+	"strings"
 	"testing"
 
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_email_authorization_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
 
@@ -45,15 +47,42 @@ func TestSendLiveHouseStaffEmailAuthorization(t *testing.T) {
 				return
 			}
 
-			count := 0
+			auth := []live_house_staff_email_authorization_domain.LiveHouseStaffEmailAuthorizationIntf{}
 			for _, v := range store.LiveHouseStaffEmailAuthorizations {
 				if v.EmailAddress().String() == tt.args.emailAddress {
-					count++
+					auth = append(auth, v)
 				}
 			}
 
-			if count != 1 {
-				t.Errorf("SendLiveHouseStaffEmailAuthorizationUsecase.Execute() error = %v, wantErr %v", err, tt.want.hasError)
+			if len(auth) != 1 {
+				t.Fatalf("SendLiveHouseStaffEmailAuthorizationUsecase.Execute() error = %v, wantErr %v", err, tt.want.hasError)
+				return
+			}
+
+			mails := []SentMail{}
+			for _, v := range store.SentMails {
+				if v.To == tt.args.emailAddress {
+					mails = append(mails, v)
+				}
+			}
+
+			if len(mails) != 1 {
+				t.Fatalf("SendLiveHouseStaffEmailAuthorizationUsecase.Execute() error = %v, wantErr %v", err, tt.want.hasError)
+				return
+			}
+
+			if mails[0].To != tt.args.emailAddress {
+				t.Fatalf("SendLiveHouseStaffEmailAuthorizationUsecase.Execute() error = %v, wantErr %v", err, tt.want.hasError)
+				return
+			}
+
+			if mails[0].Subject != "認証メール" {
+				t.Fatalf("SendLiveHouseStaffEmailAuthorizationUsecase.Execute() error = %v, wantErr %v", err, tt.want.hasError)
+				return
+			}
+
+			if !strings.Contains(mails[0].Body, auth[0].Token().String()) {
+				t.Fatalf("SendLiveHouseStaffEmailAuthorizationUsecase.Execute() error = %v, wantErr %v", err, tt.want.hasError)
 				return
 			}
 		})

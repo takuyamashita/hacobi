@@ -19,7 +19,9 @@ func NewTestContainer(store *Store) container.Container {
 	})
 
 	container.Bind(func() domain.MailIntf {
-		return &MailMock{}
+		return &MailMock{
+			Store: store,
+		}
 	})
 
 	container.Bind(func() usecase.TransationRepositoryIntf {
