@@ -23,6 +23,6 @@ func (e LiveHouseStaffEmailAuthorization) Handle(event live_house_staff_email_au
 	e.mail.Send(
 		event.EmailAddress.String(),
 		"認証メール",
-		fmt.Sprintf("%s://%s/live_house_staff_register/?token=%s", os.Getenv("URL_PROTOCOL"), os.Getenv("FQDN"), event.Token.String()),
+		fmt.Sprintf("%s://%s/livehouse/register/staff/%s", os.Getenv("URL_PROTOCOL"), os.Getenv("FQDN"), event.Token.String()),
 	)
 }
