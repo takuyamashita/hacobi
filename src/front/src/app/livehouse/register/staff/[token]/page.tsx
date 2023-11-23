@@ -1,5 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
+import Register from "@/components/LiveHouse/Register";
 
 export const metadata: Metadata = {
   title: "Staff Register",
