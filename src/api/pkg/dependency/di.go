@@ -7,6 +7,7 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/event"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_email_authorization_domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/infrastructure"
 	"github.com/takuyamashita/hacobi/src/api/pkg/repository"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
@@ -14,6 +15,8 @@ import (
 func SetupDI(container container.Container, db *db.MySQL) {
 
 	//~~~~~~~~~~~~~~~~~~ repository ~~~~~~~~~~~~~~~~~~//
+
+	container.Bind(infrastructure.NewMail)
 
 	container.Bind(func() usecase.UuidRepositoryIntf {
 		return repository.NewUuidRepository()
