@@ -44,6 +44,18 @@ func TestSendLiveHouseStaffEmailAuthorization(t *testing.T) {
 				t.Errorf("SendLiveHouseStaffEmailAuthorizationUsecase.Execute() error = %v, wantErr %v", err, tt.want.hasError)
 				return
 			}
+
+			count := 0
+			for _, v := range store.LiveHouseStaffEmailAuthorizations {
+				if v.EmailAddress().String() == tt.args.emailAddress {
+					count++
+				}
+			}
+
+			if count != 1 {
+				t.Errorf("SendLiveHouseStaffEmailAuthorizationUsecase.Execute() error = %v, wantErr %v", err, tt.want.hasError)
+				return
+			}
 		})
 	}
 }

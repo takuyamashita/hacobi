@@ -86,7 +86,7 @@ type LiveHouseStaffEmailAuthorizationRepositoryMock struct {
 
 func (repo LiveHouseStaffEmailAuthorizationRepositoryMock) Save(auth live_house_staff_email_authorization_domain.LiveHouseStaffEmailAuthorizationIntf, ctx context.Context) error {
 
-	repo.Store.LiveHouseStaffEmailAuthorization = append(repo.Store.LiveHouseStaffEmailAuthorization, auth)
+	repo.Store.LiveHouseStaffEmailAuthorizations = append(repo.Store.LiveHouseStaffEmailAuthorizations, auth)
 
 	return nil
 }
