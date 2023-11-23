@@ -11,5 +11,6 @@ func NewMail() domain.MailIntf {
 }
 
 func (m MailImpl) Send(to string, subject string, body string) error {
+
 	return nil
 }
