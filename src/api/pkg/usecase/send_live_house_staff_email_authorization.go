@@ -32,7 +32,7 @@ func SendLiveHouseStaffEmailAuthorization(emailAddress string, ctx context.Conte
 	liveHouseStaffEmailAuthorizationRepo.Save(auth, ctx)
 
 	event := live_house_staff_email_authorization_domain.AuthCreatedEvent{
-		To:           auth.Token(),
+		Token:        auth.Token(),
 		EmailAddress: auth.EmailAddress(),
 	}
 
