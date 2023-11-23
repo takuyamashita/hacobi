@@ -96,3 +96,33 @@ func TestBindSingle(t *testing.T) {
 		t.Errorf("intf1_1 = %d, intf1_2 = %d", intf1_1.GetN(), intf1_2.GetN())
 	}
 }
+
+type Intf3[T string] interface {
+	ABC() T
+}
+
+type Impl3[T string] struct {
+	n T
+}
+
+func (impl3 *Impl3[T]) ABC() T {
+	return impl3.n
+}
+
+func TestGenerics(t *testing.T) {
+
+	c := container.NewContainer()
+
+	c.BindSingle(func() Intf3[string] {
+		return &Impl3[string]{
+			n: "abc",
+		}
+	})
+
+	var intf3 Intf3[string]
+	c.Make(&intf3)
+
+	if intf3.ABC() != "abc" {
+		t.Errorf("intf3.ABC() = %v, want %v", intf3.ABC(), "abc")
+	}
+}
