@@ -83,6 +83,7 @@ func (app *application) setupRoutes() {
 
 	liveHouseStaffController := web.NewliveHouseStaffController(app.container)
 
+	app.server.POST("/api/v1/send_live_house_staff_email_authorization", liveHouseStaffController.SendLiveHouseStaffRegisterMail)
 	app.server.POST("/api/v1/live_house_staff", liveHouseStaffController.RegisterStaff)
 	app.server.POST("/api/v1/live_house_account", liveHouseStaffController.RegisterAccount)
 }

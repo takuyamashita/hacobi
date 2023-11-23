@@ -16,6 +16,16 @@ func NewliveHouseStaffController(container container.Container) liveHouseStaffCo
 	}
 }
 
+func (ctrl liveHouseStaffController) SendLiveHouseStaffRegisterMail(c echo.Context) error {
+
+	err := usecase.SendLiveHouseStaffEmailAuthorization("test@test.com", c.Request().Context(), ctrl.container)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(200, "ok")
+}
+
 // curl -X POST -H "Content-Type: application/json" -d '{}' localhost/api/v1/live_house_staff
 func (ctrl liveHouseStaffController) RegisterStaff(c echo.Context) error {
 
