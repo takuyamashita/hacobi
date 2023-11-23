@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Button from "@/component/Button";
+import Button from "@/components/Button";
 
 const Login = () => {
   const [email, setEmail] = React.useState("");
