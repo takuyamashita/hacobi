@@ -13,9 +13,9 @@ func NewEventPublisher[T Event]() EventPublisherIntf[T] {
 	return &eventPublisherImpl[T]{}
 }
 
-func (p eventPublisherImpl[T]) Subscribe(subscribers EventSubscriber[T]) {
+func (p *eventPublisherImpl[T]) Subscribe(subscriber EventSubscriber[T]) {
 
-	p.subscribers = append(p.subscribers, subscribers)
+	p.subscribers = append(p.subscribers, subscriber)
 }
 
 func (p eventPublisherImpl[T]) Publish(event T) {
