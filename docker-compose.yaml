@@ -54,3 +54,8 @@ services:
     volumes:
       - db-data:/var/lib/mysql
   
+  mail:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+  
