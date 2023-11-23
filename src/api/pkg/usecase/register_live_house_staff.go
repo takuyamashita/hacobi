@@ -8,7 +8,6 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/event"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_email_authorization_domain"
-	"github.com/takuyamashita/hacobi/src/api/pkg/domain/mail"
 )
 
 func SendLiveHouseStaffEmailAuthorization(emailAddress string, ctx context.Context, container container.Container) error {
@@ -16,9 +15,11 @@ func SendLiveHouseStaffEmailAuthorization(emailAddress string, ctx context.Conte
 	var (
 		liveHouseStaffEmailAuthorizationRepo LiveHouseStaffEmailAuthorizationRepositoryIntf
 		tokenGenerator                       live_house_staff_email_authorization_domain.TokenGeneratorIntf
+		eventPublisher                       event.EventPublisherIntf[live_house_staff_email_authorization_domain.AuthCreatedEvent]
 	)
 	container.Make(&liveHouseStaffEmailAuthorizationRepo)
 	container.Make(&tokenGenerator)
+	container.Make(&eventPublisher)
 
 	token, err := tokenGenerator.Generate()
 	if err != nil {
@@ -32,13 +33,7 @@ func SendLiveHouseStaffEmailAuthorization(emailAddress string, ctx context.Conte
 
 	liveHouseStaffEmailAuthorizationRepo.Save(auth, ctx)
 
-	///////////////////////
-
-	eventPublisher := event.NewEventPublisher[live_house_staff_email_authorization_domain.AuthCreatedEvent]()
-	eventPublisher.Subscribe(mail.LiveHouseStaffEmailAuthorization{})
 	eventPublisher.Publish(live_house_staff_email_authorization_domain.AuthCreatedEvent{})
-
-	///////////////////////
 
 	return nil
 }
