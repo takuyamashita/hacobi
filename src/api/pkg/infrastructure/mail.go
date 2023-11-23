@@ -18,7 +18,7 @@ func NewMail() domain.MailIntf {
 
 func (m MailImpl) Send(to string, subject string, body string) error {
 
-	from := "testfrom"
+	from := "testfrom@test.com"
 	smtpServer := fmt.Sprintf("%s:%d", "mail", 1025)
 	auth := smtp.CRAMMD5Auth("username", "password")
 	msg := []byte(fmt.Sprintf("To: %s\nSubject: %s\n\n%s", "", subject, body))
