@@ -11,6 +11,6 @@ type AuthnticatorTransport string
 
 type PublicKeyCredentialDescriptor struct {
 	Type       PublicKeyCredentialType
-	ID         []byte
+	Id         []byte
 	Transports []AuthnticatorTransport
 }
