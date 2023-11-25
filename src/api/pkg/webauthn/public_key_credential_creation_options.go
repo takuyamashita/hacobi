@@ -11,7 +11,7 @@ type PublicKeyCredentialCreationOptions struct {
 	Challenge        Challenge
 	PubKeyCredParams []PublicKeyCredentialParameters
 
-	Timeout uint
+	Timeout uint64
 
 	// このメンバは、単一の認証子で同じアカウントに対する複数のクレデンシャルの作成を制限したい依拠当事者による使用を意図している。
 	// 新しいクレデンシャルが、このパラメータに列挙されたクレデンシャルのいずれかを含む認証機で作成される場合、クライアントはエラーを返すように要求される。
