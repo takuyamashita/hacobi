@@ -1,5 +1,6 @@
 package webauthn
 
+// https://www.w3.org/TR/webauthn/#sctn-attested-credential-data
 type AttestedCredentialData struct {
 	AAGUID       []byte `json:"aaguid"`
 	CredentialID []byte `json:"credential_id"`
