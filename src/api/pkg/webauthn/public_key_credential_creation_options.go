@@ -8,7 +8,7 @@ type PublicKeyCredentialCreationOptions struct {
 	Rp   PublicKeyCreadentialRpEntity
 	User PublicKeyCredentialUserEntity
 
-	Challenge        Challenge
+	Challenge        BufferSource
 	PubKeyCredParams []PublicKeyCredentialParameters
 
 	Timeout uint64

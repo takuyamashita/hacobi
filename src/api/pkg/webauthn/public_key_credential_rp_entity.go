@@ -1,6 +1,6 @@
 package webauthn
 
 type PublicKeyCreadentialRpEntity struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
+	Id   BufferSource `json:"id,omitempty"`
+	Name string       `json:"name"`
 }
