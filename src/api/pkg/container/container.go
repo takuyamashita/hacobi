@@ -25,7 +25,7 @@ func NewContainer() container {
 type resolverInfo struct {
 	isSingleton bool
 	resolver    func() reflect.Value
-	incetance   interface{}
+	instance    interface{}
 }
 
 type container map[reflect.Type]*resolverInfo
@@ -63,9 +63,9 @@ func (c container) Make(intf interface{}) {
 
 	intfReflect := reflect.TypeOf(intf)
 
-	generatedIncetance := c.retrieveInsetance(intfReflect.Elem())
+	generatedinstance := c.retrieveInsetance(intfReflect.Elem())
 
-	reflect.ValueOf(intf).Elem().Set(generatedIncetance)
+	reflect.ValueOf(intf).Elem().Set(generatedinstance)
 }
 
 func (c container) retrieveInsetance(key reflect.Type) reflect.Value {
@@ -75,10 +75,10 @@ func (c container) retrieveInsetance(key reflect.Type) reflect.Value {
 	}
 
 	if c[key].isSingleton {
-		if c[key].incetance == nil {
-			c[key].incetance = c[key].resolver().Interface()
+		if c[key].instance == nil {
+			c[key].instance = c[key].resolver().Interface()
 		}
-		return reflect.ValueOf(c[key].incetance)
+		return reflect.ValueOf(c[key].instance)
 	}
 
 	return c[key].resolver()
