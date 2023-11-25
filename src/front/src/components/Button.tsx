@@ -2,7 +2,7 @@ import React, { ButtonHTMLAttributes } from "react";
 
 type Props = {
   type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   children?: React.ReactNode;
 };
 
