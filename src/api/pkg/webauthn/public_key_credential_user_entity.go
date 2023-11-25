@@ -1,5 +1,7 @@
 package webauthn
 
 type PublicKeyCredentialUserEntity struct {
-	Id string
+	Id          string `json:"id"`
+	Name        string `json:"name"`
+	DisplayName string `json:"displayName"`
 }
