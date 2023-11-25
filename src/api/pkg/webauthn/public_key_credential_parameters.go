@@ -46,6 +46,6 @@ type PublicKeyCredentialType string
 type COSEAlgorithmIdentifier int
 
 type PublicKeyCredentialParameters struct {
-	Type PublicKeyCredentialType
-	Alg  COSEAlgorithmIdentifier
+	Type PublicKeyCredentialType `json:"type"`
+	Alg  COSEAlgorithmIdentifier `json:"alg"`
 }
