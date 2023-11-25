@@ -1,5 +1,7 @@
 package webauthn
 
+import "encoding/base64"
+
 const (
 	AuthnticatorTransportUSB AuthnticatorTransport = "usb"
 	AuthnticatorTransportNFC AuthnticatorTransport = "nfc"
@@ -9,8 +11,15 @@ const (
 
 type AuthnticatorTransport string
 
+type CredentialKey []byte
+
+func (k CredentialKey) MarshalJSON() ([]byte, error) {
+
+	return []byte(`"` + base64.RawURLEncoding.EncodeToString(k) + `"`), nil
+}
+
 type PublicKeyCredentialDescriptor struct {
-	Type       PublicKeyCredentialType
-	Id         []byte
-	Transports []AuthnticatorTransport
+	Type       PublicKeyCredentialType `json:"type"`
+	Id         CredentialKey           `json:"id"`
+	Transports []AuthnticatorTransport `json:"transports"`
 }
