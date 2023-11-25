@@ -24,3 +24,8 @@ func (c Challenge) URLSafeBase64() string {
 
 	return base64.RawURLEncoding.EncodeToString(c)
 }
+
+func (c Challenge) MarshalJSON() ([]byte, error) {
+
+	return []byte(`"` + c.URLSafeBase64() + `"`), nil
+}
