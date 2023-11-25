@@ -15,9 +15,9 @@ type PublicKeyCredentialCreationOptions struct {
 
 	// このメンバは、単一の認証子で同じアカウントに対する複数のクレデンシャルの作成を制限したい依拠当事者による使用を意図している。
 	// 新しいクレデンシャルが、このパラメータに列挙されたクレデンシャルのいずれかを含む認証機で作成される場合、クライアントはエラーを返すように要求される。
-	ExcludeCredentials    []PublicKeyCredentialDescriptor
-	AuthnticatorSelection AuthenticatorSelectionCriteria
-	Attestation           AttestationConveyancePreference
+	ExcludeCredentials     []PublicKeyCredentialDescriptor
+	AuthenticatorSelection AuthenticatorSelectionCriteria
+	Attestation            AttestationConveyancePreference
 
 	// 5 Web Authentication API」で定義されている、公開鍵クレデンシャルを生成するメカニズム、 およびAuthenticationアサーションをリクエストおよび生成するメカニズムは、 特定の使用ケースに合わせて拡張することができる。各ケースには、登録拡張および/または認証拡張を定義することで対応する。
 	//すべての拡張はクライアント拡張である。これは、拡張がクライアントとの通信およびク ライアントによる処理を伴うことを意味する。クライアント拡張は、以下のステップとデータを定義する：
