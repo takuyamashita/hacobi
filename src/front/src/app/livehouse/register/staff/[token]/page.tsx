@@ -12,8 +12,7 @@ type Props = {
   };
 };
 
-const Page = ({params: {token}}: Props) => {
-
+const Page = ({ params: { token } }: Props) => {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <Register token={token} />

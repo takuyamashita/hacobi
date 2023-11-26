@@ -86,4 +86,14 @@ func (app *application) setupRoutes() {
 	app.server.POST("/api/v1/send_live_house_staff_email_authorization", liveHouseStaffController.SendLiveHouseStaffRegisterMail)
 	app.server.POST("/api/v1/live_house_staff", liveHouseStaffController.RegisterStaff)
 	app.server.POST("/api/v1/live_house_account", liveHouseStaffController.RegisterAccount)
+
+	app.server.GET("/api/v1/auth", func(c echo.Context) error {
+
+		return c.JSON(200, "ok")
+	})
+
+	app.server.POST("/api/v1/auth", func(c echo.Context) error {
+
+		return c.JSON(200, "ok")
+	})
 }
