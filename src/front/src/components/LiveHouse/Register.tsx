@@ -64,7 +64,7 @@ const Register = ({ token }: Props) => {
     // decode excludeCredentials(Array Buffer) to Uint8Array
     const excludeCredentials = data.excludeCredentials
       ? data.ExcludeCredentials.map(
-          (credential: PublicKeyCredentialDescriptor) => {
+          (credential: { id: string; type: string; transports: string[] }) => {
             return {
               id: stringToUint8Array(credential.id),
               type: credential.type,
