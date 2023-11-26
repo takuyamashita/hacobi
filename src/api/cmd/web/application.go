@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -15,6 +16,9 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/container"
 	mysql "github.com/takuyamashita/hacobi/src/api/pkg/db"
 	"github.com/takuyamashita/hacobi/src/api/pkg/dependency"
+
+	"github.com/go-webauthn/webauthn/protocol"
+	"github.com/go-webauthn/webauthn/protocol/webauthncose"
 )
 
 type Application interface {
@@ -89,11 +93,53 @@ func (app *application) setupRoutes() {
 
 	app.server.GET("/api/v1/auth", func(c echo.Context) error {
 
-		return c.JSON(200, "ok")
+		challenge, err := protocol.CreateChallenge()
+		if err != nil {
+			return c.JSON(500, err)
+		}
+
+		c.Request().AddCookie(&http.Cookie{
+			Name:  "challenge",
+			Value: challenge.String(),
+		})
+
+		option := protocol.PublicKeyCredentialCreationOptions{
+			Challenge: challenge,
+			RelyingParty: protocol.RelyingPartyEntity{
+				CredentialEntity: protocol.CredentialEntity{
+					Name: "localhost",
+					Icon: "https://localhost/favicon.ico",
+				},
+			},
+			User: protocol.UserEntity{
+				ID:          []byte("1234567890"),
+				DisplayName: "test-user",
+			},
+			CredentialExcludeList: []protocol.CredentialDescriptor{},
+			Parameters: []protocol.CredentialParameter{
+				{
+					Type:      protocol.PublicKeyCredentialType,
+					Algorithm: webauthncose.AlgES256,
+				},
+				{
+					Type:      protocol.PublicKeyCredentialType,
+					Algorithm: webauthncose.AlgRS256,
+				},
+			},
+			Timeout: int((5 * time.Minute).Milliseconds()),
+		}
+
+		return c.JSON(200, option)
 	})
 
 	app.server.POST("/api/v1/auth", func(c echo.Context) error {
 
-		return c.JSON(200, "ok")
+		parsedResponse, err := protocol.ParseCredentialCreationResponseBody(c.Request().Body)
+		if err != nil {
+			log.Println(err)
+			return c.JSON(500, err)
+		}
+
+		return c.JSON(200, parsedResponse)
 	})
 }

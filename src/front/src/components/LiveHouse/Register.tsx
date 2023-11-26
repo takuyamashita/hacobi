@@ -13,8 +13,15 @@ const Register = ({ token }: Props) => {
   ) => {
     e.preventDefault();
 
-    const base64URLSafeToUint8Array = (base64URLSafe: string) => {
+    const stringToUint8Array = (str: string) => {
+      const array = new Uint8Array(str.length);
+      for (let i = 0; i < str.length; i++) {
+        array[i] = str.charCodeAt(i);
+      }
+      return array;
+    };
 
+    const base64URLSafeToUint8Array = (base64URLSafe: string) => {
       if (base64URLSafe === undefined || base64URLSafe === null) {
         return new Uint8Array();
       }
@@ -22,15 +29,13 @@ const Register = ({ token }: Props) => {
       // padding
       const pad = (s: string) => {
         while (s.length % 4 !== 0) {
-          s += '=';
+          s += "=";
         }
         return s;
       };
 
       // base64URLSafe to base64
-      const base64 = pad(base64URLSafe)
-        .replace(/\-/g, '+')
-        .replace(/_/g, '/');
+      const base64 = pad(base64URLSafe).replace(/\-/g, "+").replace(/_/g, "/");
 
       // base64 to Uint8Array
       const raw = window.atob(base64);
@@ -40,7 +45,7 @@ const Register = ({ token }: Props) => {
         array[i] = raw.charCodeAt(i);
       }
       return array;
-    }
+    };
 
     const res = await fetch("/api/v1/auth", {
       method: "GET",
@@ -53,42 +58,46 @@ const Register = ({ token }: Props) => {
 
     if (!window.PublicKeyCredential) return;
 
-    const a = base64URLSafeToUint8Array(data.Challenge);
+    // decode challenge(Array Buffer) to Uint8Array
+    const a = base64URLSafeToUint8Array(data.challenge);
 
-    const excludeCredentials = data.ExcludeCredentials.map( (credential: PublicKeyCredentialDescriptor) => {
-      return {
-        id: base64URLSafeToUint8Array(credential.id),
-        type: credential.type,
-        transports: credential.transports,
-      };
-    });
+    // decode excludeCredentials(Array Buffer) to Uint8Array
+    const excludeCredentials = data.excludeCredentials
+      ? data.ExcludeCredentials.map(
+          (credential: PublicKeyCredentialDescriptor) => {
+            return {
+              id: stringToUint8Array(credential.id),
+              type: credential.type,
+              transports: credential.transports,
+            };
+          },
+        )
+      : [];
 
-    const rp = 'id' in data.Rp ?  {
-      ...data.Rp,
-      id: base64URLSafeToUint8Array(data.Rp.id),
-    }: data.Rp;
+    const rp = {
+      name: data.rp.name,
+    };
 
     const user = {
-      ...data.User,
-      id: base64URLSafeToUint8Array(data.User.id),
+      ...data.user,
+      id: base64URLSafeToUint8Array(data.user.id),
     };
 
     const pubKeyOptions: PublicKeyCredentialCreationOptions = {
       challenge: a,
       rp: rp,
       user: user,
-      authenticatorSelection: data.AuthenticatorSelection,
-      pubKeyCredParams: data.PubKeyCredParams,
-      attestation: data.Attestation,
-      timeout: data.Timeout,
+      authenticatorSelection: data.authenticatorSelection,
+      pubKeyCredParams: data.pubKeyCredParams,
+      attestation: data.attestation,
+      timeout: data.timeout,
       excludeCredentials: excludeCredentials,
       extensions: undefined,
     };
 
-
-    const publickeyCredential = await navigator.credentials.create({
+    const publickeyCredential = (await navigator.credentials.create({
       publicKey: pubKeyOptions,
-    }) as PublicKeyCredential;
+    })) as PublicKeyCredential;
 
     console.log(publickeyCredential);
     console.log(publickeyCredential.response.clientDataJSON);
@@ -100,14 +109,20 @@ const Register = ({ token }: Props) => {
     console.log(clientDataJSON.challenge);
     console.log(publickeyCredential.response);
 
-    const r = publickeyCredential.response as AuthenticatorAttestationResponse
+    const r = publickeyCredential.response as AuthenticatorAttestationResponse;
 
     const pubKey = r.getPublicKey();
     if (!pubKey) return;
 
-    console.log("attestationObject", new TextDecoder().decode(r.attestationObject));
+    console.log(
+      "attestationObject",
+      new TextDecoder().decode(r.attestationObject),
+    );
     console.log("clientDataJSON", new TextDecoder().decode(r.clientDataJSON));
-    console.log("authenticatorData", new TextDecoder().decode(r.getAuthenticatorData()));
+    console.log(
+      "authenticatorData",
+      new TextDecoder().decode(r.getAuthenticatorData()),
+    );
     console.log("transports", r.getTransports());
     console.log("publicKeyAlgorithm", r.getPublicKeyAlgorithm());
     console.log("signature", new TextDecoder().decode(pubKey));
@@ -118,14 +133,29 @@ const Register = ({ token }: Props) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id : publickeyCredential.id,
-        rawId: btoa(String.fromCharCode(...(new Uint8Array(publickeyCredential.rawId)))),
+        id: publickeyCredential.id,
+        rawId: btoa(
+          String.fromCharCode(...new Uint8Array(publickeyCredential.rawId)),
+        )
+          .replace(/\+/g, "-")
+          .replace(/\//g, "_")
+          .replace(/=/g, ""),
         type: publickeyCredential.type,
         authenticatorAttachment: publickeyCredential.authenticatorAttachment,
         clientExtensionResults: publickeyCredential.getClientExtensionResults(),
         response: {
-          attestationObject: btoa(String.fromCharCode(...(new Uint8Array(r.attestationObject)))),
-          clientDataJSON: btoa(String.fromCharCode(...(new Uint8Array(r.clientDataJSON)))),
+          attestationObject: btoa(
+            String.fromCharCode(...new Uint8Array(r.attestationObject)),
+          )
+            .replace(/\+/g, "-")
+            .replace(/\//g, "_")
+            .replace(/=/g, ""),
+          clientDataJSON: btoa(
+            String.fromCharCode(...new Uint8Array(r.clientDataJSON)),
+          )
+            .replace(/\+/g, "-")
+            .replace(/\//g, "_")
+            .replace(/=/g, ""),
           transports: r.getTransports(),
           publicKeyAlgorithm: r.getPublicKeyAlgorithm(),
         },
