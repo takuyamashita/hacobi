@@ -91,7 +91,7 @@ func (app *application) setupRoutes() {
 	app.server.POST("/api/v1/live_house_staff", liveHouseStaffController.RegisterStaff)
 	app.server.POST("/api/v1/live_house_account", liveHouseStaffController.RegisterAccount)
 
-	app.server.GET("/api/v1/auth", func(c echo.Context) error {
+	app.server.POST("/api/v1/ceremony/start", func(c echo.Context) error {
 
 		challenge, err := protocol.CreateChallenge()
 		if err != nil {

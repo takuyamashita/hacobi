@@ -47,7 +47,7 @@ const Register = ({ token }: Props) => {
       return array;
     };
 
-    const res = await fetch("/api/v1/auth", {
+    const res = await fetch("/api/v1/ceremony/start", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
