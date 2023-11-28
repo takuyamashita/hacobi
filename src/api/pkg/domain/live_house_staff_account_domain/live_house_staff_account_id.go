@@ -1,5 +1,11 @@
 package live_house_staff_account_domain
 
 type LiveHouseStaffAccountId struct {
-	value uint64
+	value string
+}
+
+func NewLiveHouseStaffAccountId(value string) LiveHouseStaffAccountId {
+	return LiveHouseStaffAccountId{
+		value: value,
+	}
 }

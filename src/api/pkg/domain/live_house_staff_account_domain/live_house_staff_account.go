@@ -1,6 +1,8 @@
 package live_house_staff_account_domain
 
-import "github.com/takuyamashita/hacobi/src/api/pkg/domain"
+import (
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
+)
 
 type LiveHouseStaffAccountIntf interface {
 	EmailAddress() domain.LiveHouseStaffEmailAddress
@@ -18,18 +20,46 @@ type LiveHouseStaffAccountImpl struct {
 	provisionalRegistration LiveHouseStaffAccountProvisionalRegistrationIntf
 }
 
-func NewLiveHouseStaffAccount(
-	id LiveHouseStaffAccountId,
-	email domain.LiveHouseStaffEmailAddress,
-	isProvisional bool,
-	provisionalRegistration LiveHouseStaffAccountProvisionalRegistrationIntf,
-) LiveHouseStaffAccountIntf {
+type ProvisionalRegistrationParam struct {
+	Token string
+}
+
+type NewLiveHouseStaffAccountParams struct {
+	Id                      string
+	Email                   string
+	IsProvisional           bool
+	ProvisionalRegistration *ProvisionalRegistrationParam
+}
+
+func NewLiveHouseStaffAccount(params NewLiveHouseStaffAccountParams) (account LiveHouseStaffAccountIntf, err error) {
+
+	id := NewLiveHouseStaffAccountId(params.Id)
+
+	email, err := domain.NewLiveHouseStaffEmailAddress(params.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	if params.ProvisionalRegistration == nil {
+		return &LiveHouseStaffAccountImpl{
+			id:                      id,
+			email:                   email,
+			isProvisional:           params.IsProvisional,
+			provisionalRegistration: nil,
+		}, nil
+	}
+
+	provisionalRegistration, err := NewLiveHouseStaffAccountProvisionalRegistration(params.ProvisionalRegistration.Token)
+	if err != nil {
+		return nil, err
+	}
+
 	return &LiveHouseStaffAccountImpl{
 		id:                      id,
 		email:                   email,
-		isProvisional:           isProvisional,
+		isProvisional:           params.IsProvisional,
 		provisionalRegistration: provisionalRegistration,
-	}
+	}, nil
 }
 
 func (account LiveHouseStaffAccountImpl) EmailAddress() domain.LiveHouseStaffEmailAddress {

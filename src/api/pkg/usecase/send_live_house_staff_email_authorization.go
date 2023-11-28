@@ -11,6 +11,7 @@ import (
 func SendLiveHouseStaffEmailAuthorization(emailAddress string, ctx context.Context, container container.Container) error {
 
 	var (
+		uuidRepo                  UuidRepositoryIntf
 		liveHouseStaffAccountRepo LiveHouseStaffAccountRepositoryIntf
 		tokenGenerator            live_house_staff_account_domain.TokenGeneratorIntf
 		eventPublisher            event.EventPublisherIntf[live_house_staff_account_domain.AuthCreatedEvent]
@@ -24,13 +25,23 @@ func SendLiveHouseStaffEmailAuthorization(emailAddress string, ctx context.Conte
 		return err
 	}
 
-	registration, err := live_house_staff_account_domain.NewLiveHouseStaffAccountProvisionalRegistration(token.String())
+	id, err := uuidRepo.Generate()
 	if err != nil {
 		return err
 	}
 
+	account, err := live_house_staff_account_domain.NewLiveHouseStaffAccount(live_house_staff_account_domain.NewLiveHouseStaffAccountParams{
+		Id:            id,
+		Email:         emailAddress,
+		IsProvisional: true,
+		ProvisionalRegistration: &live_house_staff_account_domain.ProvisionalRegistrationParam{
+			Token: token.String(),
+		},
+	})
+
 	event := live_house_staff_account_domain.AuthCreatedEvent{
-		Token: registration.Token(),
+		Token:        *account.ProvisionalToken(),
+		EmailAddress: account.EmailAddress(),
 	}
 
 	eventPublisher.Publish(event)
