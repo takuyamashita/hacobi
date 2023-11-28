@@ -102,6 +102,18 @@ func (repo LiveHouseStaffAccountRepositoryMock) FindByEmail(emailAddress domain.
 	return account, nil
 }
 
+func (repo LiveHouseStaffAccountRepositoryMock) FindByProvisionalRegistrationToken(token live_house_staff_account_domain.Token, ctx context.Context) (live_house_staff_account_domain.LiveHouseStaffAccountIntf, error) {
+
+	var account live_house_staff_account_domain.LiveHouseStaffAccountIntf
+	for _, v := range repo.Store.LiveHouseStaffAccounts {
+		if v.ProvisionalToken().String() == token.String() {
+			account = v
+		}
+	}
+
+	return account, nil
+}
+
 // ~~~~~~~~~~~domain.MainIntf~~~~~~~~~~~ //
 var _ domain.MailIntf = (*MailMock)(nil)
 
