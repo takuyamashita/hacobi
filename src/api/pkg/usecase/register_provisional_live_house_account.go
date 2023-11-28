@@ -66,3 +66,49 @@ func RegisterProvisionalLiveHouseAccount(emailAddress string, ctx context.Contex
 
 	return nil
 }
+
+func StartCeremony(token string, ctx context.Context, container container.Container) error {
+
+	var (
+		publicKeyCredential       CredentialKeyIntf
+		liveHouseStaffAccountRepo LiveHouseStaffAccountRepositoryIntf
+	)
+	container.Make(&publicKeyCredential)
+	container.Make(&liveHouseStaffAccountRepo)
+
+	tkn, err := live_house_staff_account_domain.NewTokenFromHexString(token)
+	if err != nil {
+		return err
+	}
+
+	account, err := liveHouseStaffAccountRepo.FindByProvisionalRegistrationToken(tkn, ctx)
+	if err != nil {
+		return err
+	}
+	if account == nil {
+		return errors.New("account not found")
+	}
+
+	challenge, err := publicKeyCredential.CreateChallenge()
+	if err != nil {
+		return err
+	}
+
+	c, err := live_house_staff_account_domain.NewCredentialChallenge(
+		live_house_staff_account_domain.NewChallengeFromBytes(challenge),
+		time.Now(),
+	)
+	if err != nil {
+		return err
+	}
+
+	if err := account.AddCredentialChallenge(c); err != nil {
+		return err
+	}
+
+	if err := liveHouseStaffAccountRepo.Save(account, ctx); err != nil {
+		return err
+	}
+
+	return nil
+}

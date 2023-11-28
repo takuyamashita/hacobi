@@ -14,7 +14,7 @@ type LiveHouseStaffAccountProvisionalRegistrationImpl struct {
 
 func NewLiveHouseStaffAccountProvisionalRegistration(token string, createdAt time.Time) (LiveHouseStaffAccountProvisionalRegistrationIntf, error) {
 
-	tkn, err := newTokenFromHexString(token)
+	tkn, err := NewTokenFromHexString(token)
 	if err != nil {
 		return nil, err
 	}

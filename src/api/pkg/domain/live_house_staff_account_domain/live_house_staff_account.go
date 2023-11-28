@@ -12,6 +12,8 @@ type LiveHouseStaffAccountIntf interface {
 	EmailAddress() domain.LiveHouseStaffEmailAddress
 	IsProvisional() bool
 	ProvisionalToken() *Token
+	CredentialChallenges() []CredentialChallengeIntf
+	AddCredentialChallenge(challenge CredentialChallengeIntf) error
 }
 
 type LiveHouseStaffAccountImpl struct {
@@ -23,6 +25,9 @@ type LiveHouseStaffAccountImpl struct {
 
 	// 仮登録の場合のみ保持する
 	provisionalRegistration LiveHouseStaffAccountProvisionalRegistrationIntf
+
+	// PublickKeyを登録する際に必要なChallenge
+	credentialChallenges []CredentialChallengeIntf
 }
 
 type ProvisionalRegistrationParam struct {
@@ -111,4 +116,23 @@ func (account LiveHouseStaffAccountImpl) ProvisionalToken() *Token {
 
 func (account LiveHouseStaffAccountImpl) IsProvisional() bool {
 	return account.isProvisional
+}
+
+func (account *LiveHouseStaffAccountImpl) AddCredentialChallenge(challenge CredentialChallengeIntf) error {
+
+	if !account.isProvisional {
+		return errors.New("仮登録でない場合は、CredentialChallengeを追加できません。")
+	}
+
+	if account.provisionalRegistration == nil {
+		return errors.New("仮登録の場合は、ProvisionalRegistrationはnilではありません。")
+	}
+
+	account.credentialChallenges = append(account.credentialChallenges, challenge)
+
+	return nil
+}
+
+func (account LiveHouseStaffAccountImpl) CredentialChallenges() []CredentialChallengeIntf {
+	return account.credentialChallenges
 }

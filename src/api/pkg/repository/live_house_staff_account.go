@@ -58,6 +58,26 @@ func (repo LiveHouseStaffAccountRepositoryImpl) Save(
 		account.ProvisionalToken().String(),
 	)
 
+	stmt := "REPLACE INTO live_house_staff_account_credential_challenges (live_house_staff_account_id, challenge) VALUES "
+	args := []interface{}{}
+	for i, v := range account.CredentialChallenges() {
+		args = append(args, account.Id().String(), v.Challenge().String())
+		if i == 0 {
+			stmt += "(?, ?)"
+			continue
+		}
+		stmt += ", (?, ?)"
+	}
+	_, err = tx.ExecContext(
+		ctx,
+		stmt,
+		args...,
+	)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	return tx.Commit()
 
 }
@@ -130,6 +150,64 @@ func (repo LiveHouseStaffAccountRepositoryImpl) FindByEmail(
 		Id:            id,
 		Email:         email,
 		IsProvisional: int2Bool(isProvisional),
+	})
+
+}
+
+func (repo LiveHouseStaffAccountRepositoryImpl) FindByProvisionalRegistrationToken(
+	token live_house_staff_account_domain.Token,
+	ctx context.Context,
+) (live_house_staff_account_domain.LiveHouseStaffAccountIntf, error) {
+
+	row := repo.db.QueryRowContext(
+		ctx,
+		`
+		SELECT 
+			live_house_staff_accounts.id
+			live_house_staff_accounts.email
+			live_house_staff_accounts.is_provisional
+			live_house_staff_account_provisional_registrations.token
+			live_house_staff_account_provisional_registrations.created_at
+		FROM live_house_staff_account_provisional_registrations
+		INNER JOIN live_house_staff_accounts ON live_house_staff_accounts.id = live_house_staff_account_provisional_registrations.live_house_staff_account_id	
+		WHERE live_house_staff_account_provisional_registrations.token = ?
+		`,
+		token.String(),
+	)
+
+	var (
+		accountId     string
+		email         string
+		isProvisional int
+		tokenStr      string
+		createdAt     []uint8
+	)
+	if err := row.Scan(&accountId, &email, &isProvisional, &tokenStr, &createdAt); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	isProvisionalBool := func(i int) bool {
+		if i == 1 {
+			return true
+		}
+		return false
+	}(isProvisional)
+	createdAtTime, err := time.Parse("2006-01-02 15:04:05", string(createdAt))
+	if err != nil {
+		return nil, err
+	}
+
+	return live_house_staff_account_domain.NewLiveHouseStaffAccount(live_house_staff_account_domain.NewLiveHouseStaffAccountParams{
+		Id:            accountId,
+		Email:         email,
+		IsProvisional: isProvisionalBool,
+		ProvisionalRegistration: &live_house_staff_account_domain.ProvisionalRegistrationParam{
+			Token:     tokenStr,
+			CreatedAt: createdAtTime,
+		},
 	})
 
 }

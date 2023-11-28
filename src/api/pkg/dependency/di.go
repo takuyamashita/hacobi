@@ -50,6 +50,10 @@ func SetupDI(container container.Container, db *db.MySQL) {
 		return repository.NewliveHouseAccount(db)
 	})
 
+	//~~~~~~~~~~~~~~~~~~ infra ~~~~~~~~~~~~~~~~~~//
+
+	container.Bind(infrastructure.NewCredentialKey)
+
 	//~~~~~~~~~~~~~~~~~~ domain ~~~~~~~~~~~~~~~~~~//
 
 	container.Bind(live_house_staff_domain.NewLiveHouseStaffEmailAddressChecker)
