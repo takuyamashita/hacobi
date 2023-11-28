@@ -16,6 +16,7 @@ func RegisterProvisionalLiveHouseAccount(emailAddress string, ctx context.Contex
 		tokenGenerator            live_house_staff_account_domain.TokenGeneratorIntf
 		eventPublisher            event.EventPublisherIntf[live_house_staff_account_domain.ProvisionalLiveHouseAccountCreated]
 	)
+	container.Make(&uuidRepo)
 	container.Make(&liveHouseStaffAccountRepo)
 	container.Make(&tokenGenerator)
 	container.Make(&eventPublisher)

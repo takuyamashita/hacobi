@@ -1,6 +1,8 @@
 package live_house_staff_account_domain
 
 import (
+	"errors"
+
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
 )
 
@@ -34,6 +36,13 @@ type NewLiveHouseStaffAccountParams struct {
 }
 
 func NewLiveHouseStaffAccount(params NewLiveHouseStaffAccountParams) (account LiveHouseStaffAccountIntf, err error) {
+
+	if params.IsProvisional == false && params.ProvisionalRegistration != nil {
+		return nil, errors.New("仮登録でない場合は、ProvisionalRegistrationはnilである必要があります。")
+	}
+	if params.IsProvisional == true && params.ProvisionalRegistration == nil {
+		return nil, errors.New("仮登録の場合は、ProvisionalRegistrationは必須です。")
+	}
 
 	id := NewLiveHouseStaffAccountId(params.Id)
 
