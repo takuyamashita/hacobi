@@ -5,7 +5,9 @@ import (
 )
 
 type LiveHouseStaffAccountIntf interface {
+	Id() LiveHouseStaffAccountId
 	EmailAddress() domain.LiveHouseStaffEmailAddress
+	IsProvisional() bool
 	ProvisionalToken() *Token
 }
 
@@ -62,6 +64,10 @@ func NewLiveHouseStaffAccount(params NewLiveHouseStaffAccountParams) (account Li
 	}, nil
 }
 
+func (account LiveHouseStaffAccountImpl) Id() LiveHouseStaffAccountId {
+	return account.id
+}
+
 func (account LiveHouseStaffAccountImpl) EmailAddress() domain.LiveHouseStaffEmailAddress {
 	return account.email
 }
@@ -79,4 +85,8 @@ func (account LiveHouseStaffAccountImpl) ProvisionalToken() *Token {
 	t := account.provisionalRegistration.Token()
 
 	return &t
+}
+
+func (account LiveHouseStaffAccountImpl) IsProvisional() bool {
+	return account.isProvisional
 }

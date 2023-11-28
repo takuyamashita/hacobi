@@ -8,7 +8,7 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
 )
 
-func SendLiveHouseStaffEmailAuthorization(emailAddress string, ctx context.Context, container container.Container) error {
+func RegisterProvisionalLiveHouseAccount(emailAddress string, ctx context.Context, container container.Container) error {
 
 	var (
 		uuidRepo                  UuidRepositoryIntf
@@ -38,6 +38,8 @@ func SendLiveHouseStaffEmailAuthorization(emailAddress string, ctx context.Conte
 			Token: token.String(),
 		},
 	})
+
+	liveHouseStaffAccountRepo.Save(account, ctx)
 
 	event := live_house_staff_account_domain.ProvisionalLiveHouseAccountCreated{
 		Token:        *account.ProvisionalToken(),

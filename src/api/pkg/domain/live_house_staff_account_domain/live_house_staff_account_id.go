@@ -9,3 +9,7 @@ func NewLiveHouseStaffAccountId(value string) LiveHouseStaffAccountId {
 		value: value,
 	}
 }
+
+func (id LiveHouseStaffAccountId) String() string {
+	return id.value
+}

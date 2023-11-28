@@ -41,7 +41,7 @@ func TestSendLiveHouseStaffAccountProvisionalRegistration(t *testing.T) {
 
 			ctx := context.Background()
 
-			err := usecase.SendLiveHouseStaffEmailAuthorization(tt.args.emailAddress, ctx, container)
+			err := usecase.RegisterProvisionalLiveHouseAccount(tt.args.emailAddress, ctx, container)
 			if (err != nil) != tt.want.hasError {
 				t.Errorf("SendLiveHouseStaffAccountProvisionalRegistrationUsecase.Execute() error = %v, wantErr %v", err, tt.want.hasError)
 				return

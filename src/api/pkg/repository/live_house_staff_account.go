@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/db"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
@@ -27,14 +28,33 @@ func (repo LiveHouseStaffAccountRepositoryImpl) Save(
 	ctx context.Context,
 ) error {
 
-	_, err := repo.db.ExecContext(
+	tx, err := repo.db.BeginTx(ctx, &sql.TxOptions{})
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.ExecContext(
 		ctx,
-		"INSERT INTO live_house_staff_email_authorizations (email, token) VALUES (?, ?)",
+		"INSERT INTO live_house_staff_accounts (id, email, is_provisional) VALUES (?, ?, ?)",
+		account.Id().String(),
 		account.EmailAddress().String(),
+		account.IsProvisional(),
 	)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	if account.IsProvisional() {
+		return tx.Commit()
+	}
+
+	_, err = tx.ExecContext(
+		ctx,
+		"INSERT INTO live_house_staff_account_provisional_registrations (live_house_staff_account_id, token) VALUES (?, ?)",
+		account.Id().String(),
+		account.ProvisionalToken().String(),
+	)
+
+	return tx.Commit()
+
 }
