@@ -12,7 +12,7 @@ type LiveHouseStaffAccountProvisionalRegistrationImpl struct {
 	createdAt time.Time
 }
 
-func NewLiveHouseStaffAccountProvisionalRegistration(token string) (LiveHouseStaffAccountProvisionalRegistrationIntf, error) {
+func NewLiveHouseStaffAccountProvisionalRegistration(token string, createdAt time.Time) (LiveHouseStaffAccountProvisionalRegistrationIntf, error) {
 
 	tkn, err := newTokenFromHexString(token)
 	if err != nil {

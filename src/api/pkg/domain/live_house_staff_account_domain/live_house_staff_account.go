@@ -2,6 +2,7 @@ package live_house_staff_account_domain
 
 import (
 	"errors"
+	"time"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
 )
@@ -25,7 +26,8 @@ type LiveHouseStaffAccountImpl struct {
 }
 
 type ProvisionalRegistrationParam struct {
-	Token string
+	Token     string
+	CreatedAt time.Time
 }
 
 type NewLiveHouseStaffAccountParams struct {
@@ -37,11 +39,19 @@ type NewLiveHouseStaffAccountParams struct {
 
 func NewLiveHouseStaffAccount(params NewLiveHouseStaffAccountParams) (account LiveHouseStaffAccountIntf, err error) {
 
-	if params.IsProvisional == false && params.ProvisionalRegistration != nil {
+	if !params.IsProvisional && params.ProvisionalRegistration != nil {
 		return nil, errors.New("仮登録でない場合は、ProvisionalRegistrationはnilである必要があります。")
 	}
-	if params.IsProvisional == true && params.ProvisionalRegistration == nil {
-		return nil, errors.New("仮登録の場合は、ProvisionalRegistrationは必須です。")
+	if params.IsProvisional {
+		if params.ProvisionalRegistration == nil {
+			return nil, errors.New("仮登録の場合は、ProvisionalRegistrationは必須です。")
+		}
+		if params.ProvisionalRegistration.Token == "" {
+			return nil, errors.New("仮登録の場合は、ProvisionalRegistration.Tokenは必須です。")
+		}
+		if params.ProvisionalRegistration.CreatedAt.IsZero() {
+			return nil, errors.New("仮登録の場合は、ProvisionalRegistration.CreatedAtは必須です。")
+		}
 	}
 
 	id := NewLiveHouseStaffAccountId(params.Id)
@@ -60,7 +70,10 @@ func NewLiveHouseStaffAccount(params NewLiveHouseStaffAccountParams) (account Li
 		}, nil
 	}
 
-	provisionalRegistration, err := NewLiveHouseStaffAccountProvisionalRegistration(params.ProvisionalRegistration.Token)
+	provisionalRegistration, err := NewLiveHouseStaffAccountProvisionalRegistration(
+		params.ProvisionalRegistration.Token,
+		params.ProvisionalRegistration.CreatedAt,
+	)
 	if err != nil {
 		return nil, err
 	}

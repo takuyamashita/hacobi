@@ -21,6 +21,7 @@ func (ctrl liveHouseStaffController) SendLiveHouseStaffRegisterMail(c echo.Conte
 
 	err := usecase.RegisterProvisionalLiveHouseAccount("test@test.com", c.Request().Context(), ctrl.container)
 	if err != nil {
+		c.Error(err)
 		return err
 	}
 

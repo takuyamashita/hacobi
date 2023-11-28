@@ -26,12 +26,16 @@ func SetupDI(container container.Container, db *db.MySQL) {
 		return repository.NewRandomStringRepository()
 	})
 
+	container.Bind(func() usecase.TransationRepositoryIntf {
+		return repository.NewTransaction(db)
+	})
+
 	container.Bind(func() usecase.LiveHouseStaffAccountRepositoryIntf {
 		return repository.NewLiveHouseStaffAccountRepository(db)
 	})
 
-	container.Bind(func() usecase.TransationRepositoryIntf {
-		return repository.NewTransaction(db)
+	container.Bind(func() live_house_staff_account_domain.LiveHouseStaffAccountRepositoryIntf {
+		return repository.NewLiveHouseStaffAccountRepository(db)
 	})
 
 	container.Bind(func() live_house_staff_domain.LiveHouseStaffRepositoryIntf {
@@ -49,6 +53,8 @@ func SetupDI(container container.Container, db *db.MySQL) {
 	//~~~~~~~~~~~~~~~~~~ domain ~~~~~~~~~~~~~~~~~~//
 
 	container.Bind(live_house_staff_domain.NewLiveHouseStaffEmailAddressChecker)
+
+	container.Bind(live_house_staff_account_domain.NewLiveHouseStaffAccountEmailAddressChecker)
 
 	container.Bind(live_house_staff_account_domain.NewTokenGenerator)
 

@@ -90,6 +90,18 @@ func (repo LiveHouseStaffAccountRepositoryMock) Save(account live_house_staff_ac
 	return nil
 }
 
+func (repo LiveHouseStaffAccountRepositoryMock) FindByEmail(emailAddress domain.LiveHouseStaffEmailAddress, ctx context.Context) (live_house_staff_account_domain.LiveHouseStaffAccountIntf, error) {
+
+	var account live_house_staff_account_domain.LiveHouseStaffAccountIntf
+	for _, v := range repo.Store.LiveHouseStaffAccounts {
+		if v.EmailAddress().String() == emailAddress.String() {
+			account = v
+		}
+	}
+
+	return account, nil
+}
+
 // ~~~~~~~~~~~domain.MainIntf~~~~~~~~~~~ //
 var _ domain.MailIntf = (*MailMock)(nil)
 
