@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS live_house_staff_credentials (
+CREATE TABLE IF NOT EXISTS live_house_staff_account_credentials (
     live_house_staff_account_id VARCHAR(36) NOT NULL,
     public_key_id VARCHAR(128) NOT NULL,
     public_key VARCHAR(128) NOT NULL,
