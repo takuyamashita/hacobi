@@ -40,7 +40,9 @@ func RegisterProvisionalLiveHouseAccount(emailAddress string, ctx context.Contex
 		},
 	})
 
-	liveHouseStaffAccountRepo.Save(account, ctx)
+	if err := liveHouseStaffAccountRepo.Save(account, ctx); err != nil {
+		return err
+	}
 
 	event := live_house_staff_account_domain.ProvisionalLiveHouseAccountCreated{
 		Token:        *account.ProvisionalToken(),
