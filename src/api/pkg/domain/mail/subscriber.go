@@ -18,7 +18,7 @@ func NewLiveHouseStaffAccountProvisionalRegistration(m domain.MailIntf) LiveHous
 	}
 }
 
-func (e LiveHouseStaffAccountProvisionalRegistration) Handle(event live_house_staff_account_domain.AuthCreatedEvent) {
+func (e LiveHouseStaffAccountProvisionalRegistration) Handle(event live_house_staff_account_domain.ProvisionalLiveHouseAccountCreated) {
 
 	e.mail.Send(
 		event.EmailAddress.String(),

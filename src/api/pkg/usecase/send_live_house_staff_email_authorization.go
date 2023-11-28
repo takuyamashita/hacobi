@@ -14,7 +14,7 @@ func SendLiveHouseStaffEmailAuthorization(emailAddress string, ctx context.Conte
 		uuidRepo                  UuidRepositoryIntf
 		liveHouseStaffAccountRepo LiveHouseStaffAccountRepositoryIntf
 		tokenGenerator            live_house_staff_account_domain.TokenGeneratorIntf
-		eventPublisher            event.EventPublisherIntf[live_house_staff_account_domain.AuthCreatedEvent]
+		eventPublisher            event.EventPublisherIntf[live_house_staff_account_domain.ProvisionalLiveHouseAccountCreated]
 	)
 	container.Make(&liveHouseStaffAccountRepo)
 	container.Make(&tokenGenerator)
@@ -39,7 +39,7 @@ func SendLiveHouseStaffEmailAuthorization(emailAddress string, ctx context.Conte
 		},
 	})
 
-	event := live_house_staff_account_domain.AuthCreatedEvent{
+	event := live_house_staff_account_domain.ProvisionalLiveHouseAccountCreated{
 		Token:        *account.ProvisionalToken(),
 		EmailAddress: account.EmailAddress(),
 	}
