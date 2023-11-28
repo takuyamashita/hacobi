@@ -11,11 +11,10 @@ import (
 )
 
 type CredentialKeyIntf interface {
-	//xxx: TODO return []byte, error
+	//webauthnに依存...
 	CreateChallenge() (protocol.URLEncodedBase64, error)
-
-	//xxx: TODO return []byte or struct, error
 	ParseCredentialKey(body io.Reader) (*protocol.ParsedCredentialCreationData, error)
+	CreateCredentialCreationOptions(challenge protocol.URLEncodedBase64, rpId string) protocol.PublicKeyCredentialCreationOptions
 }
 
 type UuidRepositoryIntf interface {
