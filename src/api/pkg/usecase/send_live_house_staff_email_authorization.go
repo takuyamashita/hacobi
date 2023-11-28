@@ -11,11 +11,11 @@ import (
 func SendLiveHouseStaffEmailAuthorization(emailAddress string, ctx context.Context, container container.Container) error {
 
 	var (
-		liveHouseStaffEmailAuthorizationRepo LiveHouseStaffAccountRepositoryIntf
-		tokenGenerator                       live_house_staff_account_domain.TokenGeneratorIntf
-		eventPublisher                       event.EventPublisherIntf[live_house_staff_account_domain.AuthCreatedEvent]
+		liveHouseStaffAccountRepo LiveHouseStaffAccountRepositoryIntf
+		tokenGenerator            live_house_staff_account_domain.TokenGeneratorIntf
+		eventPublisher            event.EventPublisherIntf[live_house_staff_account_domain.AuthCreatedEvent]
 	)
-	container.Make(&liveHouseStaffEmailAuthorizationRepo)
+	container.Make(&liveHouseStaffAccountRepo)
 	container.Make(&tokenGenerator)
 	container.Make(&eventPublisher)
 
