@@ -5,8 +5,8 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/db"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/event"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
-	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_email_authorization_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/infrastructure"
 	"github.com/takuyamashita/hacobi/src/api/pkg/repository"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
@@ -26,8 +26,8 @@ func SetupDI(container container.Container, db *db.MySQL) {
 		return repository.NewRandomStringRepository()
 	})
 
-	container.Bind(func() usecase.LiveHouseStaffEmailAuthorizationRepositoryIntf {
-		return repository.NewLiveHouseStaffEmailAuthorizationRepository(db)
+	container.Bind(func() usecase.LiveHouseStaffAccountRepositoryIntf {
+		return repository.NewLiveHouseStaffAccountRepository(db)
 	})
 
 	container.Bind(func() usecase.TransationRepositoryIntf {
@@ -50,13 +50,13 @@ func SetupDI(container container.Container, db *db.MySQL) {
 
 	container.Bind(live_house_staff_domain.NewLiveHouseStaffEmailAddressChecker)
 
-	container.Bind(live_house_staff_email_authorization_domain.NewTokenGenerator)
+	container.Bind(live_house_staff_account_domain.NewTokenGenerator)
 
 	/*
 		var (
 			rndStrRepo                  domain.RandomStringRepositoryIntf
-			liveHouseStaffEmailAuthRepo usecase.LiveHouseStaffEmailAuthorizationRepositoryIntf
-			tknGen                      live_house_staff_email_authorization_domain.TokenGeneratorIntf
+			liveHouseStaffEmailAuthRepo usecase.LiveHouseStaffAccountProvisionalRegistrationRepositoryIntf
+			tknGen                      live_house_staff_account_domain.TokenGeneratorIntf
 		)
 		container.Make(&rndStrRepo)
 		container.Make(&liveHouseStaffEmailAuthRepo)
@@ -65,5 +65,5 @@ func SetupDI(container container.Container, db *db.MySQL) {
 
 	//~~~~~~~~~~~~~~~~~~ event ~~~~~~~~~~~~~~~~~~//
 
-	container.Bind(event.NewLiveHouseStaffEmailAuthorizationCreated)
+	container.Bind(event.NewLiveHouseStaffAccountProvisionalRegistrationCreated)
 }

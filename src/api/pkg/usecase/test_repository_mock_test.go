@@ -5,8 +5,8 @@ import (
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_account_domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
-	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_email_authorization_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/repository"
 )
 
@@ -76,16 +76,16 @@ func (repo LiveHouseAccountRepositoryMock) Save(account live_house_account_domai
 	return nil
 }
 
-// ~~~~~~~~~~~usecase.LiveHouseStaffEmailAuthorizationRepositoryIntf~~~~~~~~~~~ //
-var _ repository.LiveHouseStaffEmailAuthorizationRepositoryIntf = (*LiveHouseStaffEmailAuthorizationRepositoryMock)(nil)
+// ~~~~~~~~~~~usecase.LiveHouseStaffAccountProvisionalRegistrationRepositoryIntf~~~~~~~~~~~ //
+var _ repository.LiveHouseStaffAccountRepositoryIntf = (*LiveHouseStaffAccountRepositoryMock)(nil)
 
-type LiveHouseStaffEmailAuthorizationRepositoryMock struct {
+type LiveHouseStaffAccountRepositoryMock struct {
 	Store *Store
 }
 
-func (repo LiveHouseStaffEmailAuthorizationRepositoryMock) Save(auth live_house_staff_email_authorization_domain.LiveHouseStaffEmailAuthorizationIntf, ctx context.Context) error {
+func (repo LiveHouseStaffAccountRepositoryMock) Save(account live_house_staff_account_domain.LiveHouseStaffAccountIntf, ctx context.Context) error {
 
-	repo.Store.LiveHouseStaffEmailAuthorizations = append(repo.Store.LiveHouseStaffEmailAuthorizations, auth)
+	repo.Store.LiveHouseStaffAccounts = append(repo.Store.LiveHouseStaffAccounts, account)
 
 	return nil
 }

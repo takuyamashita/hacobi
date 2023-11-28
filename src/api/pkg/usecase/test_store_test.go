@@ -4,16 +4,16 @@ import (
 	"testing"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_account_domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
-	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_email_authorization_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
 
 type Store struct {
-	Staffs                            []live_house_staff_domain.LiveHouseStaffIntf
-	Accounts                          []live_house_account_domain.LiveHouseAccountIntf
-	LiveHouseStaffEmailAuthorizations []live_house_staff_email_authorization_domain.LiveHouseStaffEmailAuthorizationIntf
-	SentMails                         []SentMail
+	Staffs                 []live_house_staff_domain.LiveHouseStaffIntf
+	Accounts               []live_house_account_domain.LiveHouseAccountIntf
+	LiveHouseStaffAccounts []live_house_staff_account_domain.LiveHouseStaffAccountIntf
+	SentMails              []SentMail
 }
 
 func NewStore() Store {

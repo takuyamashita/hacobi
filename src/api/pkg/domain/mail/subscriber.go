@@ -5,20 +5,20 @@ import (
 	"os"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
-	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_email_authorization_domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
 )
 
-type LiveHouseStaffEmailAuthorization struct {
+type LiveHouseStaffAccountProvisionalRegistration struct {
 	mail domain.MailIntf
 }
 
-func NewLiveHouseStaffEmailAuthorization(m domain.MailIntf) LiveHouseStaffEmailAuthorization {
-	return LiveHouseStaffEmailAuthorization{
+func NewLiveHouseStaffAccountProvisionalRegistration(m domain.MailIntf) LiveHouseStaffAccountProvisionalRegistration {
+	return LiveHouseStaffAccountProvisionalRegistration{
 		mail: m,
 	}
 }
 
-func (e LiveHouseStaffEmailAuthorization) Handle(event live_house_staff_email_authorization_domain.AuthCreatedEvent) {
+func (e LiveHouseStaffAccountProvisionalRegistration) Handle(event live_house_staff_account_domain.AuthCreatedEvent) {
 
 	e.mail.Send(
 		event.EmailAddress.String(),

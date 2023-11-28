@@ -32,8 +32,8 @@ func NewTestContainer(store *Store) container.Container {
 		return &LiveHouseStaffRepositoryMock{Store: store}
 	})
 
-	container.Bind(func() usecase.LiveHouseStaffEmailAuthorizationRepositoryIntf {
-		return &LiveHouseStaffEmailAuthorizationRepositoryMock{Store: store}
+	container.Bind(func() usecase.LiveHouseStaffAccountRepositoryIntf {
+		return &LiveHouseStaffAccountRepositoryMock{Store: store}
 	})
 
 	container.Bind(func() usecase.LiveHouseStaffRepositoryIntf {

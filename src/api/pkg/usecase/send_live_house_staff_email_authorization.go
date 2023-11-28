@@ -5,15 +5,15 @@ import (
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/container"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/event"
-	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_email_authorization_domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
 )
 
 func SendLiveHouseStaffEmailAuthorization(emailAddress string, ctx context.Context, container container.Container) error {
 
 	var (
-		liveHouseStaffEmailAuthorizationRepo LiveHouseStaffEmailAuthorizationRepositoryIntf
-		tokenGenerator                       live_house_staff_email_authorization_domain.TokenGeneratorIntf
-		eventPublisher                       event.EventPublisherIntf[live_house_staff_email_authorization_domain.AuthCreatedEvent]
+		liveHouseStaffEmailAuthorizationRepo LiveHouseStaffAccountRepositoryIntf
+		tokenGenerator                       live_house_staff_account_domain.TokenGeneratorIntf
+		eventPublisher                       event.EventPublisherIntf[live_house_staff_account_domain.AuthCreatedEvent]
 	)
 	container.Make(&liveHouseStaffEmailAuthorizationRepo)
 	container.Make(&tokenGenerator)
@@ -24,16 +24,13 @@ func SendLiveHouseStaffEmailAuthorization(emailAddress string, ctx context.Conte
 		return err
 	}
 
-	auth, err := live_house_staff_email_authorization_domain.NewLiveHouseStaffEmailAuthorization(emailAddress, token.String())
+	registration, err := live_house_staff_account_domain.NewLiveHouseStaffAccountProvisionalRegistration(token.String())
 	if err != nil {
 		return err
 	}
 
-	liveHouseStaffEmailAuthorizationRepo.Save(auth, ctx)
-
-	event := live_house_staff_email_authorization_domain.AuthCreatedEvent{
-		Token:        auth.Token(),
-		EmailAddress: auth.EmailAddress(),
+	event := live_house_staff_account_domain.AuthCreatedEvent{
+		Token: registration.Token(),
 	}
 
 	eventPublisher.Publish(event)
