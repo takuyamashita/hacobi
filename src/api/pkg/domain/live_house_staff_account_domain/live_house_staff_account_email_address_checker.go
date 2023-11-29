@@ -2,6 +2,7 @@ package live_house_staff_account_domain
 
 import (
 	"context"
+	"log"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
 )
@@ -27,6 +28,7 @@ func (checker liveHouseStaffAccountEmailAddressCheckerImpl) IsEmailAddressAlread
 	liveHouseStaffEmailAddress, err := domain.NewLiveHouseStaffEmailAddress(emailAddress)
 
 	sameEmailAddressStaff, err := checker.liveHouseStaffAccountRepository.FindByEmail(liveHouseStaffEmailAddress, ctx)
+	log.Println(sameEmailAddressStaff)
 	if err != nil {
 		return false, err
 	}

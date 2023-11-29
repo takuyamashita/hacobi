@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"log"
 	"time"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/db"
@@ -32,6 +33,9 @@ func (repo LiveHouseStaffAccountRepositoryImpl) Save(
 ) error {
 
 	tx, err := repo.db.BeginTx(ctx, &sql.TxOptions{})
+	defer func() {
+		tx.Commit()
+	}()
 	if err != nil {
 		return err
 	}
@@ -58,6 +62,29 @@ func (repo LiveHouseStaffAccountRepositoryImpl) Save(
 		account.ProvisionalToken().String(),
 	)
 
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if account.CredentialLength() == 0 {
+
+		_, err = tx.ExecContext(
+			ctx,
+			"DELETE FROM live_house_staff_account_credential_challenges WHERE live_house_staff_account_id = ?",
+			account.Id().String(),
+		)
+
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+
+		return tx.Commit()
+	} else {
+
+	}
+
 	stmt := "REPLACE INTO live_house_staff_account_credential_challenges (live_house_staff_account_id, challenge) VALUES "
 	args := []interface{}{}
 	for i, v := range account.CredentialChallenges() {
@@ -68,6 +95,7 @@ func (repo LiveHouseStaffAccountRepositoryImpl) Save(
 		}
 		stmt += ", (?, ?)"
 	}
+	log.Println(stmt)
 	_, err = tx.ExecContext(
 		ctx,
 		stmt,
@@ -116,18 +144,20 @@ func (repo LiveHouseStaffAccountRepositoryImpl) FindByEmail(
 	if isProvisional == 1 {
 		row := repo.db.QueryRowContext(
 			ctx,
-			"SELECT token, created_at FROM live_house_staff_account_provisional_registrations WHERE live_house_staff_account_id = ?",
+			"SELECT token, created_at, live_house_staff_account_id FROM live_house_staff_account_provisional_registrations WHERE live_house_staff_account_id = ?",
 			id,
 		)
 
 		var (
 			token     string
 			createdAt []uint8
+			_id       string
 		)
-		if err := row.Scan(&token, &createdAt); err != nil {
+		if err := row.Scan(&token, &createdAt, &_id); err != nil {
 			if err != sql.ErrNoRows {
 				return nil, err
 			}
+			return nil, nil
 		}
 
 		createdAtTime, err := time.Parse("2006-01-02 15:04:05", string(createdAt))
@@ -163,10 +193,10 @@ func (repo LiveHouseStaffAccountRepositoryImpl) FindByProvisionalRegistrationTok
 		ctx,
 		`
 		SELECT 
-			live_house_staff_accounts.id
-			live_house_staff_accounts.email
-			live_house_staff_accounts.is_provisional
-			live_house_staff_account_provisional_registrations.token
+			live_house_staff_accounts.id,
+			live_house_staff_accounts.email,
+			live_house_staff_accounts.is_provisional,
+			live_house_staff_account_provisional_registrations.token,
 			live_house_staff_account_provisional_registrations.created_at
 		FROM live_house_staff_account_provisional_registrations
 		INNER JOIN live_house_staff_accounts ON live_house_staff_accounts.id = live_house_staff_account_provisional_registrations.live_house_staff_account_id	

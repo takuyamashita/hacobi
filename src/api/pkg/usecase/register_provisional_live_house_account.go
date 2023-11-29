@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/go-webauthn/webauthn/protocol"
 	"github.com/takuyamashita/hacobi/src/api/pkg/container"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/event"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
@@ -67,7 +68,7 @@ func RegisterProvisionalLiveHouseAccount(emailAddress string, ctx context.Contex
 	return nil
 }
 
-func StartCeremony(token string, ctx context.Context, container container.Container) error {
+func StartRegister(token string, ctx context.Context, container container.Container) (*protocol.PublicKeyCredentialCreationOptions, error) {
 
 	var (
 		publicKeyCredential       CredentialKeyIntf
@@ -78,20 +79,20 @@ func StartCeremony(token string, ctx context.Context, container container.Contai
 
 	tkn, err := live_house_staff_account_domain.NewTokenFromHexString(token)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	account, err := liveHouseStaffAccountRepo.FindByProvisionalRegistrationToken(tkn, ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if account == nil {
-		return errors.New("account not found")
+		return nil, errors.New("account not found")
 	}
 
 	challenge, err := publicKeyCredential.CreateChallenge()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	c, err := live_house_staff_account_domain.NewCredentialChallenge(
@@ -99,16 +100,19 @@ func StartCeremony(token string, ctx context.Context, container container.Contai
 		time.Now(),
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if err := account.AddCredentialChallenge(c); err != nil {
-		return err
+		return nil, err
 	}
 
 	if err := liveHouseStaffAccountRepo.Save(account, ctx); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	option := publicKeyCredential.CreateCredentialCreationOptions(challenge, "localhost")
+
+	return &option, nil
+
 }

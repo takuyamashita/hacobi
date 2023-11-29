@@ -42,6 +42,7 @@ func newApplication() Application {
 		container: container.NewContainer(),
 	}
 	app.setupMiddlewares()
+	// xxx: リクエストスコープ毎にDBをわたさないと、リクエストを超えてトランザクションを貼れてしまう
 	dependency.SetupDI(app.container, app.db)
 	app.setupRoutes()
 
@@ -90,6 +91,7 @@ func (app *application) setupRoutes() {
 	app.server.POST("/api/v1/send_live_house_staff_email_authorization", liveHouseStaffController.SendLiveHouseStaffRegisterMail)
 	app.server.POST("/api/v1/live_house_staff", liveHouseStaffController.RegisterStaff)
 	app.server.POST("/api/v1/live_house_account", liveHouseStaffController.RegisterAccount)
+	app.server.POST("/api/v1/live_house_account/credential/start_register", liveHouseStaffController.StartRegister)
 
 	app.server.POST("/api/v1/ceremony/start", func(c echo.Context) error {
 

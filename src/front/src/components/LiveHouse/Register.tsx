@@ -7,52 +7,58 @@ type Props = {
   token: string;
 };
 
+const stringToUint8Array = (str: string) => {
+  const array = new Uint8Array(str.length);
+  for (let i = 0; i < str.length; i++) {
+    array[i] = str.charCodeAt(i);
+  }
+  return array;
+};
+
+const base64URLSafeToUint8Array = (base64URLSafe: string) => {
+  if (base64URLSafe === undefined || base64URLSafe === null) {
+    return new Uint8Array();
+  }
+
+  // padding
+  const pad = (s: string) => {
+    while (s.length % 4 !== 0) {
+      s += "=";
+    }
+    return s;
+  };
+
+  // base64URLSafe to base64
+  const base64 = pad(base64URLSafe).replace(/\-/g, "+").replace(/_/g, "/");
+
+  // base64 to Uint8Array
+  const raw = window.atob(base64);
+  const rawLength = raw.length;
+  const array = new Uint8Array(new ArrayBuffer(rawLength));
+  for (let i = 0; i < rawLength; i++) {
+    array[i] = raw.charCodeAt(i);
+  }
+  return array;
+};
+
 const Register = ({ token }: Props) => {
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent,
   ) => {
     e.preventDefault();
 
-    const stringToUint8Array = (str: string) => {
-      const array = new Uint8Array(str.length);
-      for (let i = 0; i < str.length; i++) {
-        array[i] = str.charCodeAt(i);
-      }
-      return array;
-    };
-
-    const base64URLSafeToUint8Array = (base64URLSafe: string) => {
-      if (base64URLSafe === undefined || base64URLSafe === null) {
-        return new Uint8Array();
-      }
-
-      // padding
-      const pad = (s: string) => {
-        while (s.length % 4 !== 0) {
-          s += "=";
-        }
-        return s;
-      };
-
-      // base64URLSafe to base64
-      const base64 = pad(base64URLSafe).replace(/\-/g, "+").replace(/_/g, "/");
-
-      // base64 to Uint8Array
-      const raw = window.atob(base64);
-      const rawLength = raw.length;
-      const array = new Uint8Array(new ArrayBuffer(rawLength));
-      for (let i = 0; i < rawLength; i++) {
-        array[i] = raw.charCodeAt(i);
-      }
-      return array;
-    };
-
-    const res = await fetch("/api/v1/ceremony/start", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
+    const res = await fetch(
+      "/api/v1/live_house_account/credential/start_register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: token,
+        }),
       },
-    });
+    );
 
     const data = await res.json();
 

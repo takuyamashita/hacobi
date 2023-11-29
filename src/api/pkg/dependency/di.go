@@ -52,7 +52,9 @@ func SetupDI(container container.Container, db *db.MySQL) {
 
 	//~~~~~~~~~~~~~~~~~~ infra ~~~~~~~~~~~~~~~~~~//
 
-	container.Bind(infrastructure.NewCredentialKey)
+	container.Bind(func() usecase.CredentialKeyIntf {
+		return infrastructure.NewCredentialKey()
+	})
 
 	//~~~~~~~~~~~~~~~~~~ domain ~~~~~~~~~~~~~~~~~~//
 

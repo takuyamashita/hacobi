@@ -19,7 +19,15 @@ func NewliveHouseStaffController(container container.Container) liveHouseStaffCo
 // curl -X POST -H "Content-Type: application/json" -d '{}' localhost/api/v1/send_live_house_staff_email_authorization
 func (ctrl liveHouseStaffController) SendLiveHouseStaffRegisterMail(c echo.Context) error {
 
-	err := usecase.RegisterProvisionalLiveHouseAccount("test@test.com", c.Request().Context(), ctrl.container)
+	req := struct {
+		EmailAddress string `json:"emailAddress"`
+	}{}
+
+	if err := c.Bind(&req); err != nil {
+		return err
+	}
+
+	err := usecase.RegisterProvisionalLiveHouseAccount(req.EmailAddress, c.Request().Context(), ctrl.container)
 	if err != nil {
 		c.Error(err)
 		return err
@@ -37,6 +45,24 @@ func (ctrl liveHouseStaffController) RegisterStaff(c echo.Context) error {
 	}
 
 	return c.JSON(200, id)
+}
+
+func (ctrl liveHouseStaffController) StartRegister(c echo.Context) error {
+
+	req := struct {
+		Token string `json:"token"`
+	}{}
+
+	if err := c.Bind(&req); err != nil {
+		return err
+	}
+
+	option, err := usecase.StartRegister(req.Token, c.Request().Context(), ctrl.container)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(200, option)
 }
 
 // curl -X POST -H "Content-Type: application/json" -d '{}' localhost/api/v1/live_house_account
