@@ -15,16 +15,24 @@ func RegisterProvisionalLiveHouseAccount(emailAddress string, ctx context.Contex
 
 	var (
 		uuidRepo                  UuidRepositoryIntf
+		txRepo                    TransationRepositoryIntf
 		liveHouseStaffAccountRepo LiveHouseStaffAccountRepositoryIntf
 		emailAddressChecker       live_house_staff_account_domain.LiveHouseStaffAccountEmailAddressCheckerIntf
 		tokenGenerator            live_house_staff_account_domain.TokenGeneratorIntf
 		eventPublisher            event.EventPublisherIntf[live_house_staff_account_domain.ProvisionalLiveHouseAccountCreated]
 	)
 	container.Make(&uuidRepo)
+	container.Make(&txRepo)
 	container.Make(&liveHouseStaffAccountRepo)
 	container.Make(&emailAddressChecker)
 	container.Make(&tokenGenerator)
 	container.Make(&eventPublisher)
+
+	commit, rollback, err := txRepo.Begin(ctx)
+	defer rollback()
+	if err != nil {
+		return err
+	}
 
 	isAlreadyRegistered, err := emailAddressChecker.IsEmailAddressAlreadyRegistered(emailAddress, ctx)
 	if err != nil {
@@ -55,6 +63,7 @@ func RegisterProvisionalLiveHouseAccount(emailAddress string, ctx context.Contex
 	})
 
 	if err := liveHouseStaffAccountRepo.Save(account, ctx); err != nil {
+		rollback()
 		return err
 	}
 
@@ -65,7 +74,7 @@ func RegisterProvisionalLiveHouseAccount(emailAddress string, ctx context.Contex
 
 	eventPublisher.Publish(event)
 
-	return nil
+	return commit()
 }
 
 func StartRegister(token string, ctx context.Context, container container.Container) (*protocol.PublicKeyCredentialCreationOptions, error) {

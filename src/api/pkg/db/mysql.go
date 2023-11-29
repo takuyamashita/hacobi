@@ -3,12 +3,14 @@ package db
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"log"
 )
 
 type MySQL struct {
 	*sql.DB
 	tx       *sql.Tx
-	txCount  uint
+	txCount  int
 	Begin    interface{}
 	Exec     interface{}
 	Query    interface{}
@@ -24,6 +26,8 @@ func NewMySQL(db *sql.DB) MySQL {
 type txFunc func(tx *MySQL) error
 
 func (m *MySQL) BeginTx(ctx context.Context, opts *sql.TxOptions) (*MySQL, error) {
+
+	log.Println("Begin", m.txCount)
 
 	m.txCount++
 
@@ -43,10 +47,15 @@ func (m *MySQL) BeginTx(ctx context.Context, opts *sql.TxOptions) (*MySQL, error
 
 func (m *MySQL) Commit() error {
 
-	m.txCount--
+	log.Println("Commit", m.txCount)
 
-	if m.txCount > 0 {
+	if m.txCount > 1 {
+		m.txCount--
 		return nil
+	}
+
+	if m.tx == nil {
+		return errors.New("transaction has already been committed")
 	}
 
 	err := m.tx.Commit()
@@ -54,6 +63,7 @@ func (m *MySQL) Commit() error {
 		return err
 	}
 
+	m.txCount = 0
 	m.tx = nil
 
 	return nil
@@ -61,13 +71,14 @@ func (m *MySQL) Commit() error {
 
 func (m *MySQL) Rollback() error {
 
-	err := m.tx.Rollback()
-	if err != nil {
+	log.Println("Rollback", m.txCount)
+
+	if m.tx != nil {
+		m.txCount = 0
+		err := m.tx.Rollback()
+		m.tx = nil
 		return err
 	}
-
-	m.txCount = 0
-	m.tx = nil
 
 	return nil
 }

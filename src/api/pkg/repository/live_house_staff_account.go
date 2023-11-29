@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"log"
 	"time"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/db"
@@ -33,9 +32,6 @@ func (repo LiveHouseStaffAccountRepositoryImpl) Save(
 ) error {
 
 	tx, err := repo.db.BeginTx(ctx, &sql.TxOptions{})
-	defer func() {
-		tx.Commit()
-	}()
 	if err != nil {
 		return err
 	}
@@ -95,7 +91,7 @@ func (repo LiveHouseStaffAccountRepositoryImpl) Save(
 		}
 		stmt += ", (?, ?)"
 	}
-	log.Println(stmt)
+
 	_, err = tx.ExecContext(
 		ctx,
 		stmt,
