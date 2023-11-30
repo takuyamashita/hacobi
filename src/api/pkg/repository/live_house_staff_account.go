@@ -38,7 +38,15 @@ func (repo LiveHouseStaffAccountRepositoryImpl) Save(
 
 	_, err = tx.ExecContext(
 		ctx,
-		"INSERT INTO live_house_staff_accounts (id, email, is_provisional) VALUES (?, ?, ?)",
+		`
+			INSERT INTO live_house_staff_accounts 
+				(id, email, is_provisional)
+			VALUES 
+				(?, ?, ?) AS new
+			ON DUPLICATE KEY UPDATE
+				email = new.email,
+				is_provisional = new.is_provisional
+		`,
 		account.Id().String(),
 		account.EmailAddress().String(),
 		account.IsProvisional(),
@@ -53,7 +61,14 @@ func (repo LiveHouseStaffAccountRepositoryImpl) Save(
 
 	_, err = tx.ExecContext(
 		ctx,
-		"INSERT INTO live_house_staff_account_provisional_registrations (live_house_staff_account_id, token) VALUES (?, ?)",
+		`
+			INSERT INTO live_house_staff_account_provisional_registrations
+				(live_house_staff_account_id, token)
+			VALUES
+				(?, ?) AS new
+			ON DUPLICATE KEY UPDATE
+				token = new.token
+		`,
 		account.Id().String(),
 		account.ProvisionalToken().String(),
 	)
