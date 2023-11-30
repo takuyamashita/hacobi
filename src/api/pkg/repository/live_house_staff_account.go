@@ -78,7 +78,7 @@ func (repo LiveHouseStaffAccountRepositoryImpl) Save(
 		return err
 	}
 
-	if account.CredentialLength() == 0 {
+	if account.CredentialChallengeLength() == 0 {
 
 		_, err = tx.ExecContext(
 			ctx,

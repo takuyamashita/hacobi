@@ -13,7 +13,7 @@ type LiveHouseStaffAccountIntf interface {
 	IsProvisional() bool
 	ProvisionalToken() *Token
 	CredentialChallenges() []CredentialChallengeIntf
-	CredentialLength() int
+	CredentialChallengeLength() int
 	AddCredentialChallenge(challenge CredentialChallengeIntf) error
 }
 
@@ -155,7 +155,7 @@ func (account LiveHouseStaffAccountImpl) CredentialChallenges() []CredentialChal
 	return account.credentialChallenges
 }
 
-func (account LiveHouseStaffAccountImpl) CredentialLength() int {
+func (account LiveHouseStaffAccountImpl) CredentialChallengeLength() int {
 
 	if account.credentialChallenges == nil {
 		return 0
