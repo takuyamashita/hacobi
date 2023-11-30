@@ -6,19 +6,24 @@ type CredentialChallengeIntf interface {
 	Challenge() Challenge
 }
 
-type CredentialChallengeImpl struct {
+type credentialChallengeImpl struct {
 	challenge Challenge
 	createdAt time.Time
 }
 
-func NewCredentialChallenge(challenge Challenge, createdAt time.Time) (CredentialChallengeIntf, error) {
+func NewCredentialChallenge(challenge string, createdAt time.Time) (CredentialChallengeIntf, error) {
 
-	return &CredentialChallengeImpl{
-		challenge: challenge,
+	c, err := NewChallenge(challenge)
+	if err != nil {
+		return nil, err
+	}
+
+	return &credentialChallengeImpl{
+		challenge: c,
 		createdAt: createdAt,
 	}, nil
 }
 
-func (c CredentialChallengeImpl) Challenge() Challenge {
+func (c credentialChallengeImpl) Challenge() Challenge {
 	return c.challenge
 }

@@ -1,6 +1,11 @@
 package web
 
 import (
+	"log"
+	"net/http"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"github.com/takuyamashita/hacobi/src/api/pkg/container"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
@@ -36,15 +41,9 @@ func (ctrl liveHouseStaffController) SendLiveHouseStaffRegisterMail(c echo.Conte
 	return c.JSON(200, "ok")
 }
 
-// curl -X POST -H "Content-Type: application/json" -d '{}' localhost/api/v1/live_house_staff
-func (ctrl liveHouseStaffController) RegisterStaff(c echo.Context) error {
-
-	id, err := usecase.RegisterLiveHouseStaff("name", "emailAddress@test.com", "password", c.Request().Context(), ctrl.container)
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(200, id)
+type jwtClaims struct {
+	AccountId string `json:"accountId"`
+	jwt.RegisteredClaims
 }
 
 func (ctrl liveHouseStaffController) StartRegister(c echo.Context) error {
@@ -57,18 +56,65 @@ func (ctrl liveHouseStaffController) StartRegister(c echo.Context) error {
 		return err
 	}
 
-	option, err := usecase.StartRegister(req.Token, c.Request().Context(), ctrl.container)
+	option, accountId, err := usecase.StartRegister(req.Token, c.Request().Context(), ctrl.container)
 	if err != nil {
 		return err
 	}
 
+	claims := jwtClaims{
+		accountId,
+		jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Millisecond * time.Duration(option.Timeout))),
+		},
+	}
+	jwtToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte("secret"))
+	c.SetCookie(&http.Cookie{
+		Name:  "jwt",
+		Value: jwtToken,
+	})
+
 	return c.JSON(200, option)
+}
+
+func (ctrl liveHouseStaffController) FinishRegister(c echo.Context) error {
+
+	jwtCookie, err := c.Cookie("jwt")
+	if err != nil {
+		return err
+	}
+	// get accountId from jwt
+	claims := jwtClaims{}
+	_, err = jwt.ParseWithClaims(jwtCookie.Value, &claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte("secret"), nil
+	})
+	if err != nil {
+		return err
+	}
+
+	log.Println(claims.AccountId)
+
+	if err := usecase.FinishRegisterLiveHouseStaffAccount(c.Request().Body, claims.AccountId, c.Request().Context(), ctrl.container); err != nil {
+		return err
+	}
+
+	return c.JSON(200, "ok")
 }
 
 // curl -X POST -H "Content-Type: application/json" -d '{}' localhost/api/v1/live_house_account
 func (ctrl liveHouseStaffController) RegisterAccount(c echo.Context) error {
 
 	id, err := usecase.RegisterLiveHouseAccount("298e12d6-ec49-4dd7-8a39-84b090d47b36", c.Request().Context(), ctrl.container)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(200, id)
+}
+
+// curl -X POST -H "Content-Type: application/json" -d '{}' localhost/api/v1/live_house_staff
+func (ctrl liveHouseStaffController) RegisterStaff(c echo.Context) error {
+
+	id, err := usecase.RegisterLiveHouseStaff("name", "emailAddress@test.com", "password", c.Request().Context(), ctrl.container)
 	if err != nil {
 		return err
 	}

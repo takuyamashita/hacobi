@@ -27,6 +27,7 @@ type TransationRepositoryIntf interface {
 
 type LiveHouseStaffAccountRepositoryIntf interface {
 	Save(account live_house_staff_account_domain.LiveHouseStaffAccountIntf, ctx context.Context) error
+	FindById(id live_house_staff_account_domain.LiveHouseStaffAccountId, ctx context.Context) (live_house_staff_account_domain.LiveHouseStaffAccountIntf, error)
 	FindByProvisionalRegistrationToken(token live_house_staff_account_domain.Token, ctx context.Context) (live_house_staff_account_domain.LiveHouseStaffAccountIntf, error)
 }
 

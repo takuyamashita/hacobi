@@ -3,9 +3,13 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
+	"io"
+	"log"
 	"time"
 
 	"github.com/go-webauthn/webauthn/protocol"
+	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/takuyamashita/hacobi/src/api/pkg/container"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/event"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
@@ -77,7 +81,7 @@ func RegisterProvisionalLiveHouseAccount(emailAddress string, ctx context.Contex
 	return commit()
 }
 
-func StartRegister(token string, ctx context.Context, container container.Container) (*protocol.PublicKeyCredentialCreationOptions, error) {
+func StartRegister(token string, ctx context.Context, container container.Container) (*protocol.PublicKeyCredentialCreationOptions, string, error) {
 
 	var (
 		publicKeyCredential       CredentialKeyIntf
@@ -88,40 +92,103 @@ func StartRegister(token string, ctx context.Context, container container.Contai
 
 	tkn, err := live_house_staff_account_domain.NewTokenFromHexString(token)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	account, err := liveHouseStaffAccountRepo.FindByProvisionalRegistrationToken(tkn, ctx)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	if account == nil {
-		return nil, errors.New("account not found")
+		return nil, "", errors.New("account not found")
 	}
 
 	challenge, err := publicKeyCredential.CreateChallenge()
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	c, err := live_house_staff_account_domain.NewCredentialChallenge(
-		live_house_staff_account_domain.NewChallengeFromBytes(challenge),
+		challenge.String(),
 		time.Now(),
 	)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	if err := account.AddCredentialChallenge(c); err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	if err := liveHouseStaffAccountRepo.Save(account, ctx); err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	option := publicKeyCredential.CreateCredentialCreationOptions(challenge, "localhost")
 
-	return &option, nil
+	return &option, account.Id().String(), nil
 
+}
+
+func FinishRegisterLiveHouseStaffAccount(
+	reader io.Reader,
+	accountId string,
+	ctx context.Context,
+	container container.Container,
+) error {
+
+	var (
+		uuidRepo                  UuidRepositoryIntf
+		txRepo                    TransationRepositoryIntf
+		liveHouseStaffAccountRepo LiveHouseStaffAccountRepositoryIntf
+		publicKeyCredential       CredentialKeyIntf
+	)
+	container.Make(&uuidRepo)
+	container.Make(&txRepo)
+	container.Make(&liveHouseStaffAccountRepo)
+	container.Make(&publicKeyCredential)
+
+	commit, rollback, err := txRepo.Begin(ctx)
+	defer rollback()
+	if err != nil {
+		return err
+	}
+
+	parsedResponse, err := protocol.ParseCredentialCreationResponseBody(reader)
+	if err != nil {
+
+		// cast error to protocol.Error
+		fmt.Println(err.(*protocol.Error).Details)
+
+		log.Println(err)
+		return err
+	}
+
+	liveHouseStaffAccountId := live_house_staff_account_domain.NewLiveHouseStaffAccountId(accountId)
+	account, err := liveHouseStaffAccountRepo.FindById(liveHouseStaffAccountId, ctx)
+	if err != nil {
+		return err
+	}
+
+	for _, v := range account.CredentialChallenges() {
+		log.Println(v.Challenge().String())
+	}
+
+	if err := parsedResponse.Verify(
+		account.CredentialChallenges()[len(account.CredentialChallenges())-1].Challenge().String(),
+		true,
+		"localhost",
+		[]string{"localhost"},
+	); err != nil {
+		return err
+	}
+
+	credential, err := webauthn.MakeNewCredential(parsedResponse)
+	if err != nil {
+		return err
+	}
+
+	log.Println(credential)
+
+	return commit()
 }

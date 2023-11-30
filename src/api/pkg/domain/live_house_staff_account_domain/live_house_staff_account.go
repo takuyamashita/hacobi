@@ -36,11 +36,17 @@ type ProvisionalRegistrationParam struct {
 	CreatedAt time.Time
 }
 
+type CredentialChallengeParam struct {
+	Challenge string
+	CreatedAt time.Time
+}
+
 type NewLiveHouseStaffAccountParams struct {
-	Id                      string
-	Email                   string
-	IsProvisional           bool
-	ProvisionalRegistration *ProvisionalRegistrationParam
+	Id                        string
+	Email                     string
+	IsProvisional             bool
+	ProvisionalRegistration   *ProvisionalRegistrationParam
+	CredentialChallengeParams []CredentialChallengeParam
 }
 
 func NewLiveHouseStaffAccount(params NewLiveHouseStaffAccountParams) (account LiveHouseStaffAccountIntf, err error) {
@@ -67,11 +73,21 @@ func NewLiveHouseStaffAccount(params NewLiveHouseStaffAccountParams) (account Li
 		return nil, err
 	}
 
+	credentialChallenges := make([]CredentialChallengeIntf, 0)
+	for _, v := range params.CredentialChallengeParams {
+		challenge, err := NewCredentialChallenge(v.Challenge, v.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+		credentialChallenges = append(credentialChallenges, challenge)
+	}
+
 	if params.ProvisionalRegistration == nil {
 		return &LiveHouseStaffAccountImpl{
 			id:                      id,
 			email:                   email,
 			isProvisional:           params.IsProvisional,
+			credentialChallenges:    credentialChallenges,
 			provisionalRegistration: nil,
 		}, nil
 	}
@@ -89,6 +105,7 @@ func NewLiveHouseStaffAccount(params NewLiveHouseStaffAccountParams) (account Li
 		email:                   email,
 		isProvisional:           params.IsProvisional,
 		provisionalRegistration: provisionalRegistration,
+		credentialChallenges:    credentialChallenges,
 	}, nil
 }
 

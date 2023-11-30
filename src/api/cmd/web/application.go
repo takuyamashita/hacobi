@@ -92,6 +92,7 @@ func (app *application) setupRoutes() {
 	app.server.POST("/api/v1/live_house_staff", liveHouseStaffController.RegisterStaff)
 	app.server.POST("/api/v1/live_house_account", liveHouseStaffController.RegisterAccount)
 	app.server.POST("/api/v1/live_house_account/credential/start_register", liveHouseStaffController.StartRegister)
+	app.server.POST("/api/v1/live_house_account/credential/finish_register", liveHouseStaffController.FinishRegister)
 
 	app.server.POST("/api/v1/ceremony/start", func(c echo.Context) error {
 

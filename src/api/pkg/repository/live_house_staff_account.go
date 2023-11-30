@@ -195,6 +195,102 @@ func (repo LiveHouseStaffAccountRepositoryImpl) FindByEmail(
 
 }
 
+func (repo LiveHouseStaffAccountRepositoryImpl) FindById(
+	id live_house_staff_account_domain.LiveHouseStaffAccountId,
+	ctx context.Context,
+) (live_house_staff_account_domain.LiveHouseStaffAccountIntf, error) {
+
+	int2Bool := func(i int) bool {
+		if i == 1 {
+			return true
+		}
+		return false
+	}
+
+	row := repo.db.QueryRowContext(
+		ctx,
+		"SELECT id, email, is_provisional FROM live_house_staff_accounts WHERE id = ?",
+		id.String(),
+	)
+
+	var (
+		_id           string
+		email         string
+		isProvisional int
+	)
+
+	if err := row.Scan(&_id, &email, &isProvisional); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	credentialChallenges, err := repo.findChallenges(id, ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if isProvisional == 1 {
+		row := repo.db.QueryRowContext(
+			ctx,
+			"SELECT token, created_at, live_house_staff_account_id FROM live_house_staff_account_provisional_registrations WHERE live_house_staff_account_id = ?",
+			id.String(),
+		)
+
+		var (
+			token     string
+			createdAt []uint8
+			_id       string
+		)
+		if err := row.Scan(&token, &createdAt, &_id); err != nil {
+			if err != sql.ErrNoRows {
+				return nil, err
+			}
+			return nil, nil
+		}
+
+		createdAtTime, err := time.Parse("2006-01-02 15:04:05", string(createdAt))
+		if err != nil {
+			return nil, err
+		}
+
+		account, err := live_house_staff_account_domain.NewLiveHouseStaffAccount(live_house_staff_account_domain.NewLiveHouseStaffAccountParams{
+			Id:            id.String(),
+			Email:         email,
+			IsProvisional: int2Bool(isProvisional),
+			ProvisionalRegistration: &live_house_staff_account_domain.ProvisionalRegistrationParam{
+				Token:     token,
+				CreatedAt: createdAtTime,
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		for _, v := range credentialChallenges {
+			account.AddCredentialChallenge(v)
+		}
+
+		return account, nil
+	}
+
+	account, err := live_house_staff_account_domain.NewLiveHouseStaffAccount(live_house_staff_account_domain.NewLiveHouseStaffAccountParams{
+		Id:            id.String(),
+		Email:         email,
+		IsProvisional: int2Bool(isProvisional),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, v := range credentialChallenges {
+		account.AddCredentialChallenge(v)
+	}
+
+	return account, nil
+}
+
 func (repo LiveHouseStaffAccountRepositoryImpl) FindByProvisionalRegistrationToken(
 	token live_house_staff_account_domain.Token,
 	ctx context.Context,
@@ -250,5 +346,52 @@ func (repo LiveHouseStaffAccountRepositoryImpl) FindByProvisionalRegistrationTok
 			CreatedAt: createdAtTime,
 		},
 	})
+
+}
+
+func (repo LiveHouseStaffAccountRepositoryImpl) findChallenges(
+	id live_house_staff_account_domain.LiveHouseStaffAccountId,
+	ctx context.Context,
+) ([]live_house_staff_account_domain.CredentialChallengeIntf, error) {
+
+	rows, err := repo.db.QueryContext(
+		ctx,
+		"SELECT challenge, created_at FROM live_house_staff_account_credential_challenges WHERE live_house_staff_account_id = ? ORDER BY created_at ASC",
+		id.String(),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	challenges := []live_house_staff_account_domain.CredentialChallengeIntf{}
+	for rows.Next() {
+
+		var (
+			challenge string
+			createdAt []uint8
+		)
+
+		if err := rows.Scan(&challenge, &createdAt); err != nil {
+			return nil, err
+		}
+
+		createdAtTime, err := time.Parse("2006-01-02 15:04:05", string(createdAt))
+		if err != nil {
+			return nil, err
+		}
+
+		c, err := live_house_staff_account_domain.NewCredentialChallenge(
+			challenge,
+			createdAtTime,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		challenges = append(challenges, c)
+	}
+
+	return challenges, nil
 
 }

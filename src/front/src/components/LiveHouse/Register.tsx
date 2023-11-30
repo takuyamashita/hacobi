@@ -133,7 +133,7 @@ const Register = ({ token }: Props) => {
     console.log("publicKeyAlgorithm", r.getPublicKeyAlgorithm());
     console.log("signature", new TextDecoder().decode(pubKey));
 
-    fetch("/api/v1/auth", {
+    fetch("/api/v1/live_house_account/credential/finish_register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
