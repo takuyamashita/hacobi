@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"log"
 )
 
 type MySQL struct {
@@ -27,8 +26,6 @@ type txFunc func(tx *MySQL) error
 
 func (m *MySQL) BeginTx(ctx context.Context, opts *sql.TxOptions) (*MySQL, error) {
 
-	log.Println("Begin", m.txCount)
-
 	m.txCount++
 
 	if m.tx != nil {
@@ -46,8 +43,6 @@ func (m *MySQL) BeginTx(ctx context.Context, opts *sql.TxOptions) (*MySQL, error
 }
 
 func (m *MySQL) Commit() error {
-
-	log.Println("Commit", m.txCount)
 
 	if m.txCount > 1 {
 		m.txCount--
@@ -70,8 +65,6 @@ func (m *MySQL) Commit() error {
 }
 
 func (m *MySQL) Rollback() error {
-
-	log.Println("Rollback", m.txCount)
 
 	if m.tx != nil {
 		m.txCount = 0
