@@ -14,6 +14,7 @@ type LiveHouseStaffAccountIntf interface {
 	ProvisionalToken() *Token
 	CredentialChallenge() CredentialChallengeIntf
 	SetCredentialChallenge(challenge CredentialChallengeIntf) error
+	AddCredentialKey(id domain.PublicKeyId) error
 }
 
 type LiveHouseStaffAccountImpl struct {
@@ -28,6 +29,9 @@ type LiveHouseStaffAccountImpl struct {
 
 	// PublickKeyを登録する際に必要なChallenge
 	credentialChallenge CredentialChallengeIntf
+
+	// publicKeys
+	credentialKeys []domain.PublicKeyId
 }
 
 type ProvisionalRegistrationParam struct {
@@ -144,4 +148,11 @@ func (account *LiveHouseStaffAccountImpl) SetCredentialChallenge(challenge Crede
 
 func (account LiveHouseStaffAccountImpl) CredentialChallenge() CredentialChallengeIntf {
 	return account.credentialChallenge
+}
+
+func (account *LiveHouseStaffAccountImpl) AddCredentialKey(id domain.PublicKeyId) error {
+
+	account.credentialKeys = append(account.credentialKeys, id)
+
+	return nil
 }
