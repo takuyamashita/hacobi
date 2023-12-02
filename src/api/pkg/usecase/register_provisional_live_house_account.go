@@ -10,6 +10,8 @@ import (
 	"github.com/go-webauthn/webauthn/protocol"
 	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/takuyamashita/hacobi/src/api/pkg/container"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/account_credential_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/event"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
 )
@@ -149,11 +151,13 @@ func FinishRegisterLiveHouseStaffAccount(
 		txRepo                    TransationRepositoryIntf
 		liveHouseStaffAccountRepo LiveHouseStaffAccountRepositoryIntf
 		publicKeyCredential       CredentialKeyIntf
+		accountCredentialRepo     AccountCredentialRepositoryIntf
 	)
 	container.Make(&uuidRepo)
 	container.Make(&txRepo)
 	container.Make(&liveHouseStaffAccountRepo)
 	container.Make(&publicKeyCredential)
+	container.Make(&accountCredentialRepo)
 
 	commit, rollback, err := txRepo.Begin(ctx)
 	defer rollback()
@@ -185,6 +189,55 @@ func FinishRegisterLiveHouseStaffAccount(
 
 	credential, err := webauthn.MakeNewCredential(parsedResponse)
 	if err != nil {
+		return err
+	}
+
+	transport := make([]string, len(credential.Transport))
+	for i, t := range credential.Transport {
+		transport[i] = string(t)
+	}
+
+	accountCredential, err := account_credential_domain.NewAccountCredential(
+		account_credential_domain.NewAccountCredentialParams{
+			LiveHouseStaffAccountId: liveHouseStaffAccountId,
+			// dbからNewする場合と、それ以外でNewする場合とで[]byteを引数にするのかstringを引数にするのかがぐちゃぐちゃになっている
+			PublicKeyID:     domain.PublicKeyId(credential.ID).String(),
+			PublicKey:       account_credential_domain.PublicKey(credential.PublicKey).String(),
+			AttestationType: string(credential.AttestationType),
+			Transport:       transport,
+			Flags: account_credential_domain.Flags{
+				UserPresent:    credential.Flags.UserPresent,
+				UserVerified:   credential.Flags.UserVerified,
+				BackupEligible: credential.Flags.BackupEligible,
+				BackupState:    credential.Flags.BackupState,
+			},
+			Authenticator: struct {
+				AAGUID       string
+				SignCount    uint32
+				Attachment   string
+				CloneWarning bool
+			}{
+				AAGUID:       account_credential_domain.AAGUID(credential.Authenticator.AAGUID).String(),
+				SignCount:    credential.Authenticator.SignCount,
+				Attachment:   string(credential.Authenticator.Attachment),
+				CloneWarning: credential.Authenticator.CloneWarning,
+			},
+			CreatedAt: time.Now(),
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	if err := account.AddCredentialKey(accountCredential.PublicKeyId()); err != nil {
+		return err
+	}
+
+	if err := liveHouseStaffAccountRepo.Save(account, ctx); err != nil {
+		return err
+	}
+
+	if err := accountCredentialRepo.Save(accountCredential, ctx); err != nil {
 		return err
 	}
 
