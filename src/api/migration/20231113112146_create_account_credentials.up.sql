@@ -1,10 +1,10 @@
-CREATE TABLE IF NOT EXISTS live_house_staff_account_credentials (
+CREATE TABLE IF NOT EXISTS account_credentials (
     live_house_staff_account_id VARCHAR(36) NOT NULL,
 
     public_key_id VARCHAR(128) NOT NULL,
     public_key VARCHAR(128) NOT NULL,
     attestation_type VARCHAR(128) NOT NULL,
-    transport VARCHAR(128) NOT NULL,
+    transport INT(32) UNSIGNED NOT NULL,
 
     user_present TINYINT(1) NOT NULL,
     user_verified TINYINT(1) NOT NULL,
