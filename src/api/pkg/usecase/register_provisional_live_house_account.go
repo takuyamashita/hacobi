@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"time"
@@ -165,9 +164,6 @@ func FinishRegisterLiveHouseStaffAccount(
 	parsedResponse, err := protocol.ParseCredentialCreationResponseBody(reader)
 	if err != nil {
 
-		// cast error to protocol.Error
-		fmt.Println(err.(*protocol.Error).Details)
-
 		log.Println(err)
 		return err
 	}
@@ -182,7 +178,7 @@ func FinishRegisterLiveHouseStaffAccount(
 		account.CredentialChallenge().Challenge().String(),
 		true,
 		"localhost",
-		[]string{"localhost"},
+		[]string{"http://localhost"},
 	); err != nil {
 		return err
 	}
