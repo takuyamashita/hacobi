@@ -110,6 +110,7 @@ func StartRegister(
 		return nil, "", errors.New("account not found")
 	}
 
+	// xxx: repositoryChallengeとdomainChallengeが存在しており混乱を招く
 	repositoryChallenge, err := publicKeyCredential.CreateChallenge()
 	if err != nil {
 		return nil, "", err
