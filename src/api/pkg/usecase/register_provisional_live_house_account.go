@@ -229,19 +229,9 @@ func FinishRegisterLiveHouseStaffAccount(
 		return err
 	}
 
-	if err := account.AddCredentialKey(accountCredential.PublicKeyId()); err != nil {
-		return err
-	}
-
-	if err := liveHouseStaffAccountRepo.Save(account, ctx); err != nil {
-		return err
-	}
-
 	if err := accountCredentialRepo.Save(accountCredential, ctx); err != nil {
 		return err
 	}
-
-	log.Println(credential)
 
 	return commit()
 }
