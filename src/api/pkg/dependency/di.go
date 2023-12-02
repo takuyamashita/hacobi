@@ -50,6 +50,10 @@ func SetupDI(container container.Container, db *db.MySQL) {
 		return repository.NewliveHouseAccount(db)
 	})
 
+	container.Bind(func() usecase.AccountCredentialRepositoryIntf {
+		return repository.NewAccountCredentialRepository(db)
+	})
+
 	//~~~~~~~~~~~~~~~~~~ infra ~~~~~~~~~~~~~~~~~~//
 
 	container.Bind(func() usecase.CredentialKeyIntf {
