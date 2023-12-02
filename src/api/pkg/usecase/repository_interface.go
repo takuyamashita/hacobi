@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/go-webauthn/webauthn/protocol"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/account_credential_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_account_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
@@ -38,4 +39,8 @@ type LiveHouseStaffRepositoryIntf interface {
 
 type LiveHouseAccountRepositoryIntf interface {
 	Save(account live_house_account_domain.LiveHouseAccountIntf, ctx context.Context) error
+}
+
+type AccountCredentialRepositoryIntf interface {
+	Save(credential account_credential_domain.AccountCredentialIntf, ctx context.Context) error
 }
