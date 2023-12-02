@@ -15,6 +15,7 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
 )
 
+// 仮アカウントの登録と本登録メールの送信をおこないます
 func RegisterProvisionalLiveHouseStaffAccount(emailAddress string, ctx context.Context, container container.Container) error {
 
 	var (
@@ -81,7 +82,13 @@ func RegisterProvisionalLiveHouseStaffAccount(emailAddress string, ctx context.C
 	return commit()
 }
 
-func StartRegister(token string, ctx context.Context, container container.Container) (*protocol.PublicKeyCredentialCreationOptions, string, error) {
+// 本登録を開始します
+// 本登録ではWebAuthnを使用したアカウント登録をおこなうため、そのために必要な情報を返します
+func StartRegister(
+	token string,
+	ctx context.Context,
+	container container.Container,
+) (*protocol.PublicKeyCredentialCreationOptions, string, error) {
 
 	var (
 		publicKeyCredential       CredentialKeyIntf
@@ -103,20 +110,20 @@ func StartRegister(token string, ctx context.Context, container container.Contai
 		return nil, "", errors.New("account not found")
 	}
 
-	challenge, err := publicKeyCredential.CreateChallenge()
+	repositoryChallenge, err := publicKeyCredential.CreateChallenge()
 	if err != nil {
 		return nil, "", err
 	}
 
-	c, err := live_house_staff_account_domain.NewCredentialChallenge(
-		challenge.String(),
+	domainChallenge, err := live_house_staff_account_domain.NewCredentialChallenge(
+		repositoryChallenge.String(),
 		time.Now(),
 	)
 	if err != nil {
 		return nil, "", err
 	}
 
-	if err := account.AddCredentialChallenge(c); err != nil {
+	if err := account.AddCredentialChallenge(domainChallenge); err != nil {
 		return nil, "", err
 	}
 
@@ -124,7 +131,7 @@ func StartRegister(token string, ctx context.Context, container container.Contai
 		return nil, "", err
 	}
 
-	option := publicKeyCredential.CreateCredentialCreationOptions(challenge, "localhost")
+	option := publicKeyCredential.CreateCredentialCreationOptions(repositoryChallenge, "localhost")
 
 	return &option, account.Id().String(), nil
 
