@@ -37,6 +37,7 @@ func getConfigParams() mysql.Config {
 		Addr:      Addr,
 		Collation: "utf8mb4_unicode_ci",
 		Net:       "tcp",
+		ParseTime: true,
 	}
 }
 
