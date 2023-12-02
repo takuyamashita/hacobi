@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS live_house_staff_email_accounts;
+DROP TABLE IF EXISTS live_house_staff_accounts;
