@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/db"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
@@ -152,22 +151,6 @@ func (repo LiveHouseStaffAccountRepositoryImpl) FindByProvisionalRegistrationTok
 	return repo.findBy(params, ctx)
 }
 
-type findByType string
-
-func (t findByType) stmt() string {
-
-	switch t {
-	case findByTypeId:
-		return fmt.Sprintf(selectStmtTmpl, "a", "id", "?")
-	case findByTypeEmail:
-		return fmt.Sprintf(selectStmtTmpl, "a", "email", "?")
-	case findByTypeToken:
-		return fmt.Sprintf(selectStmtTmpl, "r", "token", "?")
-	default:
-		return ""
-	}
-}
-
 const (
 	findByTypeEmail findByType = "email"
 	findByTypeId    findByType = "id"
@@ -201,6 +184,22 @@ const (
 		WHERE %s.%s = %s
 	`
 )
+
+type findByType string
+
+func (t findByType) stmt() string {
+
+	switch t {
+	case findByTypeId:
+		return fmt.Sprintf(selectStmtTmpl, "a", "id", "?")
+	case findByTypeEmail:
+		return fmt.Sprintf(selectStmtTmpl, "a", "email", "?")
+	case findByTypeToken:
+		return fmt.Sprintf(selectStmtTmpl, "r", "token", "?")
+	default:
+		return ""
+	}
+}
 
 type findByParams struct {
 	findByType  findByType
@@ -252,8 +251,6 @@ func int2Bool(i int) bool {
 }
 
 func (repo LiveHouseStaffAccountRepositoryImpl) findBy(params findByParams, ctx context.Context) (account live_house_staff_account_domain.LiveHouseStaffAccountIntf, err error) {
-
-	log.Println(params.findByType.stmt())
 
 	var (
 		accountId          string
