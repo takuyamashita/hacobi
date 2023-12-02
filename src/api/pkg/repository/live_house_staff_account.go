@@ -288,14 +288,6 @@ func (repo LiveHouseStaffAccountRepositoryImpl) findBy(params findByParams, ctx 
 		return nil, err
 	}
 
-	log.Println(accountId)
-	log.Println(email)
-	log.Println(isProvisional)
-	log.Println(token)
-	log.Println(tokenCreatedAt)
-	log.Println(challenge)
-	log.Println(challengeCreatedAt)
-
 	var (
 		provisionalRegistrationParam *live_house_staff_account_domain.ProvisionalRegistrationParam
 		credentialChallengeParam     *live_house_staff_account_domain.CredentialChallengeParam
