@@ -32,7 +32,7 @@ func (ctrl liveHouseStaffController) SendLiveHouseStaffRegisterMail(c echo.Conte
 		return err
 	}
 
-	err := usecase.RegisterProvisionalLiveHouseAccount(req.EmailAddress, c.Request().Context(), ctrl.container)
+	err := usecase.RegisterProvisionalLiveHouseStaffAccount(req.EmailAddress, c.Request().Context(), ctrl.container)
 	if err != nil {
 		c.Error(err)
 		return err

@@ -15,7 +15,7 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
 )
 
-func RegisterProvisionalLiveHouseAccount(emailAddress string, ctx context.Context, container container.Container) error {
+func RegisterProvisionalLiveHouseStaffAccount(emailAddress string, ctx context.Context, container container.Container) error {
 
 	var (
 		uuidRepo                  UuidRepositoryIntf
