@@ -124,7 +124,7 @@ func StartRegister(
 		return nil, "", err
 	}
 
-	if err := account.AddCredentialChallenge(domainChallenge); err != nil {
+	if err := account.SetCredentialChallenge(domainChallenge); err != nil {
 		return nil, "", err
 	}
 
@@ -178,12 +178,8 @@ func FinishRegisterLiveHouseStaffAccount(
 		return err
 	}
 
-	for _, v := range account.CredentialChallenges() {
-		log.Println(v.Challenge().String())
-	}
-
 	if err := parsedResponse.Verify(
-		account.CredentialChallenges()[len(account.CredentialChallenges())-1].Challenge().String(),
+		account.CredentialChallenge().Challenge().String(),
 		true,
 		"localhost",
 		[]string{"localhost"},

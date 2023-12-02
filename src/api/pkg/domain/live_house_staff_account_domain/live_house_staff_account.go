@@ -12,9 +12,8 @@ type LiveHouseStaffAccountIntf interface {
 	EmailAddress() domain.LiveHouseStaffEmailAddress
 	IsProvisional() bool
 	ProvisionalToken() *Token
-	CredentialChallenges() []CredentialChallengeIntf
-	CredentialChallengeLength() int
-	AddCredentialChallenge(challenge CredentialChallengeIntf) error
+	CredentialChallenge() CredentialChallengeIntf
+	SetCredentialChallenge(challenge CredentialChallengeIntf) error
 }
 
 type LiveHouseStaffAccountImpl struct {
@@ -28,7 +27,7 @@ type LiveHouseStaffAccountImpl struct {
 	provisionalRegistration LiveHouseStaffAccountProvisionalRegistrationIntf
 
 	// PublickKeyを登録する際に必要なChallenge
-	credentialChallenges []CredentialChallengeIntf
+	credentialChallenge CredentialChallengeIntf
 }
 
 type ProvisionalRegistrationParam struct {
@@ -46,7 +45,7 @@ type NewLiveHouseStaffAccountParams struct {
 	Email                     string
 	IsProvisional             bool
 	ProvisionalRegistration   *ProvisionalRegistrationParam
-	CredentialChallengeParams []CredentialChallengeParam
+	CredentialChallengeParams *CredentialChallengeParam
 }
 
 func NewLiveHouseStaffAccount(params NewLiveHouseStaffAccountParams) (account LiveHouseStaffAccountIntf, err error) {
@@ -73,13 +72,13 @@ func NewLiveHouseStaffAccount(params NewLiveHouseStaffAccountParams) (account Li
 		return nil, err
 	}
 
-	credentialChallenges := make([]CredentialChallengeIntf, 0)
-	for _, v := range params.CredentialChallengeParams {
-		challenge, err := NewCredentialChallenge(v.Challenge, v.CreatedAt)
+	var challenge CredentialChallengeIntf
+
+	if params.CredentialChallengeParams != nil {
+		challenge, err = NewCredentialChallenge(params.CredentialChallengeParams.Challenge, params.CredentialChallengeParams.CreatedAt)
 		if err != nil {
 			return nil, err
 		}
-		credentialChallenges = append(credentialChallenges, challenge)
 	}
 
 	if params.ProvisionalRegistration == nil {
@@ -87,7 +86,7 @@ func NewLiveHouseStaffAccount(params NewLiveHouseStaffAccountParams) (account Li
 			id:                      id,
 			email:                   email,
 			isProvisional:           params.IsProvisional,
-			credentialChallenges:    credentialChallenges,
+			credentialChallenge:     challenge,
 			provisionalRegistration: nil,
 		}, nil
 	}
@@ -105,7 +104,7 @@ func NewLiveHouseStaffAccount(params NewLiveHouseStaffAccountParams) (account Li
 		email:                   email,
 		isProvisional:           params.IsProvisional,
 		provisionalRegistration: provisionalRegistration,
-		credentialChallenges:    credentialChallenges,
+		credentialChallenge:     challenge,
 	}, nil
 }
 
@@ -136,30 +135,13 @@ func (account LiveHouseStaffAccountImpl) IsProvisional() bool {
 	return account.isProvisional
 }
 
-func (account *LiveHouseStaffAccountImpl) AddCredentialChallenge(challenge CredentialChallengeIntf) error {
+func (account *LiveHouseStaffAccountImpl) SetCredentialChallenge(challenge CredentialChallengeIntf) error {
 
-	if !account.isProvisional {
-		return errors.New("仮登録でない場合は、CredentialChallengeを追加できません。")
-	}
-
-	if account.provisionalRegistration == nil {
-		return errors.New("仮登録の場合は、ProvisionalRegistrationはnilではありません。")
-	}
-
-	account.credentialChallenges = append(account.credentialChallenges, challenge)
+	account.credentialChallenge = challenge
 
 	return nil
 }
 
-func (account LiveHouseStaffAccountImpl) CredentialChallenges() []CredentialChallengeIntf {
-	return account.credentialChallenges
-}
-
-func (account LiveHouseStaffAccountImpl) CredentialChallengeLength() int {
-
-	if account.credentialChallenges == nil {
-		return 0
-	}
-
-	return len(account.credentialChallenges)
+func (account LiveHouseStaffAccountImpl) CredentialChallenge() CredentialChallengeIntf {
+	return account.credentialChallenge
 }

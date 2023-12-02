@@ -4,6 +4,7 @@ import "time"
 
 type CredentialChallengeIntf interface {
 	Challenge() Challenge
+	CreatedAt() time.Time
 }
 
 type credentialChallengeImpl struct {
@@ -26,4 +27,8 @@ func NewCredentialChallenge(challenge string, createdAt time.Time) (CredentialCh
 
 func (c credentialChallengeImpl) Challenge() Challenge {
 	return c.challenge
+}
+
+func (c credentialChallengeImpl) CreatedAt() time.Time {
+	return c.createdAt
 }
