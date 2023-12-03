@@ -126,6 +126,19 @@ func (repo AccountCredentialRepositoryImpl) Save(
 					?,
 					?
 				)
+			AS new
+			ON DUPLICATE KEY UPDATE
+				public_key = new.public_key,
+				attestation_type = new.attestation_type,
+				transport = new.transport,
+				user_present = new.user_present,
+				user_verified = new.user_verified,
+				backup_eligible = new.backup_eligible,
+				backup_state = new.backup_state,
+				aaguid = new.aaguid,
+				sign_count = new.sign_count,
+				attachment = new.attachment,
+				created_at = new.created_at
 		`,
 		credential.PublicKeyId().String(),
 		credential.PublicKey().String(),
