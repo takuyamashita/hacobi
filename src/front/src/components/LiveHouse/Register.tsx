@@ -2,6 +2,10 @@
 
 import React from "react";
 import Button from "@/components/Button";
+import {
+  base64URLSafeToUint8Array,
+  arrayBufferToBase64URLSafe,
+} from "@/utils/base64";
 
 type Props = {
   token: string;
@@ -11,32 +15,6 @@ const stringToUint8Array = (str: string) => {
   const array = new Uint8Array(str.length);
   for (let i = 0; i < str.length; i++) {
     array[i] = str.charCodeAt(i);
-  }
-  return array;
-};
-
-const base64URLSafeToUint8Array = (base64URLSafe: string) => {
-  if (base64URLSafe === undefined || base64URLSafe === null) {
-    return new Uint8Array();
-  }
-
-  // padding
-  const pad = (s: string) => {
-    while (s.length % 4 !== 0) {
-      s += "=";
-    }
-    return s;
-  };
-
-  // base64URLSafe to base64
-  const base64 = pad(base64URLSafe).replace(/\-/g, "+").replace(/_/g, "/");
-
-  // base64 to Uint8Array
-  const raw = window.atob(base64);
-  const rawLength = raw.length;
-  const array = new Uint8Array(new ArrayBuffer(rawLength));
-  for (let i = 0; i < rawLength; i++) {
-    array[i] = raw.charCodeAt(i);
   }
   return array;
 };
@@ -72,7 +50,7 @@ const Register = ({ token }: Props) => {
       ? data.ExcludeCredentials.map(
           (credential: { id: string; type: string; transports: string[] }) => {
             return {
-              id: stringToUint8Array(credential.id),
+              id: base64URLSafeToUint8Array(credential.id),
               type: credential.type,
               transports: credential.transports,
             };
@@ -84,8 +62,9 @@ const Register = ({ token }: Props) => {
       name: data.rp.name,
     };
 
-    const user = {
-      ...data.user,
+    const user: PublicKeyCredentialUserEntity = {
+      name: data.user.displayName,
+      displayName: data.user.displayName,
       id: base64URLSafeToUint8Array(data.user.id),
     };
 
@@ -105,33 +84,10 @@ const Register = ({ token }: Props) => {
       publicKey: pubKeyOptions,
     })) as PublicKeyCredential;
 
-    console.log(publickeyCredential);
-    console.log(publickeyCredential.response.clientDataJSON);
-    // decode clientDataJSON(Array Buffer) to JSON
-    const clientDataJSON = JSON.parse(
-      new TextDecoder().decode(publickeyCredential.response.clientDataJSON),
-    );
-    console.log(clientDataJSON);
-    console.log(clientDataJSON.challenge);
-    console.log(publickeyCredential.response);
-
     const r = publickeyCredential.response as AuthenticatorAttestationResponse;
 
     const pubKey = r.getPublicKey();
     if (!pubKey) return;
-
-    console.log(
-      "attestationObject",
-      new TextDecoder().decode(r.attestationObject),
-    );
-    console.log("clientDataJSON", new TextDecoder().decode(r.clientDataJSON));
-    console.log(
-      "authenticatorData",
-      new TextDecoder().decode(r.getAuthenticatorData()),
-    );
-    console.log("transports", r.getTransports());
-    console.log("publicKeyAlgorithm", r.getPublicKeyAlgorithm());
-    console.log("signature", new TextDecoder().decode(pubKey));
 
     fetch("/api/v1/live_house_account/credential/finish_register", {
       method: "POST",
@@ -140,28 +96,13 @@ const Register = ({ token }: Props) => {
       },
       body: JSON.stringify({
         id: publickeyCredential.id,
-        rawId: btoa(
-          String.fromCharCode(...new Uint8Array(publickeyCredential.rawId)),
-        )
-          .replace(/\+/g, "-")
-          .replace(/\//g, "_")
-          .replace(/=/g, ""),
+        rawId: arrayBufferToBase64URLSafe(publickeyCredential.rawId),
         type: publickeyCredential.type,
         authenticatorAttachment: publickeyCredential.authenticatorAttachment,
         clientExtensionResults: publickeyCredential.getClientExtensionResults(),
         response: {
-          attestationObject: btoa(
-            String.fromCharCode(...new Uint8Array(r.attestationObject)),
-          )
-            .replace(/\+/g, "-")
-            .replace(/\//g, "_")
-            .replace(/=/g, ""),
-          clientDataJSON: btoa(
-            String.fromCharCode(...new Uint8Array(r.clientDataJSON)),
-          )
-            .replace(/\+/g, "-")
-            .replace(/\//g, "_")
-            .replace(/=/g, ""),
+          attestationObject: arrayBufferToBase64URLSafe(r.attestationObject),
+          clientDataJSON: arrayBufferToBase64URLSafe(r.clientDataJSON),
           transports: r.getTransports(),
           publicKeyAlgorithm: r.getPublicKeyAlgorithm(),
         },

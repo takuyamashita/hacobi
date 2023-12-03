@@ -3,7 +3,7 @@
 import React from "react";
 import Button from "@/components/Button";
 import { base64URLSafeToUint8Array } from "@/utils/base64";
-import { toJSON } from "@/utils/publicKeyCredential";
+import { convertPublicKeyCredential } from "@/utils/publicKeyCredential";
 
 const Login = () => {
   const [email, setEmail] = React.useState("");
@@ -52,12 +52,6 @@ const Login = () => {
         throw new Error("Credential is null");
       }
 
-      /*
-
-		Email                       string
-		CredentialAssertionResponse protocol.CredentialAssertionResponse
-      */
-
       const res2 = await fetch(
         "/api/v1/live_house_account/credential/finish_login",
         {
@@ -67,7 +61,7 @@ const Login = () => {
           },
           body: JSON.stringify({
             Email: email,
-            CredentialAssertionResponse: toJSON(credential),
+            CredentialAssertionResponse: convertPublicKeyCredential(credential),
           }),
         },
       );
