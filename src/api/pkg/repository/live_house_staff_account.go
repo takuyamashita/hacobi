@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/db"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
@@ -293,6 +294,50 @@ func (repo LiveHouseStaffAccountRepositoryImpl) Save(
 		account.CredentialChallenge().Challenge().String(),
 		account.CredentialChallenge().CreatedAt(),
 	)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if len(account.CredentialKeys()) == 0 {
+		return tx.Commit()
+	}
+
+	values := ""
+	args := make([]interface{}, len(account.CredentialKeys())*2)
+
+	for i, credentialKey := range account.CredentialKeys() {
+		values += "(?, ?),"
+		args[i*2] = account.Id().String()
+		args[i*2+1] = credentialKey.String()
+	}
+
+	log.Println(fmt.Sprintf(
+		`
+				REPLACE INTO live_house_staff_account_credential_relations
+					(live_house_staff_account_id, public_key_id)
+				VALUES
+					%s
+			`,
+		values[:len(values)-1],
+	))
+	log.Println(values)
+	log.Println(args)
+
+	_, err = tx.ExecContext(
+		ctx,
+		fmt.Sprintf(
+			`
+				REPLACE INTO live_house_staff_account_credential_relations
+					(live_house_staff_account_id, public_key_id)
+				VALUES
+					%s
+			`,
+			values[:len(values)-1],
+		),
+		args...,
+	)
+
 	if err != nil {
 		tx.Rollback()
 		return err

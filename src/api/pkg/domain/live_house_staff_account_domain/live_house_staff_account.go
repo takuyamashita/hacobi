@@ -15,6 +15,7 @@ type LiveHouseStaffAccountIntf interface {
 	CredentialChallenge() CredentialChallengeIntf
 	SetCredentialChallenge(challenge CredentialChallengeIntf) error
 	AddCredentialKey(id domain.PublicKeyId) error
+	CredentialKeys() []domain.PublicKeyId
 }
 
 type LiveHouseStaffAccountImpl struct {
@@ -157,4 +158,8 @@ func (account *LiveHouseStaffAccountImpl) AddCredentialKey(id domain.PublicKeyId
 	account.credentialKeys = append(account.credentialKeys, id)
 
 	return nil
+}
+
+func (account LiveHouseStaffAccountImpl) CredentialKeys() []domain.PublicKeyId {
+	return account.credentialKeys
 }
