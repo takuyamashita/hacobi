@@ -120,9 +120,30 @@ func (ctrl liveHouseStaffController) StartLogin(c echo.Context) error {
 
 func (ctrl liveHouseStaffController) FinishLogin(c echo.Context) error {
 
-	if err := usecase.LoginLiveHouseStaffAccount(c.Request().Body, c.Request().Context(), ctrl.container); err != nil {
+	err, account := usecase.LoginLiveHouseStaffAccount(c.Request().Body, c.Request().Context(), ctrl.container)
+	if err != nil {
 		return err
 	}
+
+	claims := AuthJwtClaims{
+		AccountId: account.Id().String(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 1)),
+		},
+	}
+
+	// xxx: secretは別で定義する
+	jwtToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte("secret"))
+	if err != nil {
+		return err
+	}
+
+	c.SetCookie(&http.Cookie{
+		Name:     "auth_token",
+		Value:    jwtToken,
+		HttpOnly: true,
+		Expires:  time.Now().Add(time.Hour * 1),
+	})
 
 	return c.JSON(200, "ok")
 }

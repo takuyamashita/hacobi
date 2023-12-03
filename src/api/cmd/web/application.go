@@ -96,6 +96,11 @@ func (app *application) setupRoutes() {
 	app.server.POST("/api/v1/live_house_account/credential/start_login", liveHouseStaffController.StartLogin)
 	app.server.POST("/api/v1/live_house_account/credential/finish_login", liveHouseStaffController.FinishLogin)
 
+	liveHouseStaffAccountOnly := app.server.Group("/api/v1/live_house_staff_account/enable")
+
+	liveHouseStaffAccountOnly.Use(middleware.CORS())
+	liveHouseStaffAccountOnly.Use(web.NewAuthJwtMiddleware())
+
 	app.server.POST("/api/v1/ceremony/start", func(c echo.Context) error {
 
 		challenge, err := protocol.CreateChallenge()

@@ -61,7 +61,7 @@ func LoginLiveHouseStaffAccount(
 	reader io.Reader,
 	ctx context.Context,
 	container container.Container,
-) error {
+) (error, live_house_staff_account_domain.LiveHouseStaffAccountIntf) {
 
 	var (
 		liveHouseStaffAccountRepo LiveHouseStaffAccountRepositoryIntf
@@ -80,27 +80,27 @@ func LoginLiveHouseStaffAccount(
 	var body Body
 
 	if err := json.NewDecoder(reader).Decode(&body); err != nil {
-		return err
+		return err, nil
 	}
 
 	parsedResponse, err := body.CredentialAssertionResponse.Parse()
 	if err != nil {
-		return err
+		return err, nil
 	}
 
 	email, err := domain.NewLiveHouseStaffEmailAddress(body.Email)
 	if err != nil {
-		return err
+		return err, nil
 	}
 
 	account, err := liveHouseStaffAccountRepo.FindByEmail(email, ctx)
 	if err != nil {
-		return err
+		return err, nil
 	}
 
 	credentials, err := accountCredentialRepo.FindByIds(account.CredentialKeys(), ctx)
 	if err != nil {
-		return err
+		return err, nil
 	}
 
 	var credential account_credential_domain.AccountCredentialIntf
@@ -111,7 +111,7 @@ func LoginLiveHouseStaffAccount(
 		}
 	}
 	if credential == nil {
-		return errors.New("credential not found")
+		return errors.New("credential not found"), nil
 	}
 
 	err = parsedResponse.Verify(
@@ -123,7 +123,7 @@ func LoginLiveHouseStaffAccount(
 	)
 
 	if err != nil {
-		return err
+		return err, nil
 	}
 
 	credential.SetAuthenticatorCount(parsedResponse.Response.AuthenticatorData.Counter)
@@ -133,8 +133,8 @@ func LoginLiveHouseStaffAccount(
 	credential.SetBackupState(parsedResponse.Response.AuthenticatorData.Flags.HasBackupState())
 
 	if err := accountCredentialRepo.Save(credential, ctx); err != nil {
-		return err
+		return err, nil
 	}
 
-	return err
+	return nil, account
 }
