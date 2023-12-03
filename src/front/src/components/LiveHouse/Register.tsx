@@ -11,14 +11,6 @@ type Props = {
   token: string;
 };
 
-const stringToUint8Array = (str: string) => {
-  const array = new Uint8Array(str.length);
-  for (let i = 0; i < str.length; i++) {
-    array[i] = str.charCodeAt(i);
-  }
-  return array;
-};
-
 const Register = ({ token }: Props) => {
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent,
