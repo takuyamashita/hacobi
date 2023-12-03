@@ -14,6 +14,11 @@ type AccountCredentialIntf interface {
 	Flags() Flags
 	Authenticator() Authenticator
 	CreatedAt() time.Time
+	SetAuthenticatorCount(count uint32)
+	SetUserPresent(v bool)
+	SetUserVerified(v bool)
+	SetBackupEligible(v bool)
+	SetBackupState(v bool)
 }
 
 type accountCredentialImpl struct {
@@ -124,4 +129,24 @@ func (l *accountCredentialImpl) Authenticator() Authenticator {
 
 func (l *accountCredentialImpl) CreatedAt() time.Time {
 	return l.createdAt
+}
+
+func (l *accountCredentialImpl) SetAuthenticatorCount(count uint32) {
+	l.authenticator.signCount = count
+}
+
+func (l *accountCredentialImpl) SetUserPresent(v bool) {
+	l.flags.UserPresent = v
+}
+
+func (l *accountCredentialImpl) SetUserVerified(v bool) {
+	l.flags.UserVerified = v
+}
+
+func (l *accountCredentialImpl) SetBackupEligible(v bool) {
+	l.flags.BackupEligible = v
+}
+
+func (l *accountCredentialImpl) SetBackupState(v bool) {
+	l.flags.BackupState = v
 }

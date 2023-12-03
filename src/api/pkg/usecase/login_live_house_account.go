@@ -122,5 +122,19 @@ func LoginLiveHouseStaffAccount(
 		credential.PublicKey(),
 	)
 
+	if err != nil {
+		return err
+	}
+
+	credential.SetAuthenticatorCount(parsedResponse.Response.AuthenticatorData.Counter)
+	credential.SetUserPresent(parsedResponse.Response.AuthenticatorData.Flags.HasUserPresent())
+	credential.SetUserVerified(parsedResponse.Response.AuthenticatorData.Flags.HasUserVerified())
+	credential.SetBackupEligible(parsedResponse.Response.AuthenticatorData.Flags.HasAttestedCredentialData())
+	credential.SetBackupState(parsedResponse.Response.AuthenticatorData.Flags.HasBackupState())
+
+	if err := accountCredentialRepo.Save(credential, ctx); err != nil {
+		return err
+	}
+
 	return err
 }
