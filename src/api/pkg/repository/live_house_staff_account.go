@@ -28,10 +28,7 @@ func NewLiveHouseStaffAccountRepository(db *db.MySQL) LiveHouseStaffAccountRepos
 }
 
 func int2Bool(i int) bool {
-	if i == 1 {
-		return true
-	}
-	return false
+	return i == 1
 }
 
 type liveHouseStaffAccountSelectStmtTmpl string
