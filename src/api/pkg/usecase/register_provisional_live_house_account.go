@@ -199,7 +199,6 @@ func FinishRegisterLiveHouseStaffAccount(
 
 	accountCredential, err := account_credential_domain.NewAccountCredential(
 		account_credential_domain.NewAccountCredentialParams{
-			LiveHouseStaffAccountId: liveHouseStaffAccountId,
 			// dbからNewする場合と、それ以外でNewする場合とで[]byteを引数にするのかstringを引数にするのかがぐちゃぐちゃになっている
 			PublicKeyID:     domain.PublicKeyId(credential.ID).String(),
 			PublicKey:       account_credential_domain.PublicKey(credential.PublicKey).String(),
@@ -229,7 +228,13 @@ func FinishRegisterLiveHouseStaffAccount(
 		return err
 	}
 
+	account.AddCredentialKey(accountCredential.PublicKeyId())
+
 	if err := accountCredentialRepo.Save(accountCredential, ctx); err != nil {
+		return err
+	}
+
+	if err := liveHouseStaffAccountRepo.Save(account, ctx); err != nil {
 		return err
 	}
 

@@ -50,7 +50,6 @@ func (repo AccountCredentialRepositoryImpl) Save(
 
 	/*
 		+-----------------------------+--------------+------+-----+----------------------+-------------------+
-		| live_house_staff_account_id | varchar(36)  | NO   |     | NULL                 |                   |
 		| public_key_id               | varchar(128) | NO   | PRI | NULL                 |                   |
 		| public_key                  | varchar(128) | NO   |     | NULL                 |                   |
 		| attestation_type            | varchar(128) | NO   |     | NULL                 |                   |
@@ -96,7 +95,6 @@ func (repo AccountCredentialRepositoryImpl) Save(
 		`
 			INSERT INTO account_credentials
 				(
-					live_house_staff_account_id,
 					public_key_id,
 					public_key,
 					attestation_type,
@@ -123,11 +121,9 @@ func (repo AccountCredentialRepositoryImpl) Save(
 					?,
 					?,
 					?,
-					?,
 					?
 				)
 		`,
-		credential.LiveHouseStaffAccountId().String(),
 		credential.PublicKeyId().String(),
 		credential.PublicKey().String(),
 		credential.AttestationType().String(),

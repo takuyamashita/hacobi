@@ -4,11 +4,9 @@ import (
 	"time"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
-	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
 )
 
 type AccountCredentialIntf interface {
-	LiveHouseStaffAccountId() live_house_staff_account_domain.LiveHouseStaffAccountId
 	PublicKeyId() domain.PublicKeyId
 	PublicKey() PublicKey
 	AttestationType() AttestationType
@@ -19,23 +17,21 @@ type AccountCredentialIntf interface {
 }
 
 type accountCredentialImpl struct {
-	liveHouseStaffAccountId live_house_staff_account_domain.LiveHouseStaffAccountId
-	publicKeyID             domain.PublicKeyId
-	publicKey               PublicKey
-	attestationType         AttestationType
-	transport               []Transport
-	flags                   Flags
-	authenticator           Authenticator
-	createdAt               time.Time
+	publicKeyID     domain.PublicKeyId
+	publicKey       PublicKey
+	attestationType AttestationType
+	transport       []Transport
+	flags           Flags
+	authenticator   Authenticator
+	createdAt       time.Time
 }
 
 type NewAccountCredentialParams struct {
-	LiveHouseStaffAccountId live_house_staff_account_domain.LiveHouseStaffAccountId
-	PublicKeyID             string
-	PublicKey               string
-	AttestationType         string
-	Transport               []string
-	Flags                   struct {
+	PublicKeyID     string
+	PublicKey       string
+	AttestationType string
+	Transport       []string
+	Flags           struct {
 		UserPresent    bool
 		UserVerified   bool
 		BackupEligible bool
@@ -91,19 +87,14 @@ func NewAccountCredential(
 	)
 
 	return &accountCredentialImpl{
-		liveHouseStaffAccountId: params.LiveHouseStaffAccountId,
-		publicKeyID:             publicKeyId,
-		publicKey:               publicKey,
-		attestationType:         attestationType,
-		transport:               transport,
-		flags:                   flags,
-		authenticator:           authenticator,
-		createdAt:               params.CreatedAt,
+		publicKeyID:     publicKeyId,
+		publicKey:       publicKey,
+		attestationType: attestationType,
+		transport:       transport,
+		flags:           flags,
+		authenticator:   authenticator,
+		createdAt:       params.CreatedAt,
 	}, nil
-}
-
-func (l *accountCredentialImpl) LiveHouseStaffAccountId() live_house_staff_account_domain.LiveHouseStaffAccountId {
-	return l.liveHouseStaffAccountId
 }
 
 func (l *accountCredentialImpl) PublicKeyId() domain.PublicKeyId {
