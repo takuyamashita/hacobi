@@ -1,10 +1,13 @@
 package repository
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/db"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/account_credential_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
@@ -142,4 +145,135 @@ func (repo AccountCredentialRepositoryImpl) Save(
 	}
 
 	return nil
+}
+
+func (repo AccountCredentialRepositoryImpl) FindByIds(
+	ids []domain.PublicKeyId,
+	ctx context.Context,
+) ([]account_credential_domain.AccountCredentialIntf, error) {
+
+	var account = make([]account_credential_domain.AccountCredentialIntf, len(ids))
+
+	t := bytes.Repeat([]byte("?,"), len(ids))
+
+	var args = make([]interface{}, len(ids))
+	for i, id := range ids {
+		args[i] = id.String()
+	}
+
+	rows, err := repo.db.QueryContext(
+		ctx,
+		fmt.Sprintf(
+			`
+				SELECT
+					public_key_id,
+					public_key,
+					attestation_type,
+					transport,
+					user_present,
+					user_verified,
+					backup_eligible,
+					backup_state,
+					aaguid,
+					sign_count,
+					attachment,
+					created_at
+				FROM
+					account_credentials
+				WHERE
+					public_key_id IN (%s)
+			`,
+			t[:len(t)-1],
+		),
+		args...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for i := 0; rows.Next(); i++ {
+
+		var (
+			publicKeyId     string
+			publicKey       string
+			attestationType string
+			transport       uint
+			userPresent     int
+			userVerified    int
+			backupEligible  int
+			backupState     int
+			aaguid          string
+			signCount       uint32
+			attachment      string
+			createdAt       time.Time
+		)
+
+		if err := rows.Scan(
+			&publicKeyId,
+			&publicKey,
+			&attestationType,
+			&transport,
+			&userPresent,
+			&userVerified,
+			&backupEligible,
+			&backupState,
+			&aaguid,
+			&signCount,
+			&attachment,
+			&createdAt,
+		); err != nil {
+			return nil, err
+		}
+
+		var transportArray = make([]string, 0, 5)
+		for i, t := range getTransport() {
+			switch transport & (1 << transportKey(i)) {
+			case 1 << USB:
+				transportArray = append(transportArray, string(t))
+			case 1 << NFC:
+				transportArray = append(transportArray, string(t))
+			case 1 << BLE:
+				transportArray = append(transportArray, string(t))
+			case 1 << Hybrid:
+				transportArray = append(transportArray, string(t))
+			case 1 << Internal:
+				transportArray = append(transportArray, string(t))
+			}
+		}
+
+		accountCredential, err := account_credential_domain.NewAccountCredential(
+			account_credential_domain.NewAccountCredentialParams{
+				PublicKeyID:     publicKeyId,
+				PublicKey:       publicKey,
+				AttestationType: attestationType,
+				Transport:       transportArray,
+				Flags: account_credential_domain.Flags{
+					UserPresent:    userPresent == 1,
+					UserVerified:   userVerified == 1,
+					BackupEligible: backupEligible == 1,
+					BackupState:    backupState == 1,
+				},
+				Authenticator: struct {
+					AAGUID       string
+					SignCount    uint32
+					Attachment   string
+					CloneWarning bool
+				}{
+					AAGUID:       aaguid,
+					SignCount:    signCount,
+					Attachment:   attachment,
+					CloneWarning: false,
+				},
+				CreatedAt: createdAt,
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		account[i] = accountCredential
+	}
+
+	return account, nil
 }
