@@ -1,12 +1,17 @@
 package usecase
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
+	"io"
 	"time"
 
 	"github.com/go-webauthn/webauthn/protocol"
 	"github.com/takuyamashita/hacobi/src/api/pkg/container"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/account_credential_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
 )
 
@@ -47,19 +52,12 @@ func StartLiveHouseStaffAccountLogin(
 		return nil, err
 	}
 
-	credentials, err := accountCredentialRepo.FindByIds(account.CredentialKeys(), ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	options := publicKeyCredential.CreateCredentialAssertionOptions(challenge, "localhost", credentials)
+	options := publicKeyCredential.CreateCredentialAssertionOptions(challenge, "localhost", nil)
 
 	return &options, nil
 }
 
-/*
 func LoginLiveHouseStaffAccount(
-	emailAddress string,
 	reader io.Reader,
 	ctx context.Context,
 	container container.Container,
@@ -82,36 +80,47 @@ func LoginLiveHouseStaffAccount(
 	var body Body
 
 	if err := json.NewDecoder(reader).Decode(&body); err != nil {
-		return nil
+		return err
 	}
 
-	body.CredentialAssertionResponse.Parse()
-
-	parsedResponse, err := protocol.ParseCredentialRequestResponseBody(reader)
+	parsedResponse, err := body.CredentialAssertionResponse.Parse()
 	if err != nil {
 		return err
 	}
 
-	account, err := liveHouseStaffAccountRepo.FindByEmailAddress(emailAddress, ctx)
+	email, err := domain.NewLiveHouseStaffEmailAddress(body.Email)
 	if err != nil {
 		return err
 	}
 
-	credential, err := accountCredentialRepo.FindByPublicKeyId(domain.PublicKeyId(parsedResponse.RawID), ctx)
+	account, err := liveHouseStaffAccountRepo.FindByEmail(email, ctx)
 	if err != nil {
 		return err
 	}
 
-	if err := parsedResponse.Verify(
-		credential.AuthenticatorData,
-		credential.PublicKey,
-		credential.Signature,
-		"localhost",
-		[]string{"http://localhost"},
-	); err != nil {
+	credentials, err := accountCredentialRepo.FindByIds(account.CredentialKeys(), ctx)
+	if err != nil {
 		return err
 	}
 
-	return nil
+	var credential account_credential_domain.AccountCredentialIntf
+	for _, c := range credentials {
+		if bytes.Equal(c.PublicKeyId(), parsedResponse.RawID) {
+			credential = c
+			break
+		}
+	}
+	if credential == nil {
+		return errors.New("credential not found")
+	}
+
+	err = parsedResponse.Verify(
+		account.CredentialChallenge().Challenge().String(),
+		"localhost", []string{"http://localhost"},
+		"",
+		true,
+		credential.PublicKey(),
+	)
+
+	return err
 }
-*/
