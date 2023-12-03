@@ -135,12 +135,42 @@ func (repo LiveHouseStaffAccountRepositoryImpl) findBy(
 		}
 	}
 
+	var credentialKeys []domain.PublicKeyId = make([]domain.PublicKeyId, 0)
+	rows, err := repo.db.QueryContext(
+		ctx,
+		`
+			SELECT
+				public_key_id
+			FROM
+				live_house_staff_account_credential_relations
+			WHERE
+				live_house_staff_account_id = ?
+		`,
+		accountId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var credentialKey string
+		if err := rows.Scan(&credentialKey); err != nil {
+			return nil, err
+		}
+		credentialKeyId, err := domain.NewPublicKeyId(credentialKey)
+		if err != nil {
+			return nil, err
+		}
+		credentialKeys = append(credentialKeys, credentialKeyId)
+	}
+
 	account, err = live_house_staff_account_domain.NewLiveHouseStaffAccount(live_house_staff_account_domain.NewLiveHouseStaffAccountParams{
 		Id:                        accountId,
 		Email:                     email,
 		IsProvisional:             int2Bool(isProvisional),
 		ProvisionalRegistration:   provisionalRegistrationParam,
 		CredentialChallengeParams: credentialChallengeParam,
+		CredentialKeys:            credentialKeys,
 	})
 	if err != nil {
 		return nil, err

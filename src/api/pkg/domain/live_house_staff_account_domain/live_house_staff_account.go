@@ -50,6 +50,7 @@ type NewLiveHouseStaffAccountParams struct {
 	IsProvisional             bool
 	ProvisionalRegistration   *ProvisionalRegistrationParam
 	CredentialChallengeParams *CredentialChallengeParam
+	CredentialKeys            []domain.PublicKeyId
 }
 
 func NewLiveHouseStaffAccount(params NewLiveHouseStaffAccountParams) (account LiveHouseStaffAccountIntf, err error) {
@@ -109,6 +110,7 @@ func NewLiveHouseStaffAccount(params NewLiveHouseStaffAccountParams) (account Li
 		isProvisional:           params.IsProvisional,
 		provisionalRegistration: provisionalRegistration,
 		credentialChallenge:     challenge,
+		credentialKeys:          params.CredentialKeys,
 	}, nil
 }
 
