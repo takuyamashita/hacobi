@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-webauthn/webauthn/protocol"
 	"github.com/go-webauthn/webauthn/protocol/webauthncose"
+	"github.com/takuyamashita/hacobi/src/api/pkg/domain/account_credential_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/usecase"
 )
 
@@ -65,4 +66,36 @@ func (c CredentialKeyImpl) ParseCredentialKey(body io.Reader) (*protocol.ParsedC
 	}
 
 	return ccr.Parse()
+}
+
+func (c CredentialKeyImpl) CreateCredentialAssertionOptions(
+	challenge protocol.URLEncodedBase64,
+	rpId string,
+	credentials []account_credential_domain.AccountCredentialIntf,
+) protocol.PublicKeyCredentialRequestOptions {
+
+	var allowedCredentials = make([]protocol.CredentialDescriptor, len(credentials))
+
+	for i, credential := range credentials {
+
+		var transport = make([]protocol.AuthenticatorTransport, len(credential.Transport()))
+		for i, t := range credential.Transport() {
+			transport[i] = protocol.AuthenticatorTransport(t)
+		}
+
+		allowedCredentials[i] = protocol.CredentialDescriptor{
+			Type:            protocol.PublicKeyCredentialType,
+			CredentialID:    protocol.URLEncodedBase64(credential.PublicKeyId()),
+			Transport:       transport,
+			AttestationType: credential.AttestationType().String(),
+		}
+	}
+
+	return protocol.PublicKeyCredentialRequestOptions{
+		Challenge:          challenge,
+		RelyingPartyID:     rpId,
+		Timeout:            int((5 * time.Minute).Milliseconds()),
+		UserVerification:   protocol.VerificationRequired,
+		AllowedCredentials: allowedCredentials,
+	}
 }
