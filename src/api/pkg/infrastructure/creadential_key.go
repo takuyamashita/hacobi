@@ -27,7 +27,12 @@ func (c CredentialKeyImpl) CreateChallenge() (protocol.URLEncodedBase64, error) 
 	return protocol.CreateChallenge()
 }
 
-func (c CredentialKeyImpl) CreateCredentialCreationOptions(challenge protocol.URLEncodedBase64, rpId string) protocol.PublicKeyCredentialCreationOptions {
+func (c CredentialKeyImpl) CreateCredentialCreationOptions(
+	challenge protocol.URLEncodedBase64,
+	rpId string,
+	accountId string,
+	accountEmail string,
+) protocol.PublicKeyCredentialCreationOptions {
 
 	return protocol.PublicKeyCredentialCreationOptions{
 		Challenge: challenge,
@@ -38,8 +43,8 @@ func (c CredentialKeyImpl) CreateCredentialCreationOptions(challenge protocol.UR
 			},
 		},
 		User: protocol.UserEntity{
-			ID:          []byte("1234567890"),
-			DisplayName: "test-user",
+			ID:          []byte(accountId),
+			DisplayName: accountEmail,
 		},
 		CredentialExcludeList: []protocol.CredentialDescriptor{},
 		Parameters: []protocol.CredentialParameter{

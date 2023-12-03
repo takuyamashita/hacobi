@@ -16,7 +16,7 @@ type CredentialKeyIntf interface {
 	//webauthnに依存...
 	CreateChallenge() (protocol.URLEncodedBase64, error)
 	ParseCredentialKey(body io.Reader) (*protocol.ParsedCredentialCreationData, error)
-	CreateCredentialCreationOptions(challenge protocol.URLEncodedBase64, rpId string) protocol.PublicKeyCredentialCreationOptions
+	CreateCredentialCreationOptions(challenge protocol.URLEncodedBase64, rpId string, accountEmail string, accountId string) protocol.PublicKeyCredentialCreationOptions
 	CreateCredentialAssertionOptions(challenge protocol.URLEncodedBase64, rpId string, credentials []account_credential_domain.AccountCredentialIntf) protocol.PublicKeyCredentialRequestOptions
 }
 

@@ -133,7 +133,12 @@ func StartRegister(
 		return nil, "", err
 	}
 
-	option := publicKeyCredential.CreateCredentialCreationOptions(repositoryChallenge, "localhost")
+	option := publicKeyCredential.CreateCredentialCreationOptions(
+		repositoryChallenge,
+		"localhost",
+		account.Id().String(),
+		account.EmailAddress().String(),
+	)
 
 	return &option, account.Id().String(), nil
 
