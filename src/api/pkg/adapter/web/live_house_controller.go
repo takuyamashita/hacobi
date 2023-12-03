@@ -100,6 +100,33 @@ func (ctrl liveHouseStaffController) FinishRegister(c echo.Context) error {
 	return c.JSON(200, "ok")
 }
 
+func (ctrl liveHouseStaffController) StartLogin(c echo.Context) error {
+
+	req := struct {
+		EmailAddress string `json:"emailAddress"`
+	}{}
+
+	if err := c.Bind(&req); err != nil {
+		return err
+	}
+	log.Println(req.EmailAddress)
+	option, err := usecase.StartLiveHouseStaffAccountLogin(req.EmailAddress, c.Request().Context(), ctrl.container)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(200, option)
+}
+
+func (ctrl liveHouseStaffController) FinishLogin(c echo.Context) error {
+
+	if err := usecase.LoginLiveHouseStaffAccount(c.Request().Body, c.Request().Context(), ctrl.container); err != nil {
+		return err
+	}
+
+	return c.JSON(200, "ok")
+}
+
 // curl -X POST -H "Content-Type: application/json" -d '{}' localhost/api/v1/live_house_account
 func (ctrl liveHouseStaffController) RegisterAccount(c echo.Context) error {
 
