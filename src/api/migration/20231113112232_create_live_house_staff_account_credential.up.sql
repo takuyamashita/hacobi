@@ -6,5 +6,7 @@ CREATE TABLE IF NOT EXISTS live_house_staff_account_credential_relations (
     FOREIGN KEY (live_house_staff_account_id) REFERENCES live_house_staff_accounts (id) ON DELETE CASCADE,
 
     INDEX (public_key_id),
-    FOREIGN KEY (public_key_id) REFERENCES account_credentials (public_key_id) ON DELETE CASCADE
+    FOREIGN KEY (public_key_id) REFERENCES account_credentials (public_key_id) ON DELETE CASCADE,
+
+    UNIQUE (live_house_staff_account_id, public_key_id)
 );
