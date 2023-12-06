@@ -139,11 +139,11 @@ func (ctrl liveHouseStaffController) FinishLogin(c echo.Context) error {
 	}
 
 	c.SetCookie(&http.Cookie{
-		Name:     "auth_token",
+		Name:     JwtTokenCookieName,
 		Value:    jwtToken,
 		HttpOnly: true,
 		Path:     "/",
-		Expires:  time.Now().Add(time.Hour * 1),
+		Expires:  time.Now().Add(time.Hour * 500),
 	})
 
 	return c.JSON(200, "ok")

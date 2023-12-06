@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/takuyamashita/hacobi/src/api/db"
@@ -102,9 +103,12 @@ func (app *application) setupRoutes() {
 	liveHouseStaffAccountOnly.Use(web.NewAuthJwtMiddleware())
 
 	liveHouseStaffAccountOnly.GET("/live_house_staff", func(c echo.Context) error {
-		jwt := c.Get(web.AuthJwtKey)
-		jwtClaims := jwt.(*web.AuthJwtClaims)
-		return c.JSON(200, jwtClaims)
+		jwt := c.Get(web.AuthJwtKey).(*jwt.Token)
+		auth := jwt.Claims.(*web.AuthJwtClaims)
+
+		log.Println(auth)
+
+		return c.JSON(200, auth.AccountId)
 	})
 
 	app.server.POST("/api/v1/ceremony/start", func(c echo.Context) error {
