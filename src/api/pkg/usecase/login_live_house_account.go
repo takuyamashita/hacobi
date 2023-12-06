@@ -72,8 +72,10 @@ func LoginLiveHouseStaffAccount(
 	container.Make(&publicKeyCredential)
 	container.Make(&accountCredentialRepo)
 
+	// xxx: 入出力はコントローラに譲る
 	type Body struct {
-		Email                       string
+		Email string
+		// xxx: DisplayNameを加える
 		CredentialAssertionResponse protocol.CredentialAssertionResponse
 	}
 
