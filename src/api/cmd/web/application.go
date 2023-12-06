@@ -101,6 +101,12 @@ func (app *application) setupRoutes() {
 	liveHouseStaffAccountOnly.Use(middleware.CORS())
 	liveHouseStaffAccountOnly.Use(web.NewAuthJwtMiddleware())
 
+	liveHouseStaffAccountOnly.GET("/live_house_staff", func(c echo.Context) error {
+		jwt := c.Get(web.AuthJwtKey)
+		jwtClaims := jwt.(*web.AuthJwtClaims)
+		return c.JSON(200, jwtClaims)
+	})
+
 	app.server.POST("/api/v1/ceremony/start", func(c echo.Context) error {
 
 		challenge, err := protocol.CreateChallenge()

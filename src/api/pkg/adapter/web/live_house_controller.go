@@ -142,6 +142,7 @@ func (ctrl liveHouseStaffController) FinishLogin(c echo.Context) error {
 		Name:     "auth_token",
 		Value:    jwtToken,
 		HttpOnly: true,
+		Path:     "/",
 		Expires:  time.Now().Add(time.Hour * 1),
 	})
 
