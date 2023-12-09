@@ -90,16 +90,19 @@ const Register = ({ token }: Props) => {
       },
       body: JSON.stringify({
         displayName,
-        id: publickeyCredential.id,
-        rawId: arrayBufferToBase64URLSafe(publickeyCredential.rawId),
-        type: publickeyCredential.type,
-        authenticatorAttachment: publickeyCredential.authenticatorAttachment,
-        clientExtensionResults: publickeyCredential.getClientExtensionResults(),
         response: {
-          attestationObject: arrayBufferToBase64URLSafe(r.attestationObject),
-          clientDataJSON: arrayBufferToBase64URLSafe(r.clientDataJSON),
-          transports: r.getTransports(),
-          publicKeyAlgorithm: r.getPublicKeyAlgorithm(),
+          id: publickeyCredential.id,
+          rawId: arrayBufferToBase64URLSafe(publickeyCredential.rawId),
+          type: publickeyCredential.type,
+          authenticatorAttachment: publickeyCredential.authenticatorAttachment,
+          clientExtensionResults:
+            publickeyCredential.getClientExtensionResults(),
+          response: {
+            attestationObject: arrayBufferToBase64URLSafe(r.attestationObject),
+            clientDataJSON: arrayBufferToBase64URLSafe(r.clientDataJSON),
+            transports: r.getTransports(),
+            publicKeyAlgorithm: r.getPublicKeyAlgorithm(),
+          },
         },
       }),
     });
