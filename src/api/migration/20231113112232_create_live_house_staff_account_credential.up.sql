@@ -9,4 +9,4 @@ CREATE TABLE IF NOT EXISTS live_house_staff_account_credential_relations (
     FOREIGN KEY (public_key_id) REFERENCES account_credentials (public_key_id) ON DELETE CASCADE,
 
     UNIQUE (live_house_staff_account_id, public_key_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
