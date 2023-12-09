@@ -344,7 +344,7 @@ func (repo LiveHouseStaffAccountRepositoryImpl) Save(
 		_, err = tx.ExecContext(
 			ctx,
 			`
-				INSERT INTO live_house_staff_account_profiles
+				INSERT INTO live_house_staff_profiles
 					(live_house_staff_account_id, display_name)
 				VALUES
 					(?, ?) AS new
