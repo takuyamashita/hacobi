@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/db"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
@@ -309,18 +308,6 @@ func (repo LiveHouseStaffAccountRepositoryImpl) Save(
 		args[i*2] = account.Id().String()
 		args[i*2+1] = credentialKey.String()
 	}
-
-	log.Println(fmt.Sprintf(
-		`
-				REPLACE INTO live_house_staff_account_credential_relations
-					(live_house_staff_account_id, public_key_id)
-				VALUES
-					%s
-			`,
-		values[:len(values)-1],
-	))
-	log.Println(values)
-	log.Println(args)
 
 	_, err = tx.ExecContext(
 		ctx,
