@@ -275,8 +275,6 @@ func (repo LiveHouseStaffAccountRepositoryImpl) Save(
 		}
 
 		return tx.Commit()
-	} else {
-
 	}
 
 	_, err = tx.ExecContext(
