@@ -193,6 +193,16 @@ func FinishRegisterLiveHouseStaffAccount(
 		return err
 	}
 
+	profile, err := live_house_staff_account_domain.NewLiveHouseStaffProfile(body.DisplayName)
+	if err != nil {
+		return err
+	}
+
+	account.SetProfile(profile)
+	if err != nil {
+		return err
+	}
+
 	if err := parsedResponse.Verify(
 		account.CredentialChallenge().Challenge().String(),
 		true,

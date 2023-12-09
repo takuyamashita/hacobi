@@ -13,6 +13,7 @@ type LiveHouseStaffAccountIntf interface {
 	SetCredentialChallenge(challenge CredentialChallengeIntf) error
 	AddCredentialKey(id domain.PublicKeyId) error
 	CredentialKeys() []domain.PublicKeyId
+	SetProfile(profile LiveHouseStaffProfileIntf) error
 	Profile() LiveHouseStaffProfileIntf
 }
 
@@ -84,4 +85,11 @@ func (account LiveHouseStaffAccountImpl) CredentialKeys() []domain.PublicKeyId {
 
 func (account LiveHouseStaffAccountImpl) Profile() LiveHouseStaffProfileIntf {
 	return account.profile
+}
+
+func (account *LiveHouseStaffAccountImpl) SetProfile(profile LiveHouseStaffProfileIntf) error {
+
+	account.profile = profile
+
+	return nil
 }
