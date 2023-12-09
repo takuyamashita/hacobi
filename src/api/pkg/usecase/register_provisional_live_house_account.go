@@ -2,9 +2,9 @@ package usecase
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"io"
-	"log"
 	"time"
 
 	"github.com/go-webauthn/webauthn/protocol"
@@ -170,10 +170,20 @@ func FinishRegisterLiveHouseStaffAccount(
 		return err
 	}
 
-	parsedResponse, err := protocol.ParseCredentialCreationResponseBody(reader)
-	if err != nil {
+	// xxx: 入出力はコントローラに譲る
+	type Body struct {
+		DisplayName string                              `json:"displayName"`
+		Response    protocol.CredentialCreationResponse `json:"response"`
+	}
 
-		log.Println(err)
+	var body Body
+
+	if err := json.NewDecoder(reader).Decode(&body); err != nil {
+		return err
+	}
+
+	parsedResponse, err := body.Response.Parse()
+	if err != nil {
 		return err
 	}
 

@@ -74,8 +74,7 @@ func LoginLiveHouseStaffAccount(
 
 	// xxx: 入出力はコントローラに譲る
 	type Body struct {
-		Email string
-		// xxx: DisplayNameを加える
+		Email                       string
 		CredentialAssertionResponse protocol.CredentialAssertionResponse
 	}
 
