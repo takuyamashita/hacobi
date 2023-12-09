@@ -16,6 +16,7 @@ type LiveHouseStaffAccountIntf interface {
 	SetCredentialChallenge(challenge CredentialChallengeIntf) error
 	AddCredentialKey(id domain.PublicKeyId) error
 	CredentialKeys() []domain.PublicKeyId
+	Profile() LiveHouseStaffProfileIntf
 }
 
 type LiveHouseStaffAccountImpl struct {
@@ -33,6 +34,9 @@ type LiveHouseStaffAccountImpl struct {
 
 	// publicKeys
 	credentialKeys []domain.PublicKeyId
+
+	// profile LiveHouseStaffProfileIntf
+	profile LiveHouseStaffProfileIntf
 }
 
 type ProvisionalRegistrationParam struct {
@@ -162,4 +166,8 @@ func (account *LiveHouseStaffAccountImpl) AddCredentialKey(id domain.PublicKeyId
 
 func (account LiveHouseStaffAccountImpl) CredentialKeys() []domain.PublicKeyId {
 	return account.credentialKeys
+}
+
+func (account LiveHouseStaffAccountImpl) Profile() LiveHouseStaffProfileIntf {
+	return account.profile
 }
