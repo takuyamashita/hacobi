@@ -335,6 +335,30 @@ func (repo LiveHouseStaffAccountRepositoryImpl) Save(
 		),
 		args...,
 	)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if account.Profile() != nil {
+		_, err = tx.ExecContext(
+			ctx,
+			`
+				INSERT INTO live_house_staff_account_profiles
+					(live_house_staff_account_id, display_name)
+				VALUES
+					(?, ?) AS new
+				ON DUPLICATE KEY UPDATE
+					display_name = new.display_name
+			`,
+			account.Id().String(),
+			account.Profile().DisplayName(),
+		)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
 
 	if err != nil {
 		tx.Rollback()
