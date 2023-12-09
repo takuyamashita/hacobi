@@ -6,7 +6,7 @@ type Props = {
   children?: React.ReactNode;
 };
 
-const Button = ({ type, onClick, children }: Props) => {
+const Button = ({ type = "submit", onClick, children }: Props) => {
   return (
     <div className="flex justify-center">
       <button

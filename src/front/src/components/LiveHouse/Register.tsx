@@ -12,6 +12,8 @@ type Props = {
 };
 
 const Register = ({ token }: Props) => {
+  const [displayName, setDisplayName] = React.useState("");
+
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent,
   ) => {
@@ -87,6 +89,7 @@ const Register = ({ token }: Props) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        displayName,
         id: publickeyCredential.id,
         rawId: arrayBufferToBase64URLSafe(publickeyCredential.rawId),
         type: publickeyCredential.type,
@@ -103,12 +106,20 @@ const Register = ({ token }: Props) => {
   };
 
   return (
-    <Button
-      type="button"
-      onClick={(e) => handleSubmit(e)}
-    >
-      登録を開始
-    </Button>
+    <>
+      <form onSubmit={(e) => handleSubmit(e)}>
+        <div>
+          <label htmlFor="displayName">表示名</label>
+          <input
+            type="text"
+            id="displayName"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+          />
+        </div>
+        <Button>登録を開始</Button>
+      </form>
+    </>
   );
 };
 export default Register;
