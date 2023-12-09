@@ -32,11 +32,8 @@ type LiveHouseStaffAccountImpl struct {
 	// PublickKeyを登録する際に必要なChallenge
 	credentialChallenge CredentialChallengeIntf
 
-	// publicKeys
 	credentialKeys []domain.PublicKeyId
-
-	// profile LiveHouseStaffProfileIntf
-	profile LiveHouseStaffProfileIntf
+	profile        LiveHouseStaffProfileIntf
 }
 
 type ProvisionalRegistrationParam struct {
