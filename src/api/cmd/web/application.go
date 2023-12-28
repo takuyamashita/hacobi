@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -16,9 +15,6 @@ import (
 	"github.com/takuyamashita/hacobi/src/api/pkg/container"
 	mysql "github.com/takuyamashita/hacobi/src/api/pkg/db"
 	"github.com/takuyamashita/hacobi/src/api/pkg/dependency"
-
-	"github.com/go-webauthn/webauthn/protocol"
-	"github.com/go-webauthn/webauthn/protocol/webauthncose"
 )
 
 type Application interface {
@@ -89,8 +85,6 @@ func (app *application) setupRoutes() {
 	liveHouseStaffController := web.NewliveHouseStaffController(app.container)
 
 	app.server.POST("/api/v1/send_live_house_staff_email_authorization", liveHouseStaffController.SendMailLiveHouseStaffAccountRegisterPage)
-	app.server.POST("/api/v1/live_house_staff", liveHouseStaffController.RegisterStaff)
-	app.server.POST("/api/v1/live_house_account", liveHouseStaffController.RegisterAccount)
 	app.server.POST("/api/v1/live_house_account/credential/start_register", liveHouseStaffController.StartRegister)
 	app.server.POST("/api/v1/live_house_account/credential/finish_register", liveHouseStaffController.FinishRegister)
 	app.server.POST("/api/v1/live_house_account/credential/start_login", liveHouseStaffController.StartLogin)
@@ -102,67 +96,4 @@ func (app *application) setupRoutes() {
 	liveHouseStaffAccountOnly.Use(web.NewAuthJwtMiddleware())
 
 	liveHouseStaffAccountOnly.GET("/live_house_staff", liveHouseStaffController.GetStaff)
-
-	/**
-	liveHouseStaffAccountOnly.GET("/live_house_staff", func(c echo.Context) error {
-		jwt := c.Get(web.AuthJwtKey).(*jwt.Token)
-		auth := jwt.Claims.(*web.AuthJwtClaims)
-
-		log.Println(auth)
-
-		return c.JSON(200, auth.AccountId)
-	})
-	*/
-
-	app.server.POST("/api/v1/ceremony/start", func(c echo.Context) error {
-
-		challenge, err := protocol.CreateChallenge()
-		if err != nil {
-			return c.JSON(500, err)
-		}
-
-		c.Request().AddCookie(&http.Cookie{
-			Name:  "challenge",
-			Value: challenge.String(),
-		})
-
-		option := protocol.PublicKeyCredentialCreationOptions{
-			Challenge: challenge,
-			RelyingParty: protocol.RelyingPartyEntity{
-				CredentialEntity: protocol.CredentialEntity{
-					Name: "localhost",
-					Icon: "https://localhost/favicon.ico",
-				},
-			},
-			User: protocol.UserEntity{
-				ID:          []byte("1234567890"),
-				DisplayName: "test-user",
-			},
-			CredentialExcludeList: []protocol.CredentialDescriptor{},
-			Parameters: []protocol.CredentialParameter{
-				{
-					Type:      protocol.PublicKeyCredentialType,
-					Algorithm: webauthncose.AlgES256,
-				},
-				{
-					Type:      protocol.PublicKeyCredentialType,
-					Algorithm: webauthncose.AlgRS256,
-				},
-			},
-			Timeout: int((5 * time.Minute).Milliseconds()),
-		}
-
-		return c.JSON(200, option)
-	})
-
-	app.server.POST("/api/v1/auth", func(c echo.Context) error {
-
-		parsedResponse, err := protocol.ParseCredentialCreationResponseBody(c.Request().Body)
-		if err != nil {
-			log.Println(err)
-			return c.JSON(500, err)
-		}
-
-		return c.JSON(200, parsedResponse)
-	})
 }

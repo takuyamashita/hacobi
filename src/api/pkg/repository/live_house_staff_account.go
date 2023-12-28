@@ -173,22 +173,25 @@ func (repo LiveHouseStaffAccountRepositoryImpl) findBy(
 		credentialKeys = append(credentialKeys, credentialKeyId)
 	}
 
-	var profileParam = &live_house_staff_account_domain.ProfileParam{}
-
-	if displayName.Valid {
-
-		profileParam.DisplayName = displayName.String
-	}
-
-	account, err = live_house_staff_account_domain.NewLiveHouseStaffAccount(live_house_staff_account_domain.NewLiveHouseStaffAccountParams{
+	LiveHouseStaffAccountParam := live_house_staff_account_domain.NewLiveHouseStaffAccountParams{
 		Id:                        accountId,
 		Email:                     email,
 		IsProvisional:             int2Bool(isProvisional),
 		ProvisionalRegistration:   provisionalRegistrationParam,
 		CredentialChallengeParams: credentialChallengeParam,
 		CredentialKeys:            credentialKeys,
-		ProfileParams:             profileParam,
-	})
+	}
+
+	if displayName.Valid {
+
+		var profileParam = &live_house_staff_account_domain.ProfileParam{}
+
+		profileParam.DisplayName = displayName.String
+
+		LiveHouseStaffAccountParam.ProfileParams = profileParam
+	}
+
+	account, err = live_house_staff_account_domain.NewLiveHouseStaffAccount(LiveHouseStaffAccountParam)
 	if err != nil {
 		return nil, err
 	}
