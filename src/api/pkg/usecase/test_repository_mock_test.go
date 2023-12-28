@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain"
-	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_account_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_account_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/domain/live_house_staff_domain"
 	"github.com/takuyamashita/hacobi/src/api/pkg/repository"
@@ -62,18 +61,6 @@ func (repo TransactionRepositoryMock) Begin(ctx context.Context) (commit func() 
 	err = nil
 
 	return
-}
-
-// ~~~~~~~~~~~usecase.LiveHouseAccountRepositoryIntf~~~~~~~~~~~ //
-var _ repository.LiveHouseAccountRepositoryIntf = (*LiveHouseAccountRepositoryMock)(nil)
-
-type LiveHouseAccountRepositoryMock struct {
-	Store *Store
-}
-
-func (repo LiveHouseAccountRepositoryMock) Save(account live_house_account_domain.LiveHouseAccountIntf, ctx context.Context) error {
-	repo.Store.Accounts = append(repo.Store.Accounts, account)
-	return nil
 }
 
 // ~~~~~~~~~~~usecase.LiveHouseStaffAccountProvisionalRegistrationRepositoryIntf~~~~~~~~~~~ //

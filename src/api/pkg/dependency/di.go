@@ -46,10 +46,6 @@ func SetupDI(container container.Container, db *db.MySQL) {
 		return repository.NewliveHouseStaff(db)
 	})
 
-	container.Bind(func() usecase.LiveHouseAccountRepositoryIntf {
-		return repository.NewliveHouseAccount(db)
-	})
-
 	container.Bind(func() usecase.AccountCredentialRepositoryIntf {
 		return repository.NewAccountCredentialRepository(db)
 	})
