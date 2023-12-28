@@ -170,3 +170,27 @@ func (ctrl liveHouseStaffController) RegisterStaff(c echo.Context) error {
 
 	return c.JSON(200, id)
 }
+
+func (ctrl liveHouseStaffController) GetStaff(c echo.Context) error {
+
+	jwt := c.Get(AuthJwtKey).(*jwt.Token)
+	auth := jwt.Claims.(*AuthJwtClaims)
+
+	account, err := usecase.GetLiveHouseStaffAccount(auth.AccountId, c.Request().Context(), ctrl.container)
+
+	if err != nil {
+		return err
+	}
+
+	type Response struct {
+		Id           string `json:"id"`
+		Name         string `json:"name"`
+		EmailAddress string `json:"emailAddress"`
+	}
+
+	return c.JSON(200, Response{
+		Id:           account.Id().String(),
+		Name:         string(account.Profile().DisplayName()),
+		EmailAddress: account.EmailAddress().String(),
+	})
+}

@@ -42,7 +42,8 @@ const liveHouseStaffAccountSelectStmt liveHouseStaffAccountSelectStmtTmpl = `
 			r.token,
 			r.created_at,
 			c.challenge,
-			c.created_at
+			c.created_at,
+			p.display_name
 		FROM 
 			live_house_staff_accounts
 			AS
@@ -59,6 +60,12 @@ const liveHouseStaffAccountSelectStmt liveHouseStaffAccountSelectStmtTmpl = `
 				c
 			ON
 				a.id = c.live_house_staff_account_id	
+		LEFT JOIN
+			live_house_staff_profiles
+			AS
+				p
+			ON
+				a.id = p.live_house_staff_account_id
 		WHERE %s.%s = ?
 `
 
@@ -89,6 +96,7 @@ func (repo LiveHouseStaffAccountRepositoryImpl) findBy(
 		tokenCreatedAt     sql.NullTime
 		challenge          sql.NullString
 		challengeCreatedAt sql.NullTime
+		displayName        sql.NullString
 	)
 
 	row := repo.db.QueryRowContext(
@@ -105,6 +113,7 @@ func (repo LiveHouseStaffAccountRepositoryImpl) findBy(
 		&tokenCreatedAt,
 		&challenge,
 		&challengeCreatedAt,
+		&displayName,
 	); err != nil {
 
 		if errors.Is(err, sql.ErrNoRows) {
@@ -164,6 +173,13 @@ func (repo LiveHouseStaffAccountRepositoryImpl) findBy(
 		credentialKeys = append(credentialKeys, credentialKeyId)
 	}
 
+	var profileParam = &live_house_staff_account_domain.ProfileParam{}
+
+	if displayName.Valid {
+
+		profileParam.DisplayName = displayName.String
+	}
+
 	account, err = live_house_staff_account_domain.NewLiveHouseStaffAccount(live_house_staff_account_domain.NewLiveHouseStaffAccountParams{
 		Id:                        accountId,
 		Email:                     email,
@@ -171,6 +187,7 @@ func (repo LiveHouseStaffAccountRepositoryImpl) findBy(
 		ProvisionalRegistration:   provisionalRegistrationParam,
 		CredentialChallengeParams: credentialChallengeParam,
 		CredentialKeys:            credentialKeys,
+		ProfileParams:             profileParam,
 	})
 	if err != nil {
 		return nil, err
